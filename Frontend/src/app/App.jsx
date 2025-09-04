@@ -1,6 +1,7 @@
 import React from "react";
 import AppRoutes from "./routes/AppRoutes";
-import "./styles/theme.css";
+import "./theme.css";
+import "./index.css";
 
 const App = () => {
   return (
