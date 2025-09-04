@@ -76,10 +76,11 @@ async function logoutUser(req, res) {
 // food partner auth controller
 
 async function registerFoodPartner(req, res) {
-    const { fullName, email, password } = req.body
-    if (!fullName || !email) {
+    const { fullName, email, password, contactName, phone, address } = req.body
+    if (!fullName || !email || !contactName || !phone || !address) {
         return res.status(400).json({ message: 'All fields are required' })
     }
+
     const isFoodPartnerExist = await foodPartnerModel.findOne({ email })
     if (isFoodPartnerExist) {
         return res.status(400).json({ message: 'Food partner already exist' })
@@ -88,7 +89,7 @@ async function registerFoodPartner(req, res) {
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
 
-    const foodPartner = await foodPartnerModel.create({ fullName, email, password: hashedPassword })
+    const foodPartner = await foodPartnerModel.create({ fullName, email, password: hashedPassword, contactName, phone, address })
 
     const token = jwt.sign({ id: foodPartner._id }, process.env.JWT_SECRET, { expiresIn: '1d' })
 
@@ -99,7 +100,10 @@ async function registerFoodPartner(req, res) {
         foodPartner: {
             _id: foodPartner._id,
             fullName: foodPartner.fullName,
-            email: foodPartner.email
+            email: foodPartner.email,
+            contactName: foodPartner.contactName,
+            phone: foodPartner.phone,
+            address: foodPartner.address
         }
     })
 }

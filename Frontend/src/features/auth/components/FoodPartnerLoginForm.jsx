@@ -1,77 +1,92 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import "../../../app/theme.css";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import AuthLayout from "./AuthLayout";
+import Input from "../../../components/common/Input";
+import Button from "../../../components/common/Button";
 
 const FoodPartnerLoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await axios.post(
+        `${API_URL}/auth/foodpartner/login`,
+        { email, password },
+        { withCredentials: true }
+      );
+      alert(res.data.message);
+      
+      navigate("/create-food");
+    } catch (err) {
+      setError(err.response?.data?.message || "Invalid email or password");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const footer = (
+    <>
+      <div className="auth-divider">
+        <span className="divider-text">or</span>
+      </div>
+      <div className="auth-links text-center">
+        <p className="text-sm">
+          Don't have an account?{" "}
+          <Link
+            to="/food-partner/register"
+            className="text-blue-500 hover:underline"
+          >
+            Sign Up
+          </Link>
+        </p>
+      </div>
+    </>
+  );
 
   return (
-    <div className="auth-wrapper">
-      <div className="auth-container">
-        <div className="auth-header">
-          <h1 className="auth-title">Welcome back, Partner</h1>
-          <p className="auth-subtitle">Sign in to your food partner account</p>
-        </div>
-
-        <form className="auth-form">
-          <div className="form-group">
-            <label htmlFor="email" className="form-label">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="form-input"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password" className="form-label">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="form-input"
-              required
-            />
-          </div>
-
-          <button type="submit" className="btn btn-primary">
-            Sign In
-          </button>
+    <AuthLayout
+      title="Food Partner Sign In"
+      subtitle="Login to access your dashboard"
+      footer={footer}
+    >
+      <div className="max-w-md w-full mx-auto bg-white shadow-lg rounded-xl p-6 md:p-8">
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <Input
+            id="email"
+            type="email"
+            label="Email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <Input
+            id="password"
+            type="password"
+            label="Password"
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <Button type="submit" disabled={loading}>
+            {loading ? "Signing In..." : "Sign In"}
+          </Button>
         </form>
-
-        <div className="auth-footer">
-          <div className="auth-divider">
-            <span className="divider-text">or</span>
-          </div>
-
-          <div className="auth-links">
-            <p className="auth-link-text">
-              Not a food partner?{" "}
-              <Link to="/user/login" className="auth-link">
-                User Login
-              </Link>
-            </p>
-            <p className="auth-link-text">
-              Don't have an account?{" "}
-              <Link to="/food-partner/register" className="auth-link">
-                Create Partner Account
-              </Link>
-            </p>
-          </div>
-        </div>
       </div>
-    </div>
+    </AuthLayout>
   );
 };
 
