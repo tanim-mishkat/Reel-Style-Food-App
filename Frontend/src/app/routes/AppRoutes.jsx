@@ -6,6 +6,7 @@ import FoodPartnerLoginPage from "../../features/auth/pages/FoodPartnerLoginPage
 import FoodPartnerRegisterPage from "../../features/auth/pages/FoodPartnerRegisterPage";
 import Home from "../../features/user/Home";
 import CreateFood from "../../features/food-partner/CreateFood.jsx";
+import Profile from "../../features/food-partner/Profile.jsx";
 
 const NotFoundPage = () => (
   <h2 style={{ textAlign: "center" }}>404 - Page Not Found</h2>
@@ -17,6 +18,7 @@ const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/create-food" element={<CreateFood />} />
+        <Route path="/food-partner/:id" element={<Profile />} />
         <Route path="/user/login" element={<UserLoginPage />} />
         <Route path="/user/register" element={<UserRegisterPage />} />
         <Route path="/food-partner/login" element={<FoodPartnerLoginPage />} />

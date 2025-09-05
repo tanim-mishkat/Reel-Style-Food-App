@@ -3,6 +3,12 @@
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.home-container::-webkit-scrollbar {
+  display: none;
 }
 
 .video-section {
@@ -34,17 +40,84 @@
   z-index: 1;
 }
 
-.video-info {
+.video-controls {
   position: absolute;
-  top: 60px;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
+  display: flex;
+  gap: 10px;
+}
+
+.play-pause-btn,
+.mute-btn {
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: white;
+  font-size: 20px;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-timeline {
+  position: absolute;
+  bottom: 120px;
   left: 20px;
   right: 20px;
   z-index: 2;
 }
 
+.timeline-slider {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  outline: none;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.timeline-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #ff6b35;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.timeline-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #ff6b35;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+.video-info-bottom {
+  position: absolute;
+  bottom: 40px;
+  left: 20px;
+  z-index: 2;
+}
+
+.partner-name {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
 .video-description {
   color: white;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.4;
   margin: 0 0 15px 0;
   display: -webkit-box;
@@ -78,14 +151,35 @@
 }
 
 @media (max-width: 768px) {
-  .video-info {
-    bottom: 40px;
+  .video-controls {
+    top: 15px;
+    right: 15px;
+  }
+  
+  .video-timeline {
+    bottom: 100px;
     left: 15px;
     right: 15px;
   }
+  
+  .video-info-bottom {
+    bottom: 30px;
+    left: 15px;
+  }
+
+  .partner-name {
+    font-size: 16px;
+  }
 
   .video-description {
-    font-size: 14px;
+    font-size: 13px;
+  }
+
+  .play-pause-btn,
+  .mute-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
   }
 
   .visit-store-btn {
