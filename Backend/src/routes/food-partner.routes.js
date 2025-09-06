@@ -9,4 +9,9 @@ router.get('/:id',
     foodPartnerController.getFoodPartnerById
 )
 
+router.get('/:id/videos',
+    authMiddleware.authUserMiddleware,
+    foodPartnerController.getFoodPartnerVideos
+)
+
 module.exports = router
