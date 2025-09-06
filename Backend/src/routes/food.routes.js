@@ -1,6 +1,7 @@
 const express = require('express')
 const foodController = require('../controllers/food.controller.js')
 const authMiddleware = require('../middleware/auth.middleware.js')
+
 const multer = require('multer')
 
 const upload = multer({
@@ -20,6 +21,14 @@ router.get('/',
     foodController.getFoodItems
 )
 
+router.post('/like',
+    authMiddleware.authUserMiddleware,
+    foodController.likeFood
+)
 
+router.post('/save',
+    authMiddleware.authUserMiddleware,
+    foodController.saveFood
+)
 
 module.exports = router
