@@ -1,0 +1,136 @@
+import React, { useEffect, useState } from "react";
+import { foodService } from "../../../shared/services/api";
+import { useVideoPlayer } from "../../../shared/hooks/useVideoPlayer";
+import { useVideoActions } from "../../../shared/hooks/useVideoActions";
+import VideoPlayer from "../../video/components/VideoPlayer/VideoPlayer";
+import VideoControls from "../../video/components/VideoControls/VideoControls";
+import VideoActions from "../../video/components/VideoActions/VideoActions";
+import VideoInfo from "../../video/components/VideoInfo/VideoInfo";
+import VideoComments from "../../video/components/VideoComments/VideoComments";
+import BottomNav from "../../../shared/components/layout/BottomNav/BottomNav";
+import styles from "./HomePage.module.css";
+
+const UserSavedVideosPage = () => {
+  const [videos, setVideos] = useState([]);
+  const [commentsOpen, setCommentsOpen] = useState(false);
+  const [activeVideoId, setActiveVideoId] = useState(null);
+  const [showTimeline, setShowTimeline] = useState({});
+  
+  const {
+    containerRef,
+    videoRefs,
+    mutedVideos,
+    currentTimes,
+    durations,
+    pausedVideos,
+    togglePlayPause,
+    toggleMute,
+    handleTimeUpdate,
+    handleLoadedMetadata,
+    handleSeek,
+  } = useVideoPlayer(videos);
+
+  const {
+    likedVideos,
+    savedVideos,
+    videoCounts,
+    initializeVideoStates,
+    handleLike,
+    handleSave,
+  } = useVideoActions();
+
+  useEffect(() => {
+    const fetchSavedVideos = async () => {
+      try {
+        const response = await foodService.getSavedFoodItems();
+        const savedFoodItems = response.data.savedFoodItems;
+        setVideos(savedFoodItems);
+        initializeVideoStates(savedFoodItems);
+      } catch (err) {
+        // Handle error silently
+      }
+    };
+
+    fetchSavedVideos();
+  }, [initializeVideoStates]);
+
+  const handleComment = (videoId) => {
+    setActiveVideoId(videoId);
+    setCommentsOpen(true);
+  };
+
+  const handleDescriptionClick = (videoId) => {
+    setShowTimeline(prev => ({
+      ...prev,
+      [videoId]: !prev[videoId]
+    }));
+  };
+
+  const handleVideoClick = (videoId) => {
+    togglePlayPause(videoId);
+  };
+
+  return (
+    <div className={styles.homeContainer} ref={containerRef}>
+      {videos.map((video) => (
+        <div key={video._id} className={styles.videoSection}>
+          <VideoPlayer
+            video={video}
+            videoRef={(el) => (videoRefs.current[video._id] = el)}
+            muted={mutedVideos[video._id] === true}
+            onTimeUpdate={() => handleTimeUpdate(video._id)}
+            onLoadedMetadata={() => handleLoadedMetadata(video._id)}
+            onVideoClick={() => handleVideoClick(video._id)}
+          />
+          <div className={styles.videoOverlay}>
+            <VideoControls
+              isPaused={pausedVideos[video._id]}
+              isMuted={mutedVideos[video._id]}
+              onPlayPause={() => togglePlayPause(video._id)}
+              onMute={() => toggleMute(video._id)}
+            />
+            <VideoActions
+              videoId={video._id}
+              isLiked={likedVideos[video._id]}
+              isSaved={savedVideos[video._id]}
+              likesCount={videoCounts[video._id]?.likes || 0}
+              savesCount={videoCounts[video._id]?.saves || 0}
+              onLike={handleLike}
+              onSave={handleSave}
+              onComment={handleComment}
+            />
+            <div className={styles.videoInfoContainer}>
+              <h3 className={styles.videoTitle}>{video.name}</h3>
+              <VideoInfo 
+                video={video} 
+                onDescriptionClick={() => handleDescriptionClick(video._id)}
+              />
+              {showTimeline[video._id] && (
+                <div className={styles.videoTimeline}>
+                  <input
+                    type="range"
+                    min="0"
+                    max={durations[video._id] || 0}
+                    value={currentTimes[video._id] || 0}
+                    onChange={(e) => handleSeek(video._id, e.target.value)}
+                    className={styles.timelineSlider}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
+
+      <VideoComments
+        videoId={activeVideoId}
+        isOpen={commentsOpen}
+        onClose={() => setCommentsOpen(false)}
+      />
+
+      <BottomNav />
+    </div>
+  );
+};
+
+export default UserSavedVideosPage;

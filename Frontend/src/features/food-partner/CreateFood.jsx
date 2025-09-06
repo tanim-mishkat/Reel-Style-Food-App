@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { foodService } from "../../shared/services/api";
 import "./CreateFood.css";
 
 const CreateFood = () => {
@@ -28,10 +28,7 @@ const CreateFood = () => {
     formData.append("video", video);
 
     try {
-      await axios.post("http://localhost:3000/api/food", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
-      });
+      await foodService.createFood(formData);
       setSuccess("Food item created successfully!");
       setPosted(true);
       setTimeout(() => {

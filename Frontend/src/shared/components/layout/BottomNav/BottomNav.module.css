@@ -1,18 +1,18 @@
-.bottom-nav {
+.bottomNav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.95);
-  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(15px);
   display: flex;
   justify-content: space-around;
   padding: 12px 0;
-  z-index: 1000;
+  z-index: var(--z-fixed);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.nav-item {
+.navItem {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,23 +21,23 @@
   text-decoration: none;
   transition: all 0.2s ease;
   padding: 4px 8px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 
-.nav-item.active {
+.navItem.active {
   color: white;
 }
 
-.nav-item:hover {
+.navItem:hover {
   color: rgba(255, 255, 255, 0.8);
 }
 
-.nav-item svg {
+.navItem svg {
   width: 24px;
   height: 24px;
 }
 
-.nav-item span {
+.navItem span {
   font-size: 12px;
   font-weight: 500;
   margin-top: 2px;

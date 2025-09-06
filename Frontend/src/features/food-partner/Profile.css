@@ -55,7 +55,8 @@
   margin: 0;
 }
 
-.edit-profile-btn {
+.edit-profile-btn,
+.contact-btn {
   padding: 8px 16px;
   border: 1px solid var(--border);
   background: var(--background);
@@ -67,8 +68,19 @@
   transition: all 0.2s ease;
 }
 
-.edit-profile-btn:hover {
+.edit-profile-btn:hover,
+.contact-btn:hover {
   background: var(--muted);
+}
+
+.contact-btn {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+
+.contact-btn:hover {
+  background: var(--primary-hover);
 }
 
 .profile-stats {

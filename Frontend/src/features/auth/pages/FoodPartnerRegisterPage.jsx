@@ -1,5 +1,5 @@
 import React from "react";
-import FoodPartnerRegisterForm from "../components/FoodPartnerRegisterForm";
+import FoodPartnerRegisterForm from "../components/FoodPartnerRegisterForm/FoodPartnerRegisterForm";
 
 const FoodPartnerRegisterPage = () => <FoodPartnerRegisterForm />;
 

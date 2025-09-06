@@ -1,5 +1,5 @@
 import React from "react";
-import FoodPartnerLoginForm from "../components/FoodPartnerLoginForm";
+import FoodPartnerLoginForm from "../components/FoodPartnerLoginForm/FoodPartnerLoginForm";
 
 const FoodPartnerLoginPage = () => <FoodPartnerLoginForm />;
 

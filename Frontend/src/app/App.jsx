@@ -1,14 +1,9 @@
 import React from "react";
-import AppRoutes from "./routes/AppRoutes";
-import "./theme.css";
-import "./index.css";
+import AppRouter from "../routes/AppRouter";
+import "../assets/styles/global.css";
 
 const App = () => {
-  return (
-    <div>
-      <AppRoutes />
-    </div>
-  );
+  return <AppRouter />;
 };
 
 export default App;

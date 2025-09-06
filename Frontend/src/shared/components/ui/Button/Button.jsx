@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "./Button.module.css";
 
 const Button = ({ type = "button", children, onClick, disabled }) => {
   return (
@@ -6,7 +7,7 @@ const Button = ({ type = "button", children, onClick, disabled }) => {
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className="btn btn-primary"
+      className={styles.btn}
     >
       {children}
     </button>

@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "./Input.module.css";
 
 const Input = ({
   id,
@@ -10,9 +11,9 @@ const Input = ({
   required,
 }) => {
   return (
-    <div className="form-group">
+    <div className={styles.formGroup}>
       {label && (
-        <label htmlFor={id} className="form-label">
+        <label htmlFor={id} className={styles.formLabel}>
           {label}
         </label>
       )}
@@ -23,7 +24,7 @@ const Input = ({
         onChange={onChange}
         placeholder={placeholder}
         required={required}
-        className="form-input"
+        className={styles.formInput}
       />
     </div>
   );

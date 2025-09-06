@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
+import { ROUTES } from "../../routes/routeConfig";
 import "./Profile.css";
-import { useParams } from "react-router-dom";
 
 const Profile = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [profile, setProfile] = useState(null);
   const [videos, setVideos] = useState([]);
@@ -21,12 +23,12 @@ const Profile = () => {
         setVideos(response.data.foodPartner.foodItems || []);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching profile:", error);
+        // Handle error silently
         setLoading(false);
       }
     };
     fetchProfile();
-    console.log(profile);
+    // Profile fetched
   }, [id]);
 
   if (loading) {
@@ -43,7 +45,7 @@ const Profile = () => {
         <div className="profile-info">
           <div className="profile-name">
             <h1>{profile.fullName}</h1>
-            <button className="edit-profile-btn">Edit Profile</button>
+            <button className="contact-btn">Contact</button>
           </div>
 
           <div className="profile-stats">
@@ -84,6 +86,7 @@ const Profile = () => {
             <div 
               key={video._id} 
               className="post-item"
+              onClick={() => navigate(ROUTES.FOOD_PARTNER_VIDEOS.replace(':id', id))}
               onMouseEnter={(e) => {
                 const videoEl = e.currentTarget.querySelector('video');
                 videoEl.play();
