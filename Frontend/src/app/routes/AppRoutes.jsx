@@ -5,6 +5,7 @@ import UserRegisterPage from "../../features/auth/pages/UserRegisterPage";
 import FoodPartnerLoginPage from "../../features/auth/pages/FoodPartnerLoginPage";
 import FoodPartnerRegisterPage from "../../features/auth/pages/FoodPartnerRegisterPage";
 import Home from "../../features/user/Home";
+import Saved from "../../features/user/Saved";
 import CreateFood from "../../features/food-partner/CreateFood.jsx";
 import Profile from "../../features/food-partner/Profile.jsx";
 
@@ -17,6 +18,7 @@ const AppRoutes = () => {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/saved" element={<Saved />} />
         <Route path="/create-food" element={<CreateFood />} />
         <Route path="/food-partner/:id" element={<Profile />} />
         <Route path="/user/login" element={<UserLoginPage />} />
