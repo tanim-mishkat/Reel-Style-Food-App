@@ -17,6 +17,10 @@ export const ROUTES = {
   DASHBOARD: '/dashboard',
   FOOD_PARTNER_PROFILE: '/food-partner/:id',
   FOOD_PARTNER_VIDEOS: '/food-partner/:id/videos',
+  
+  // Checkout routes
+  CHECKOUT: '/checkout',
+  PAYMENT: '/payment',
 };
 
 // Route groups for easier management

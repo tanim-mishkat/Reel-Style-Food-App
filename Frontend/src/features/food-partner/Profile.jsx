@@ -3,11 +3,14 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { ROUTES } from "../../routes/routeConfig";
 import { menuService } from "../../shared/services/api";
+import { useCart } from "../../shared/contexts/CartContext";
+import CartIcon from "../../shared/components/ui/CartIcon/CartIcon";
 import "./Profile.css";
 
 const Profile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { addItem } = useCart();
 
   const [profile, setProfile] = useState(null);
   const [videos, setVideos] = useState([]);
@@ -42,7 +45,9 @@ const Profile = () => {
   }
 
   return (
-    <div className="profile-container">
+    <>
+      <CartIcon />
+      <div className="profile-container">
       <div className="profile-header">
         <div className="profile-avatar">
           <img src={profile.avatar || "/default_image.jpeg"} alt={profile.fullName} />
@@ -154,6 +159,17 @@ const Profile = () => {
                   <button 
                     className="add-to-cart-btn"
                     disabled={!item.isAvailable}
+                    onClick={() => {
+                      console.log('Adding item:', item);
+                      addItem({
+                        id: item._id,
+                        name: item.name,
+                        price: item.price,
+                        partnerId: id,
+                        partnerName: profile.fullName
+                      });
+                      alert(`Added ${item.name} to cart!`);
+                    }}
                   >
                     Add to Cart
                   </button>
@@ -164,6 +180,7 @@ const Profile = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 
