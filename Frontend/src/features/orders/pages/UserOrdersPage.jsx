@@ -33,8 +33,23 @@ const UserOrdersPage = () => {
       
       <div style={{ padding: "1rem" }}>
         {orders.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "2rem", color: "#666" }}>
-            No orders yet
+          <div style={{ 
+            textAlign: "center", 
+            padding: "var(--spacing-xxl)", 
+            color: "var(--text-secondary)"
+          }}>
+            <div style={{
+              fontSize: "3rem",
+              marginBottom: "var(--spacing-md)",
+              opacity: "0.3"
+            }}>📝</div>
+            <h3 style={{
+              fontSize: "var(--text-h3)",
+              fontWeight: "600",
+              color: "var(--text-primary)",
+              marginBottom: "var(--spacing-sm)"
+            }}>No orders yet</h3>
+            <p style={{ fontSize: "var(--text-body)", margin: "0" }}>Your order history will appear here</p>
           </div>
         ) : (
           orders.map((order) => (

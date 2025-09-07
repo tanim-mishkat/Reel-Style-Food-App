@@ -75,6 +75,7 @@ const AppRouter = () => {
         
         {/* User Routes */}
         <Route path={ROUTES.USER_DASHBOARD} element={<PrivateRoute><UserDashboardPage /></PrivateRoute>} />
+        <Route path={ROUTES.USER_ORDERS} element={<PrivateRoute><UserOrdersPage /></PrivateRoute>} />
         
         {/* Following Route */}
         <Route path="/following" element={<PrivateRoute><FollowingPage /></PrivateRoute>} />

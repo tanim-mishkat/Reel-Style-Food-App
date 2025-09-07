@@ -129,37 +129,69 @@ const DashboardPage = () => {
   if (!profile) return <div>Loading...</div>;
 
   return (
-    <div style={{ maxWidth: "800px", margin: "0 auto", padding: "2rem" }}>
-      <h1>Dashboard</h1>
+    <div style={{ 
+      maxWidth: "800px", 
+      margin: "0 auto", 
+      padding: "var(--spacing-md)", 
+      overflowX: "hidden",
+      minHeight: "100vh",
+      background: "var(--surface-light)"
+    }}>
+      <div style={{ 
+        padding: "var(--spacing-lg) 0", 
+        borderBottom: "1px solid var(--border)",
+        marginBottom: "var(--spacing-lg)"
+      }}>
+        <h1 style={{ 
+          fontSize: "var(--text-h1)", 
+          fontWeight: "700", 
+          color: "var(--text-primary)",
+          margin: "0"
+        }}>Partner Dashboard</h1>
+      </div>
       
-      <div style={{ display: "flex", gap: "1rem", marginBottom: "2rem" }}>
+      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "2rem", overflowX: "auto", paddingBottom: "0.5rem" }}>
         <button 
           onClick={() => setActiveTab('profile')}
-          style={{ padding: "0.5rem 1rem", background: activeTab === 'profile' ? '#007bff' : '#f8f9fa', color: activeTab === 'profile' ? 'white' : 'black', border: '1px solid #ddd', borderRadius: '4px' }}
+          style={{ 
+            padding: "var(--spacing-sm) var(--spacing-md)", 
+            background: activeTab === 'profile' ? 'var(--primary)' : 'var(--surface-card)', 
+            color: activeTab === 'profile' ? 'white' : 'var(--text-primary)', 
+            border: '1px solid var(--border)', 
+            borderRadius: 'var(--radius-md)', 
+            minWidth: '80px', 
+            whiteSpace: 'nowrap', 
+            fontSize: 'var(--text-caption)', 
+            fontWeight: '600',
+            minHeight: 'var(--touch-target)',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            boxShadow: activeTab === 'profile' ? '0 2px 8px rgba(255, 107, 53, 0.2)' : 'var(--shadow-sm)'
+          }}
         >
           Profile
         </button>
         <button 
           onClick={() => setActiveTab('menu')}
-          style={{ padding: "0.5rem 1rem", background: activeTab === 'menu' ? '#007bff' : '#f8f9fa', color: activeTab === 'menu' ? 'white' : 'black', border: '1px solid #ddd', borderRadius: '4px' }}
+          style={{ padding: "0.75rem 1rem", background: activeTab === 'menu' ? 'var(--primary)' : 'var(--surface-light)', color: activeTab === 'menu' ? 'white' : 'var(--text-primary)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', minWidth: '80px', whiteSpace: 'nowrap', fontSize: 'var(--text-sm)', fontWeight: '500' }}
         >
-          Menu Items
+          Menu
         </button>
         <button 
           onClick={() => setActiveTab('orders')}
-          style={{ padding: "0.5rem 1rem", background: activeTab === 'orders' ? '#007bff' : '#f8f9fa', color: activeTab === 'orders' ? 'white' : 'black', border: '1px solid #ddd', borderRadius: '4px' }}
+          style={{ padding: "0.75rem 1rem", background: activeTab === 'orders' ? 'var(--primary)' : 'var(--surface-light)', color: activeTab === 'orders' ? 'white' : 'var(--text-primary)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', minWidth: '80px', whiteSpace: 'nowrap', fontSize: 'var(--text-sm)', fontWeight: '500' }}
         >
-          Active Orders
+          Orders
         </button>
         <button 
           onClick={() => setActiveTab('completed')}
-          style={{ padding: "0.5rem 1rem", background: activeTab === 'completed' ? '#007bff' : '#f8f9fa', color: activeTab === 'completed' ? 'white' : 'black', border: '1px solid #ddd', borderRadius: '4px' }}
+          style={{ padding: "0.75rem 1rem", background: activeTab === 'completed' ? 'var(--primary)' : 'var(--surface-light)', color: activeTab === 'completed' ? 'white' : 'var(--text-primary)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', minWidth: '80px', whiteSpace: 'nowrap', fontSize: 'var(--text-sm)', fontWeight: '500' }}
         >
-          Completed
+          History
         </button>
         <button 
           onClick={() => setActiveTab('followers')}
-          style={{ padding: "0.5rem 1rem", background: activeTab === 'followers' ? '#007bff' : '#f8f9fa', color: activeTab === 'followers' ? 'white' : 'black', border: '1px solid #ddd', borderRadius: '4px' }}
+          style={{ padding: "0.75rem 1rem", background: activeTab === 'followers' ? 'var(--primary)' : 'var(--surface-light)', color: activeTab === 'followers' ? 'white' : 'var(--text-primary)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', minWidth: '100px', whiteSpace: 'nowrap', fontSize: 'var(--text-sm)', fontWeight: '500' }}
         >
           Followers ({followers.length})
         </button>
@@ -169,7 +201,14 @@ const DashboardPage = () => {
       {success && <p style={{ color: "green" }}>{success}</p>}
       
       {activeTab === 'profile' && (
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <div style={{
+          background: "var(--surface-card)",
+          borderRadius: "var(--radius-md)",
+          padding: "var(--spacing-lg)",
+          boxShadow: "var(--shadow-md)",
+          border: "1px solid var(--border)"
+        }}>
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--spacing-lg)" }}>
           <Input
             label="Full Name"
             value={fullName}
@@ -198,17 +237,61 @@ const DashboardPage = () => {
             required
           />
           
-          <Button type="submit" disabled={loading}>
+          <button 
+            type="submit" 
+            disabled={loading}
+            style={{
+              background: loading ? "var(--muted)" : "var(--primary)",
+              color: "white",
+              border: "none",
+              padding: "var(--spacing-md) var(--spacing-xl)",
+              borderRadius: "var(--radius-md)",
+              fontSize: "var(--text-body)",
+              fontWeight: "600",
+              cursor: loading ? "not-allowed" : "pointer",
+              minHeight: "var(--touch-target)",
+              transition: "all 0.3s ease",
+              boxShadow: loading ? "none" : "0 4px 12px rgba(255, 107, 53, 0.25)"
+            }}
+          >
             {loading ? "Updating..." : "Update Profile"}
-          </Button>
+          </button>
         </form>
+        </div>
       )}
 
       {activeTab === 'menu' && (
         <div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-            <h2>Menu Items</h2>
-            <Button onClick={() => setShowAddMenu(true)}>Add Menu Item</Button>
+          <div style={{ 
+            display: "flex", 
+            justifyContent: "space-between", 
+            alignItems: "center", 
+            marginBottom: "var(--spacing-lg)",
+            padding: "var(--spacing-md) 0"
+          }}>
+            <h2 style={{ 
+              fontSize: "var(--text-h2)", 
+              fontWeight: "600", 
+              color: "var(--text-primary)",
+              margin: "0"
+            }}>Menu Items</h2>
+            <button 
+              onClick={() => setShowAddMenu(true)}
+              style={{
+                background: "var(--primary)",
+                color: "white",
+                border: "none",
+                padding: "var(--spacing-sm) var(--spacing-md)",
+                borderRadius: "var(--radius-md)",
+                fontSize: "var(--text-caption)",
+                fontWeight: "600",
+                cursor: "pointer",
+                minHeight: "var(--touch-target)",
+                transition: "all 0.2s ease"
+              }}
+            >
+              Add Menu Item
+            </button>
           </div>
 
           {showAddMenu && (
@@ -237,9 +320,42 @@ const DashboardPage = () => {
                 value={menuForm.photoUrl}
                 onChange={(e) => setMenuForm({...menuForm, photoUrl: e.target.value})}
               />
-              <div style={{ display: "flex", gap: "1rem" }}>
-                <Button type="submit">Add Item</Button>
-                <Button type="button" onClick={() => setShowAddMenu(false)}>Cancel</Button>
+              <div style={{ display: "flex", gap: "var(--spacing-md)" }}>
+                <button 
+                  type="submit"
+                  style={{
+                    background: "var(--primary)",
+                    color: "white",
+                    border: "none",
+                    padding: "var(--spacing-sm) var(--spacing-md)",
+                    borderRadius: "var(--radius-md)",
+                    fontSize: "var(--text-caption)",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                    minHeight: "var(--touch-target)",
+                    flex: "1"
+                  }}
+                >
+                  Add Item
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => setShowAddMenu(false)}
+                  style={{
+                    background: "var(--surface-card)",
+                    color: "var(--text-primary)",
+                    border: "1px solid var(--border)",
+                    padding: "var(--spacing-sm) var(--spacing-md)",
+                    borderRadius: "var(--radius-md)",
+                    fontSize: "var(--text-caption)",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    minHeight: "var(--touch-target)",
+                    flex: "1"
+                  }}
+                >
+                  Cancel
+                </button>
               </div>
             </form>
           )}
@@ -252,7 +368,22 @@ const DashboardPage = () => {
                   <p>{item.description}</p>
                   <p><strong>${item.price}</strong></p>
                 </div>
-                <Button onClick={() => handleDeleteMenuItem(item._id)}>Delete</Button>
+                <button 
+                  onClick={() => handleDeleteMenuItem(item._id)}
+                  style={{
+                    background: "var(--error)",
+                    color: "white",
+                    border: "none",
+                    padding: "var(--spacing-xs) var(--spacing-sm)",
+                    borderRadius: "var(--radius-sm)",
+                    fontSize: "var(--text-small)",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    minHeight: "32px"
+                  }}
+                >
+                  Delete
+                </button>
               </div>
             ))}
           </div>
@@ -340,8 +471,23 @@ const DashboardPage = () => {
           <h2>Followers</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             {followers.length === 0 ? (
-              <div style={{ padding: "2rem", textAlign: "center", color: "#666" }}>
-                No followers yet
+              <div style={{ 
+                padding: "var(--spacing-xxl)", 
+                textAlign: "center", 
+                color: "var(--text-secondary)"
+              }}>
+                <div style={{
+                  fontSize: "3rem",
+                  marginBottom: "var(--spacing-md)",
+                  opacity: "0.3"
+                }}>👥</div>
+                <h3 style={{
+                  fontSize: "var(--text-h3)",
+                  fontWeight: "600",
+                  color: "var(--text-primary)",
+                  marginBottom: "var(--spacing-sm)"
+                }}>No followers yet</h3>
+                <p style={{ fontSize: "var(--text-body)", margin: "0" }}>Share great content to attract followers!</p>
               </div>
             ) : (
               followers.map((follower) => (

@@ -120,7 +120,8 @@ async function likeFood(req, res) {
             food: foodId,
             user: user._id
         })
-        await foodModel.findOneAndUpdate({ _id: foodId }, { $inc: { likesCount: -1 }, $max: { likesCount: 0 } })
+        await foodModel.findOneAndUpdate({ _id: foodId }, { $inc: { likesCount: -1 } })
+        await foodModel.findOneAndUpdate({ _id: foodId, likesCount: { $lt: 0 } }, { $set: { likesCount: 0 } })
         return res.status(200).json({ message: 'Food unliked successfully', liked: false })
     }
     
@@ -146,7 +147,8 @@ async function saveFood(req, res) {
             food: foodId,
             user: user._id
         })
-        await foodModel.findOneAndUpdate({ _id: foodId }, { $inc: { savedCount: -1 }, $max: { savedCount: 0 } })
+        await foodModel.findOneAndUpdate({ _id: foodId }, { $inc: { savedCount: -1 } })
+        await foodModel.findOneAndUpdate({ _id: foodId, savedCount: { $lt: 0 } }, { $set: { savedCount: 0 } })
         return res.status(200).json({ message: 'Food unsaved successfully', saved: false })
     }
     

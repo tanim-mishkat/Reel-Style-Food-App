@@ -111,25 +111,28 @@ const UserDashboardPage = () => {
   );
 
   return (
-    <div style={{ minHeight: "100vh", paddingBottom: "80px", background: "#f8f9fa" }}>
-      <div style={{ padding: "1rem", background: "white", borderBottom: "1px solid #ddd" }}>
+    <div style={{ minHeight: "100vh", paddingBottom: "80px", background: "var(--surface-light)", overflowX: "hidden" }}>
+      <div style={{ padding: "1rem", background: "var(--surface-card)", borderBottom: "1px solid var(--border)", boxShadow: "var(--shadow-sm)" }}>
         <h1>Dashboard</h1>
       </div>
 
       {/* User Profile Section */}
       {user && (
-        <div style={{ padding: "1rem", background: "white", margin: "1rem", borderRadius: "8px", border: "1px solid #e5e7eb" }}>
+        <div style={{ padding: "1rem", background: "var(--surface-card)", margin: "1rem", borderRadius: "var(--radius-md)", border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
             <h2 style={{ margin: 0, fontSize: "1.25rem" }}>Profile</h2>
             <button 
               onClick={() => setEditMode(!editMode)}
               style={{ 
-                background: "#3b82f6", 
+                background: "var(--primary)", 
                 color: "white", 
                 border: "none", 
-                padding: "0.5rem 1rem", 
-                borderRadius: "6px", 
-                cursor: "pointer" 
+                padding: "0.75rem 1rem", 
+                borderRadius: "var(--radius-md)", 
+                cursor: "pointer",
+                fontSize: "var(--text-sm)",
+                fontWeight: "500",
+                minHeight: "var(--touch-target)"
               }}
             >
               {editMode ? 'Cancel' : 'Edit'}
@@ -149,29 +152,48 @@ const UserDashboardPage = () => {
             <div>
               <p><strong>Name:</strong> {user.fullName}</p>
               <p><strong>Email:</strong> {user.email}</p>
-              <Button onClick={() => setShowFollowing(true)} style={{ marginTop: "1rem" }}>View Following</Button>
+              <button 
+                onClick={() => setShowFollowing(true)}
+                style={{ 
+                  marginTop: "1rem",
+                  background: "var(--primary)",
+                  color: "white",
+                  border: "none",
+                  padding: "12px 24px",
+                  borderRadius: "var(--radius-md)",
+                  fontSize: "var(--text-body)",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  minHeight: "var(--touch-target)",
+                  transition: "all 0.3s ease"
+                }}
+                onMouseEnter={(e) => e.target.style.background = 'var(--primary-pressed)'}
+                onMouseLeave={(e) => e.target.style.background = 'var(--primary)'}
+              >
+                View Following
+              </button>
             </div>
           )}
         </div>
       )}
 
       {/* Stats Cards */}
-      <div style={{ padding: "1rem", display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
-        <div style={{ background: "white", padding: "1rem", borderRadius: "8px", textAlign: "center" }}>
-          <div style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#16a34a" }}>{orders.length}</div>
-          <div style={{ fontSize: "0.875rem", color: "#666" }}>Total Orders</div>
+      <div style={{ padding: "1rem", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: "1rem" }}>
+        <div style={{ background: "var(--surface-card)", padding: "1rem", borderRadius: "var(--radius-md)", textAlign: "center", boxShadow: "var(--shadow-sm)" }}>
+          <div style={{ fontSize: "1.5rem", fontWeight: "bold", color: "var(--primary)" }}>{orders.length}</div>
+          <div style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>Orders</div>
         </div>
-        <div style={{ background: "white", padding: "1rem", borderRadius: "8px", textAlign: "center" }}>
+        <div style={{ background: "var(--surface-card)", padding: "1rem", borderRadius: "var(--radius-md)", textAlign: "center", boxShadow: "var(--shadow-sm)" }}>
           <div style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#f59e0b" }}>{ongoingOrders.length}</div>
-          <div style={{ fontSize: "0.875rem", color: "#666" }}>Ongoing</div>
+          <div style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>Active</div>
         </div>
-        <div style={{ background: "white", padding: "1rem", borderRadius: "8px", textAlign: "center" }}>
-          <div style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#3b82f6" }}>${totalSpent.toFixed(2)}</div>
-          <div style={{ fontSize: "0.875rem", color: "#666" }}>Total Spent</div>
+        <div style={{ background: "var(--surface-card)", padding: "1rem", borderRadius: "var(--radius-md)", textAlign: "center", boxShadow: "var(--shadow-sm)" }}>
+          <div style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#10b981" }}>${totalSpent.toFixed(2)}</div>
+          <div style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>Spent</div>
         </div>
-        <div style={{ background: "white", padding: "1rem", borderRadius: "8px", textAlign: "center" }}>
-          <div style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#10b981" }}>{followedPartners.length}</div>
-          <div style={{ fontSize: "0.875rem", color: "#666" }}>Following</div>
+        <div style={{ background: "var(--surface-card)", padding: "1rem", borderRadius: "var(--radius-md)", textAlign: "center", boxShadow: "var(--shadow-sm)" }}>
+          <div style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#3b82f6" }}>{followedPartners.length}</div>
+          <div style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>Following</div>
         </div>
       </div>
 
@@ -231,13 +253,17 @@ const UserDashboardPage = () => {
             key={order._id}
             onClick={() => navigate(`/orders/${order._id}`)}
             style={{ 
-              background: "white", 
+              background: "var(--surface-card)", 
               padding: "1rem", 
-              borderRadius: "8px", 
+              borderRadius: "var(--radius-md)", 
               marginBottom: "1rem",
               cursor: "pointer",
-              border: "1px solid #e5e7eb"
+              border: "1px solid var(--border)",
+              boxShadow: "var(--shadow-sm)",
+              transition: "all 0.2s ease"
             }}
+            onMouseEnter={(e) => e.target.style.transform = 'translateY(-1px)'}
+            onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
@@ -266,12 +292,19 @@ const UserDashboardPage = () => {
             onClick={() => navigate('/orders')}
             style={{ 
               width: "100%", 
-              padding: "0.75rem", 
-              background: "#f3f4f6", 
-              border: "none", 
-              borderRadius: "8px",
-              cursor: "pointer"
+              padding: "var(--spacing-md)", 
+              background: "var(--surface-card)", 
+              border: "1px solid var(--border)", 
+              borderRadius: "var(--radius-md)",
+              cursor: "pointer",
+              fontSize: "var(--text-body)",
+              fontWeight: "500",
+              color: "var(--text-primary)",
+              minHeight: "var(--touch-target)",
+              transition: "all 0.2s ease"
             }}
+            onMouseEnter={(e) => e.target.style.background = 'var(--muted)'}
+            onMouseLeave={(e) => e.target.style.background = 'var(--surface-card)'}
           >
             View All Orders
           </button>
@@ -287,14 +320,42 @@ const UserDashboardPage = () => {
               <button onClick={() => setShowFollowing(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>×</button>
             </div>
             {followedPartners.length === 0 ? (
-              <p style={{ textAlign: 'center', color: '#666' }}>Not following any partners yet</p>
+              <div style={{ 
+                textAlign: 'center', 
+                padding: 'var(--spacing-lg)', 
+                color: 'var(--text-secondary)'
+              }}>
+                <div style={{
+                  fontSize: '2rem',
+                  marginBottom: 'var(--spacing-sm)',
+                  opacity: '0.3'
+                }}>👥</div>
+                <p style={{ 
+                  fontSize: 'var(--text-body)', 
+                  margin: '0',
+                  color: 'var(--text-primary)'
+                }}>Not following any restaurants yet</p>
+              </div>
             ) : (
               followedPartners.map((follow) => (
                 <div key={follow._id} style={{ padding: '0.75rem', border: '1px solid #ddd', borderRadius: '4px', marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span>{follow.partner.fullName}</span>
                   <button 
                     onClick={() => navigate(`/food-partner/${follow.partner._id}`)}
-                    style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer' }}
+                    style={{ 
+                      background: 'var(--primary)', 
+                      color: 'white', 
+                      border: 'none', 
+                      padding: 'var(--spacing-xs) var(--spacing-sm)', 
+                      borderRadius: 'var(--radius-sm)', 
+                      cursor: 'pointer',
+                      fontSize: 'var(--text-caption)',
+                      fontWeight: '500',
+                      minHeight: '32px',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.background = 'var(--primary-pressed)'}
+                    onMouseLeave={(e) => e.target.style.background = 'var(--primary)'}
                   >
                     View
                   </button>

@@ -16,6 +16,11 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   color: var(--text-primary);
   background: var(--surface-light);
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 #root {
@@ -41,6 +46,7 @@ html, body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--spacing-2);
+  overflow-x: hidden;
 }
 
 /* Scrollbar Styles */

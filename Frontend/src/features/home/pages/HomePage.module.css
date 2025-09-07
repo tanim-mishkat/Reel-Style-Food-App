@@ -6,6 +6,7 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
   background: var(--surface-dark);
+  position: relative;
 }
 
 .homeContainer::-webkit-scrollbar {
@@ -28,22 +29,43 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 60%);
+  background: linear-gradient(180deg, var(--overlay-dark) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.7) 100%);
   z-index: 1;
+}
+
+.topOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-height);
+  background: var(--overlay-dark);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-md);
+  z-index: 1001;
 }
 
 .videoInfoContainer {
   position: absolute;
-  bottom: 88px;
-  left: 12px;
-  max-width: 72%;
+  bottom: calc(var(--nav-height) + var(--spacing-lg));
+  left: var(--spacing-md);
+  right: 80px;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 12px;
+  gap: var(--spacing-xs);
+}
+
+.foodInfoCard {
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
-  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 60%);
+  padding: var(--spacing-md);
+  border-top: 2px solid var(--primary);
+  transition: all 0.3s ease;
 }
 
 .videoTitle {
@@ -53,6 +75,22 @@
   margin: 0;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   line-height: 1.5;
+}
+
+.videoProgressBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.3);
+  z-index: 3;
+}
+
+.videoProgress {
+  height: 100%;
+  background: var(--primary);
+  transition: width 0.1s ease;
 }
 
 .videoTimeline {

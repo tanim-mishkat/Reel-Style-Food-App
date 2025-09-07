@@ -20,16 +20,73 @@ const CheckoutPage = () => {
 
   if (items.length === 0) {
     return (
-      <div style={{ padding: "2rem", textAlign: "center" }}>
-        <h2>Your cart is empty</h2>
-        <Button onClick={() => navigate("/")}>Continue Shopping</Button>
+      <div style={{ 
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "var(--spacing-xl)",
+        textAlign: "center",
+        background: "var(--surface-light)"
+      }}>
+        <div style={{
+          fontSize: "4rem",
+          marginBottom: "var(--spacing-lg)",
+          opacity: "0.3"
+        }}>🛒</div>
+        <h2 style={{
+          fontSize: "var(--text-h2)",
+          fontWeight: "600",
+          color: "var(--text-primary)",
+          marginBottom: "var(--spacing-sm)"
+        }}>Your cart is empty</h2>
+        <p style={{
+          color: "var(--text-secondary)",
+          marginBottom: "var(--spacing-lg)",
+          fontSize: "var(--text-body)"
+        }}>Discover amazing food videos and start ordering!</p>
+        <button 
+          onClick={() => navigate("/")}
+          style={{
+            background: "var(--primary)",
+            color: "white",
+            border: "none",
+            padding: "var(--spacing-md) var(--spacing-xl)",
+            borderRadius: "var(--radius-md)",
+            fontSize: "var(--text-body)",
+            fontWeight: "600",
+            cursor: "pointer",
+            minHeight: "var(--touch-target)",
+            boxShadow: "0 4px 12px rgba(255, 107, 53, 0.25)"
+          }}
+        >
+          Start Browsing
+        </button>
       </div>
     );
   }
 
   return (
-    <div style={{ maxWidth: "600px", margin: "0 auto", padding: "2rem" }}>
-      <h1>Checkout</h1>
+    <div style={{ 
+      maxWidth: "600px", 
+      margin: "0 auto", 
+      padding: "var(--spacing-md)", 
+      minHeight: "100vh",
+      background: "var(--surface-light)"
+    }}>
+      <div style={{
+        padding: "var(--spacing-lg) 0",
+        borderBottom: "1px solid var(--border)",
+        marginBottom: "var(--spacing-lg)"
+      }}>
+        <h1 style={{
+          fontSize: "var(--text-h1)",
+          fontWeight: "700",
+          color: "var(--text-primary)",
+          margin: "0"
+        }}>Checkout</h1>
+      </div>
       
       <div style={{ marginBottom: "2rem", padding: "1rem", border: "1px solid #ddd", borderRadius: "8px" }}>
         <h3>Order Summary</h3>

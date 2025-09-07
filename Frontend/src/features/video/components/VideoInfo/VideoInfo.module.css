@@ -18,28 +18,34 @@
 }
 
 .visitStoreBtn {
-  background: var(--accent);
+  background: var(--primary);
   color: white;
   border: none;
-  padding: 8px 16px;
+  padding: 12px 24px;
   border-radius: var(--radius-full);
   font-size: var(--text-base);
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   text-decoration: none;
-  display: inline-block;
-  transition: all 250ms ease;
-  height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6px 16px rgba(255, 106, 61, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: var(--touch-target);
+  box-shadow: 0 8px 24px rgba(255, 107, 53, 0.3);
   align-self: flex-start;
+  backdrop-filter: var(--backdrop-blur-sm);
 }
 
 .visitStoreBtn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(255, 106, 61, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(255, 107, 53, 0.4);
+  background: var(--primary-pressed);
+}
+
+.visitStoreBtn:active {
+  transform: translateY(0);
+  transition: transform 0.1s ease;
 }
 
 @media (min-width: 768px) {

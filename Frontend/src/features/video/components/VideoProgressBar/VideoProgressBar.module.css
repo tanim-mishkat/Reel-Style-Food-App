@@ -1,15 +1,16 @@
-.progressBar {
+.progressContainer {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 3px;
+  height: 2px;
   background: rgba(255, 255, 255, 0.3);
-  z-index: 2;
+  z-index: 3;
 }
 
-.progressFill {
+.progressBar {
   height: 100%;
-  background: white;
+  background: var(--primary);
   transition: width 0.1s ease;
+  border-radius: 0;
 }
