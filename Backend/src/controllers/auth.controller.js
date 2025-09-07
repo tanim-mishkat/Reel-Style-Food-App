@@ -72,6 +72,38 @@ async function logoutUser(req, res) {
     res.status(200).json({ message: 'User logged out successfully' })
 }
 
+async function getUserProfile(req, res) {
+    const user = req.user
+    res.status(200).json({
+        message: 'Profile fetched successfully',
+        user: {
+            _id: user._id,
+            fullName: user.fullName,
+            email: user.email
+        }
+    })
+}
+
+async function updateUserProfile(req, res) {
+    const user = req.user
+    const { fullName } = req.body
+    
+    const updatedUser = await userModel.findByIdAndUpdate(
+        user._id, 
+        { fullName }, 
+        { new: true }
+    )
+    
+    res.status(200).json({
+        message: 'Profile updated successfully',
+        user: {
+            _id: updatedUser._id,
+            fullName: updatedUser.fullName,
+            email: updatedUser.email
+        }
+    })
+}
+
 
 // food partner auth controller
 
@@ -148,6 +180,8 @@ module.exports = {
     registerUser,
     loginUser,
     logoutUser,
+    getUserProfile,
+    updateUserProfile,
     registerFoodPartner,
     loginFoodPartner,
     logoutFoodPartner

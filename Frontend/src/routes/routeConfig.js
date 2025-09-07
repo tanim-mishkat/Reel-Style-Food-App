@@ -14,7 +14,7 @@ export const ROUTES = {
   
   // Food Partner routes
   CREATE_FOOD: '/create-food',
-  DASHBOARD: '/dashboard',
+  PARTNER_DASHBOARD: '/partner/dashboard',
   FOOD_PARTNER_PROFILE: '/food-partner/:id',
   FOOD_PARTNER_VIDEOS: '/food-partner/:id/videos',
   
@@ -25,6 +25,7 @@ export const ROUTES = {
   // Order routes
   ORDER_DETAIL: '/orders/:id',
   USER_ORDERS: '/orders',
+  USER_DASHBOARD: '/dashboard',
 };
 
 // Route groups for easier management

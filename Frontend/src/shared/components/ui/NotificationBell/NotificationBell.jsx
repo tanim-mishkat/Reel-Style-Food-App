@@ -21,49 +21,6 @@ const NotificationBell = () => {
       setHasNotification(true);
     };
 
-    // Poll for notifications from server
-    const pollNotifications = async () => {
-      try {
-        const userResponse = await fetch('http://localhost:3000/api/notifications/user', {
-          credentials: 'include'
-        });
-        if (userResponse.ok) {
-          const data = await userResponse.json();
-          console.log('User notifications:', data.notifications);
-          data.notifications.forEach(notification => {
-            if (!notifications.find(n => n.id === notification.id)) {
-              setNotifications(prev => [{ ...notification, read: false }, ...prev]);
-              setHasNotification(true);
-            }
-          });
-        }
-      } catch (error) {
-        // Try partner notifications if user fails
-        try {
-          const partnerResponse = await fetch('http://localhost:3000/api/notifications/partner', {
-            credentials: 'include'
-          });
-          if (partnerResponse.ok) {
-            const data = await partnerResponse.json();
-            console.log('Partner notifications:', data.notifications);
-            data.notifications.forEach(notification => {
-              if (!notifications.find(n => n.id === notification.id)) {
-                setNotifications(prev => [{ ...notification, read: false }, ...prev]);
-                setHasNotification(true);
-              }
-            });
-          }
-        } catch (partnerError) {
-          // Silent fail
-        }
-      }
-    };
-
-    window.addEventListener('triggerBell', handleTriggerBell);
-    
-    // Poll every 3 seconds
-    const pollInterval = setInterval(pollNotifications, 3000);
-    
     // Click outside to close panel
     const handleClickOutside = (event) => {
       if (panelRef.current && !panelRef.current.contains(event.target) && 
@@ -72,14 +29,14 @@ const NotificationBell = () => {
       }
     };
 
+    window.addEventListener('triggerBell', handleTriggerBell);
     document.addEventListener('mousedown', handleClickOutside);
 
     return () => {
       window.removeEventListener('triggerBell', handleTriggerBell);
-      clearInterval(pollInterval);
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [notifications]);
+  }, []);
 
   const handleClick = () => {
     setShowPanel(!showPanel);

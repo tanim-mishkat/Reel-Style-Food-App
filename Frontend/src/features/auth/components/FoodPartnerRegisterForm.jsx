@@ -47,7 +47,7 @@ const FoodPartnerRegisterForm = () => {
       setContactName("");
       setPhone("");
       setAddress("");
-      navigate("/create-food");
+      navigate("/partner/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
     } finally {

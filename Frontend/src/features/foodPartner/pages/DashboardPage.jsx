@@ -104,6 +104,11 @@ const DashboardPage = () => {
         detail: statusMessages[newStatus] || `Order status updated to ${newStatus}` 
       }));
       
+      // Trigger notification bell for partner
+      window.dispatchEvent(new CustomEvent('triggerBell', { 
+        detail: statusMessages[newStatus] || `Order status updated to ${newStatus}` 
+      }));
+      
       setSuccess(statusMessages[newStatus] || `Order status updated to ${newStatus}`);
     } catch (err) {
       setError("Failed to update order status");

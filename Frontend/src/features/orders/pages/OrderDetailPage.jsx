@@ -16,7 +16,25 @@ const OrderDetailPage = () => {
     const fetchOrder = async () => {
       try {
         const response = await orderService.getOrderById(id);
-        setOrder(response.data.order);
+        const newOrder = response.data.order;
+        
+        // Check if status changed and trigger notification
+        if (order && order.status !== newOrder.status) {
+          const statusMessages = {
+            'ACCEPTED': '✅ Your order has been accepted!',
+            'PREPARING': '👨🍳 Your order is being prepared!',
+            'READY': '🎉 Your order is ready for pickup!',
+            'COMPLETED': '✨ Order completed! Please rate your experience.'
+          };
+          
+          const message = statusMessages[newOrder.status] || `Order status: ${newOrder.status}`;
+          
+          // Trigger toast and bell notifications
+          window.dispatchEvent(new CustomEvent('showToast', { detail: message }));
+          window.dispatchEvent(new CustomEvent('triggerBell', { detail: message }));
+        }
+        
+        setOrder(newOrder);
       } catch (error) {
         console.error('Failed to fetch order');
       } finally {
@@ -28,7 +46,7 @@ const OrderDetailPage = () => {
     const interval = setInterval(fetchOrder, 5000);
 
     return () => clearInterval(interval);
-  }, [id]);
+  }, [id, order]);
 
   useEffect(() => {
     if (order && order.status === 'COMPLETED' && !reviewSubmitted) {

@@ -26,7 +26,7 @@ const FoodPartnerLoginForm = () => {
         { email, password },
         { withCredentials: true }
       );
-      navigate(ROUTES.CREATE_FOOD);
+      navigate(ROUTES.PARTNER_DASHBOARD);
     } catch (err) {
       setError(err.response?.data?.message || "Invalid email or password");
     } finally {
