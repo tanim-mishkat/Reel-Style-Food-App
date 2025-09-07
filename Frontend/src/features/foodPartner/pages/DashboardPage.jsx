@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { foodPartnerService, menuService } from "../../../shared/services/api";
+import { foodPartnerService, menuService, orderService } from "../../../shared/services/api";
 import Input from "../../../shared/components/ui/Input/Input";
 import Button from "../../../shared/components/ui/Button/Button";
 
@@ -16,6 +16,8 @@ const DashboardPage = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [menuForm, setMenuForm] = useState({ name: '', description: '', price: '', prepTime: '', photoUrl: '' });
+  const [orders, setOrders] = useState([]);
+  const [statusFilter, setStatusFilter] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,6 +32,9 @@ const DashboardPage = () => {
         
         const menuResponse = await menuService.getMyMenuItems();
         setMenuItems(menuResponse.data.menuItems);
+        
+        const ordersResponse = await orderService.getPartnerOrders();
+        setOrders(ordersResponse.data.orders);
       } catch (err) {
         setError("Failed to load data");
       }
@@ -81,6 +86,19 @@ const DashboardPage = () => {
     }
   };
 
+  const handleStatusUpdate = async (orderId, newStatus) => {
+    try {
+      await orderService.updateOrderStatus(orderId, newStatus);
+      const ordersResponse = await orderService.getPartnerOrders();
+      setOrders(ordersResponse.data.orders);
+      setSuccess(`Order status updated to ${newStatus}`);
+    } catch (err) {
+      setError("Failed to update order status");
+    }
+  };
+
+  const filteredOrders = statusFilter ? orders.filter(order => order.status === statusFilter) : orders;
+
   if (!profile) return <div>Loading...</div>;
 
   return (
@@ -99,6 +117,12 @@ const DashboardPage = () => {
           style={{ padding: "0.5rem 1rem", background: activeTab === 'menu' ? '#007bff' : '#f8f9fa', color: activeTab === 'menu' ? 'white' : 'black', border: '1px solid #ddd', borderRadius: '4px' }}
         >
           Menu Items
+        </button>
+        <button 
+          onClick={() => setActiveTab('orders')}
+          style={{ padding: "0.5rem 1rem", background: activeTab === 'orders' ? '#007bff' : '#f8f9fa', color: activeTab === 'orders' ? 'white' : 'black', border: '1px solid #ddd', borderRadius: '4px' }}
+        >
+          Orders
         </button>
       </div>
 
@@ -190,6 +214,51 @@ const DashboardPage = () => {
                   <p><strong>${item.price}</strong></p>
                 </div>
                 <Button onClick={() => handleDeleteMenuItem(item._id)}>Delete</Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'orders' && (
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+            <h2>Orders</h2>
+            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} style={{ padding: "0.5rem" }}>
+              <option value="">All Orders</option>
+              <option value="PLACED">Placed</option>
+              <option value="ACCEPTED">Accepted</option>
+              <option value="PREPARING">Preparing</option>
+              <option value="READY">Ready</option>
+              <option value="COMPLETED">Completed</option>
+              <option value="CANCELLED">Cancelled</option>
+            </select>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            {filteredOrders.map((order) => (
+              <div key={order._id} style={{ padding: "1rem", border: "1px solid #ddd", borderRadius: "4px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+                  <div>
+                    <h4>Order #{order._id.slice(-6)}</h4>
+                    <p>Status: <strong>{order.status}</strong></p>
+                    <p>Items: {order.items?.length || 0}</p>
+                  </div>
+                  <div style={{ display: "flex", gap: "0.5rem" }}>
+                    {order.status === 'PLACED' && (
+                      <Button onClick={() => handleStatusUpdate(order._id, 'ACCEPTED')}>Accept</Button>
+                    )}
+                    {order.status === 'ACCEPTED' && (
+                      <Button onClick={() => handleStatusUpdate(order._id, 'PREPARING')}>Start Preparing</Button>
+                    )}
+                    {order.status === 'PREPARING' && (
+                      <Button onClick={() => handleStatusUpdate(order._id, 'READY')}>Mark Ready</Button>
+                    )}
+                    {order.status === 'READY' && (
+                      <Button onClick={() => handleStatusUpdate(order._id, 'COMPLETED')}>Complete</Button>
+                    )}
+                  </div>
+                </div>
               </div>
             ))}
           </div>

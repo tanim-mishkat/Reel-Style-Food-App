@@ -51,4 +51,6 @@ export const menuService = {
 export const orderService = {
   createOrder: (data) => api.post('/orders', data),
   getOrderById: (id) => api.get(`/orders/${id}`),
+  getPartnerOrders: (status) => api.get(`/orders/partner/orders${status ? `?status=${status}` : ''}`),
+  updateOrderStatus: (id, status) => api.patch(`/orders/${id}/status`, { status }),
 };

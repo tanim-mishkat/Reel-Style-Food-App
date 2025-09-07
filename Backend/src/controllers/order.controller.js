@@ -42,7 +42,7 @@ async function getOrderById(req, res) {
 }
 
 async function getPartnerOrders(req, res) {
-    const partnerId = req.user._id
+    const partnerId = req.foodPartner._id
     const { status } = req.query
 
     const filter = { restaurantId: partnerId }
@@ -54,8 +54,46 @@ async function getPartnerOrders(req, res) {
     res.status(200).json({ orders })
 }
 
+async function updateOrderStatus(req, res) {
+    const { id } = req.params
+    const { status } = req.body
+    const partnerId = req.foodPartner._id
+
+    const order = await orderModel.findOneAndUpdate(
+        { _id: id, restaurantId: partnerId },
+        { 
+            status,
+            $push: { timeline: { at: new Date(), status, note: `Status updated to ${status}` } }
+        },
+        { new: true }
+    )
+
+    if (!order) {
+        return res.status(404).json({ message: 'Order not found' })
+    }
+
+    res.status(200).json({ message: 'Order status updated', order })
+}
+
+async function batchUpdateOrderStatus(req, res) {
+    const { orderIds, status } = req.body
+    const partnerId = req.foodPartner._id
+
+    const result = await orderModel.updateMany(
+        { _id: { $in: orderIds }, restaurantId: partnerId },
+        { 
+            status,
+            $push: { timeline: { at: new Date(), status, note: `Batch updated to ${status}` } }
+        }
+    )
+
+    res.status(200).json({ message: `${result.modifiedCount} orders updated`, modifiedCount: result.modifiedCount })
+}
+
 module.exports = {
     createOrder,
     getOrderById,
-    getPartnerOrders
+    getPartnerOrders,
+    updateOrderStatus,
+    batchUpdateOrderStatus
 }

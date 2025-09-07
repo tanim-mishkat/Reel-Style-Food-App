@@ -19,4 +19,14 @@ router.get('/partner/orders',
     orderController.getPartnerOrders
 )
 
+router.patch('/:id/status',
+    authMiddleware.authFoodPartnerMiddleware,
+    orderController.updateOrderStatus
+)
+
+router.patch('/batch/status',
+    authMiddleware.authFoodPartnerMiddleware,
+    orderController.batchUpdateOrderStatus
+)
+
 module.exports = router
