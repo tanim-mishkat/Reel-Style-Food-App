@@ -25,6 +25,9 @@ import FoodPartnerVideosPage from "../features/foodPartner/pages/FoodPartnerVide
 import CheckoutPage from "../features/checkout/pages/CheckoutPage";
 import PaymentPage from "../features/checkout/pages/PaymentPage";
 
+// Order Pages
+import OrderDetailPage from "../features/orders/pages/OrderDetailPage";
+
 const NotFoundPage = () => (
   <div style={{ textAlign: "center", padding: "2rem" }}>
     <h2>404 - Page Not Found</h2>
@@ -57,6 +60,9 @@ const AppRouter = () => {
         {/* Checkout Routes */}
         <Route path={ROUTES.CHECKOUT} element={<CheckoutPage />} />
         <Route path={ROUTES.PAYMENT} element={<PaymentPage />} />
+        
+        {/* Order Routes */}
+        <Route path={ROUTES.ORDER_DETAIL} element={<OrderDetailPage />} />
         
         {/* 404 Route */}
         <Route path="*" element={<NotFoundPage />} />

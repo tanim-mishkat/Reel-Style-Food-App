@@ -1,6 +1,7 @@
 import React from "react";
 import { useCart } from "../../../shared/contexts/CartContext";
 import { useNavigate } from "react-router-dom";
+import { orderService } from "../../../shared/services/api";
 import Button from "../../../shared/components/ui/Button/Button";
 
 const PaymentPage = () => {
@@ -9,22 +10,25 @@ const PaymentPage = () => {
 
   const handleSuccess = async () => {
     try {
-      // Simulate order creation
       const orderData = {
+        restaurantId: items[0]?.partnerId,
         items: items.map(item => ({
-          id: item.id,
+          foodId: item.id,
           name: item.name,
-          price: item.price,
-          quantity: item.qty
+          qty: item.qty,
+          unitPrice: item.price
         })),
-        total: subtotal,
-        timestamp: new Date().toISOString()
+        fulfillment: {
+          type: 'delivery',
+          address: 'Sample address'
+        }
       };
       
-      console.log("Order created:", orderData);
+      const response = await orderService.createOrder(orderData);
+      const orderId = response.data.order._id;
       clear();
       alert("Payment successful! Order placed.");
-      navigate("/");
+      navigate(`/orders/${orderId}`);
     } catch (error) {
       alert("Failed to create order");
     }

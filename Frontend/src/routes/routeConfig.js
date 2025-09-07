@@ -21,6 +21,9 @@ export const ROUTES = {
   // Checkout routes
   CHECKOUT: '/checkout',
   PAYMENT: '/payment',
+  
+  // Order routes
+  ORDER_DETAIL: '/orders/:id',
 };
 
 // Route groups for easier management

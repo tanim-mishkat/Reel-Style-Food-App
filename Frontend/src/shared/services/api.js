@@ -46,3 +46,9 @@ export const menuService = {
   updateMenuItem: (id, data) => api.patch(`/menu/${id}`, data),
   deleteMenuItem: (id) => api.delete(`/menu/${id}`),
 };
+
+// Order Service
+export const orderService = {
+  createOrder: (data) => api.post('/orders', data),
+  getOrderById: (id) => api.get(`/orders/${id}`),
+};
