@@ -24,6 +24,7 @@ export const ROUTES = {
   
   // Order routes
   ORDER_DETAIL: '/orders/:id',
+  USER_ORDERS: '/orders',
 };
 
 // Route groups for easier management

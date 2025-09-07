@@ -9,6 +9,11 @@ router.post('/',
     orderController.createOrder
 )
 
+router.get('/user',
+    authMiddleware.authUserMiddleware,
+    orderController.getUserOrders
+)
+
 router.get('/:id',
     authMiddleware.authUserMiddleware,
     orderController.getOrderById

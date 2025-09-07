@@ -7,6 +7,8 @@ const foodPartnerRoutes = require('./routes/food-partner.routes.js')
 const menuRoutes = require('./routes/menu.routes.js')
 const orderRoutes = require('./routes/order.routes.js')
 const reviewRoutes = require('./routes/review.routes.js')
+const pushRoutes = require('./routes/push.routes.js')
+const notificationRoutes = require('./routes/notification.routes.js')
 const cors = require('cors')
 
 const app = express()
@@ -26,5 +28,7 @@ app.use('/api/food-partner', foodPartnerRoutes)
 app.use('/api/menu', menuRoutes)
 app.use('/api/orders', orderRoutes)
 app.use('/api/reviews', reviewRoutes)
+app.use('/api/push', pushRoutes)
+app.use('/api/notifications', notificationRoutes)
 
 module.exports = app

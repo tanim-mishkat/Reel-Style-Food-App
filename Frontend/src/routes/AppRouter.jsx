@@ -27,6 +27,7 @@ import PaymentPage from "../features/checkout/pages/PaymentPage";
 
 // Order Pages
 import OrderDetailPage from "../features/orders/pages/OrderDetailPage";
+import UserOrdersPage from "../features/orders/pages/UserOrdersPage";
 
 const NotFoundPage = () => (
   <div style={{ textAlign: "center", padding: "2rem" }}>
@@ -62,6 +63,7 @@ const AppRouter = () => {
         <Route path={ROUTES.PAYMENT} element={<PaymentPage />} />
         
         {/* Order Routes */}
+        <Route path={ROUTES.USER_ORDERS} element={<UserOrdersPage />} />
         <Route path={ROUTES.ORDER_DETAIL} element={<OrderDetailPage />} />
         
         {/* 404 Route */}

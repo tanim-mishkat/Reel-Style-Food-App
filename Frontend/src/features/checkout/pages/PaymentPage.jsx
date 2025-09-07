@@ -27,6 +27,12 @@ const PaymentPage = () => {
       const response = await orderService.createOrder(orderData);
       const orderId = response.data.order._id;
       clear();
+      
+      // Trigger toast notification
+      window.dispatchEvent(new CustomEvent('showToast', { 
+        detail: '🍽️ Order placed successfully!' 
+      }));
+      
       alert("Payment successful! Order placed.");
       navigate(`/orders/${orderId}`);
     } catch (error) {

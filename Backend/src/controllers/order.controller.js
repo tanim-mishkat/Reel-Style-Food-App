@@ -17,6 +17,17 @@ async function createOrder(req, res) {
         }]
     })
 
+    console.log('Order placed:', order._id)
+
+    // Notify partner of new order
+    global.partnerNotifications = global.partnerNotifications || [];
+    global.partnerNotifications.push({
+        id: Date.now(),
+        message: `📋 New order #${order._id.toString().slice(-6)} received!`,
+        time: new Date().toLocaleTimeString(),
+        partnerId: restaurantId
+    });
+
     res.status(201).json({ message: 'Order created successfully', order })
 }
 
@@ -39,6 +50,12 @@ async function getOrderById(req, res) {
             fulfillment: order.fulfillment
         }
     })
+}
+
+async function getUserOrders(req, res) {
+    const userId = req.user._id
+    const orders = await orderModel.find({ userId }).sort({ createdAt: -1 })
+    res.status(200).json({ orders })
 }
 
 async function getPartnerOrders(req, res) {
@@ -72,6 +89,23 @@ async function updateOrderStatus(req, res) {
         return res.status(404).json({ message: 'Order not found' })
     }
 
+    console.log('Order status updated:', order._id, status)
+
+    // Notify user of status update
+    global.userNotifications = global.userNotifications || [];
+    const statusMessages = {
+        'ACCEPTED': '✅ Your order has been accepted!',
+        'PREPARING': '👨🍳 Your order is being prepared!',
+        'READY': '🎉 Your order is ready for pickup!',
+        'COMPLETED': '✨ Order completed! Please rate your experience.'
+    };
+    global.userNotifications.push({
+        id: Date.now(),
+        message: statusMessages[status] || `Order status: ${status}`,
+        time: new Date().toLocaleTimeString(),
+        userId: order.userId
+    });
+
     res.status(200).json({ message: 'Order status updated', order })
 }
 
@@ -93,6 +127,7 @@ async function batchUpdateOrderStatus(req, res) {
 module.exports = {
     createOrder,
     getOrderById,
+    getUserOrders,
     getPartnerOrders,
     updateOrderStatus,
     batchUpdateOrderStatus

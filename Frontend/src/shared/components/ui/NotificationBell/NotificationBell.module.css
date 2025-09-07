@@ -1,0 +1,141 @@
+.bellContainer {
+  position: fixed !important;
+  top: 16px !important;
+  right: 16px !important;
+  z-index: 999999 !important;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.8) !important;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+.bellContainer:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: scale(1.05);
+}
+
+.bellIcon {
+  width: 18px;
+  height: 18px;
+  color: white;
+}
+
+.redDot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 14px;
+  height: 14px;
+  background: #ff4444;
+  border-radius: 50%;
+  border: 1px solid white;
+  animation: pulse 2s infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: bold;
+  color: white;
+  padding: 0 1px;
+}
+
+.notificationPanel {
+  position: fixed;
+  top: 60px;
+  right: 16px;
+  width: min(320px, calc(100vw - 32px));
+  max-height: min(400px, calc(100vh - 120px));
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 999998;
+  border: 1px solid #e5e7eb;
+}
+
+@media (max-width: 480px) {
+  .notificationPanel {
+    width: calc(100vw - 16px);
+    right: 8px;
+    top: 56px;
+  }
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.panelHeader h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.clearBtn {
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.clearBtn:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.notificationList {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.notificationItem {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.2s;
+}
+
+.notificationItem:hover {
+  background: #f9fafb;
+}
+
+.notificationItem.unread {
+  background: #eff6ff;
+  border-left: 3px solid #3b82f6;
+}
+
+.notificationMessage {
+  font-size: 14px;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.notificationTime {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.emptyState {
+  padding: 32px 16px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}

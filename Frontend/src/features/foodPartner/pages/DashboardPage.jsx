@@ -91,13 +91,31 @@ const DashboardPage = () => {
       await orderService.updateOrderStatus(orderId, newStatus);
       const ordersResponse = await orderService.getPartnerOrders();
       setOrders(ordersResponse.data.orders);
-      setSuccess(`Order status updated to ${newStatus}`);
+      
+      const statusMessages = {
+        'ACCEPTED': 'Order accepted - Customer notified',
+        'PREPARING': 'Order marked as preparing',
+        'READY': 'Order ready for pickup/delivery',
+        'COMPLETED': 'Order completed successfully'
+      };
+      
+      // Trigger toast notification
+      window.dispatchEvent(new CustomEvent('showToast', { 
+        detail: statusMessages[newStatus] || `Order status updated to ${newStatus}` 
+      }));
+      
+      setSuccess(statusMessages[newStatus] || `Order status updated to ${newStatus}`);
     } catch (err) {
       setError("Failed to update order status");
     }
   };
 
-  const filteredOrders = statusFilter ? orders.filter(order => order.status === statusFilter) : orders;
+  const activeOrders = orders.filter(order => order.status !== 'COMPLETED');
+  const completedOrders = orders.filter(order => order.status === 'COMPLETED');
+  console.log('All orders:', orders.length, 'Active:', activeOrders.length, 'Completed:', completedOrders.length);
+  const filteredOrders = activeTab === 'completed' ? completedOrders : 
+    (statusFilter ? activeOrders.filter(order => order.status === statusFilter) : activeOrders);
+  console.log('Active tab:', activeTab, 'Filtered orders:', filteredOrders.length);
 
   if (!profile) return <div>Loading...</div>;
 
@@ -122,7 +140,13 @@ const DashboardPage = () => {
           onClick={() => setActiveTab('orders')}
           style={{ padding: "0.5rem 1rem", background: activeTab === 'orders' ? '#007bff' : '#f8f9fa', color: activeTab === 'orders' ? 'white' : 'black', border: '1px solid #ddd', borderRadius: '4px' }}
         >
-          Orders
+          Active Orders
+        </button>
+        <button 
+          onClick={() => setActiveTab('completed')}
+          style={{ padding: "0.5rem 1rem", background: activeTab === 'completed' ? '#007bff' : '#f8f9fa', color: activeTab === 'completed' ? 'white' : 'black', border: '1px solid #ddd', borderRadius: '4px' }}
+        >
+          Completed
         </button>
       </div>
 
@@ -220,47 +244,78 @@ const DashboardPage = () => {
         </div>
       )}
 
-      {activeTab === 'orders' && (
+      {(activeTab === 'orders' || activeTab === 'completed') && (
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
             <h2>Orders</h2>
-            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} style={{ padding: "0.5rem" }}>
-              <option value="">All Orders</option>
-              <option value="PLACED">Placed</option>
-              <option value="ACCEPTED">Accepted</option>
-              <option value="PREPARING">Preparing</option>
-              <option value="READY">Ready</option>
-              <option value="COMPLETED">Completed</option>
-              <option value="CANCELLED">Cancelled</option>
-            </select>
+            {activeTab !== 'completed' && (
+              <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} style={{ padding: "0.5rem" }}>
+                <option value="">All Active Orders</option>
+                <option value="PLACED">Placed</option>
+                <option value="ACCEPTED">Accepted</option>
+                <option value="PREPARING">Preparing</option>
+                <option value="READY">Ready</option>
+                <option value="CANCELLED">Cancelled</option>
+              </select>
+            )}
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            {filteredOrders.map((order) => (
-              <div key={order._id} style={{ padding: "1rem", border: "1px solid #ddd", borderRadius: "4px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-                  <div>
-                    <h4>Order #{order._id.slice(-6)}</h4>
-                    <p>Status: <strong>{order.status}</strong></p>
-                    <p>Items: {order.items?.length || 0}</p>
-                  </div>
-                  <div style={{ display: "flex", gap: "0.5rem" }}>
-                    {order.status === 'PLACED' && (
-                      <Button onClick={() => handleStatusUpdate(order._id, 'ACCEPTED')}>Accept</Button>
-                    )}
-                    {order.status === 'ACCEPTED' && (
-                      <Button onClick={() => handleStatusUpdate(order._id, 'PREPARING')}>Start Preparing</Button>
-                    )}
-                    {order.status === 'PREPARING' && (
-                      <Button onClick={() => handleStatusUpdate(order._id, 'READY')}>Mark Ready</Button>
-                    )}
-                    {order.status === 'READY' && (
-                      <Button onClick={() => handleStatusUpdate(order._id, 'COMPLETED')}>Complete</Button>
-                    )}
-                  </div>
-                </div>
+            {filteredOrders.length === 0 ? (
+              <div style={{ padding: "2rem", textAlign: "center", color: "#666" }}>
+                {activeTab === 'completed' ? 'No completed orders yet' : 'No active orders'}
               </div>
-            ))}
+            ) : (
+              filteredOrders.map((order) => (
+                <div key={order._id} style={{ padding: "1rem", border: "1px solid #ddd", borderRadius: "4px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+                    <div>
+                      <h4>Order #{order._id.slice(-6)}</h4>
+                      <p>Status: <strong>{order.status}</strong></p>
+                      <p>Items: {order.items?.length || 0}</p>
+                      {activeTab === 'completed' && (
+                        <p style={{ fontSize: '12px', color: '#666' }}>
+                          Completed: {order.timeline?.find(t => t.status === 'COMPLETED')?.at ? 
+                            new Date(order.timeline.find(t => t.status === 'COMPLETED').at).toLocaleString() : 
+                            'Recently'
+                          }
+                        </p>
+                      )}
+                    </div>
+                    <div style={{ display: "flex", gap: "0.5rem" }}>
+                      {activeTab === 'completed' ? (
+                        <span style={{ color: '#16a34a', fontWeight: 'bold' }}>✅ Completed</span>
+                      ) : (
+                        <>
+                          {order.status === 'PLACED' && (
+                            <Button onClick={() => handleStatusUpdate(order._id, 'ACCEPTED')}>Accept</Button>
+                          )}
+                          {order.status === 'ACCEPTED' && (
+                            <Button onClick={() => handleStatusUpdate(order._id, 'PREPARING')}>Start Preparing</Button>
+                          )}
+                          {order.status === 'PREPARING' && (
+                            <Button onClick={() => handleStatusUpdate(order._id, 'READY')}>Mark Ready</Button>
+                          )}
+                          {order.status === 'READY' && (
+                            <Button onClick={() => handleStatusUpdate(order._id, 'COMPLETED')}>Complete</Button>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  {activeTab === 'completed' && order.items && (
+                    <div style={{ marginTop: '1rem', padding: '0.5rem', background: '#f9fafb', borderRadius: '4px' }}>
+                      <h5 style={{ margin: '0 0 0.5rem 0', fontSize: '14px' }}>Order Items:</h5>
+                      {order.items.map((item, idx) => (
+                        <div key={idx} style={{ fontSize: '12px', color: '#666' }}>
+                          {item.name} x {item.qty} - ${(item.unitPrice * item.qty).toFixed(2)}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
           </div>
         </div>
       )}
