@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { orderService } from "../../../shared/services/api";
+import { orderService, reviewService } from "../../../shared/services/api";
 
 const OrderDetailPage = () => {
   const { id } = useParams();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showReviewDialog, setShowReviewDialog] = useState(false);
+  const [selectedStars, setSelectedStars] = useState(0);
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
   const statusSteps = ['PLACED', 'CONFIRMED', 'PREPARING', 'READY', 'DELIVERED'];
 
@@ -26,6 +29,25 @@ const OrderDetailPage = () => {
 
     return () => clearInterval(interval);
   }, [id]);
+
+  useEffect(() => {
+    if (order && order.status === 'COMPLETED' && !reviewSubmitted) {
+      setShowReviewDialog(true);
+    }
+  }, [order, reviewSubmitted]);
+
+  const handleReviewSubmit = async () => {
+    try {
+      await reviewService.createReview({
+        orderId: order._id,
+        stars: selectedStars
+      });
+      setReviewSubmitted(true);
+      setShowReviewDialog(false);
+    } catch (error) {
+      console.error('Failed to submit review');
+    }
+  };
 
   if (loading) return <div style={{ padding: "2rem" }}>Loading...</div>;
   if (!order) return <div style={{ padding: "2rem" }}>Order not found</div>;
@@ -99,6 +121,29 @@ const OrderDetailPage = () => {
           </div>
         ))}
       </div>
+
+      {showReviewDialog && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: 'white', padding: '2rem', borderRadius: '8px', textAlign: 'center', maxWidth: '400px' }}>
+            <h3>Rate your order</h3>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', margin: '1rem 0' }}>
+              {[1, 2, 3, 4, 5].map(star => (
+                <button
+                  key={star}
+                  onClick={() => setSelectedStars(star)}
+                  style={{ background: 'none', border: 'none', fontSize: '2rem', cursor: 'pointer', color: star <= selectedStars ? '#ffd700' : '#ddd' }}
+                >
+                  ★
+                </button>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button onClick={() => setShowReviewDialog(false)} style={{ padding: '8px 16px', border: '1px solid #ddd', borderRadius: '4px', background: 'white' }}>Skip</button>
+              <button onClick={handleReviewSubmit} disabled={selectedStars === 0} style={{ padding: '8px 16px', border: 'none', borderRadius: '4px', background: selectedStars > 0 ? '#16a34a' : '#ccc', color: 'white' }}>Submit</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

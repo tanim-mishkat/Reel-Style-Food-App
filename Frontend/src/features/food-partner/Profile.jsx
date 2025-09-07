@@ -17,6 +17,7 @@ const Profile = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('videos');
+  const [reviewStats, setReviewStats] = useState({ averageStars: 0, totalReviews: 0 });
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -30,6 +31,9 @@ const Profile = () => {
         
         const menuResponse = await menuService.getMenuItems(id);
         setMenuItems(menuResponse.data.menuItems);
+        
+        const reviewResponse = await axios.get(`http://localhost:3000/api/reviews/partner/${id}`);
+        setReviewStats(reviewResponse.data);
         
         setLoading(false);
       } catch (error) {
@@ -65,11 +69,11 @@ const Profile = () => {
               <span className="stat-label">posts</span>
             </div>
             <div className="stat">
-              <span className="stat-number">4.5⭐</span>
+              <span className="stat-number">{reviewStats.averageStars}⭐</span>
               <span className="stat-label">rating</span>
             </div>
             <div className="stat">
-              <span className="stat-number">0</span>
+              <span className="stat-number">{reviewStats.totalReviews}</span>
               <span className="stat-label">reviews</span>
             </div>
           </div>

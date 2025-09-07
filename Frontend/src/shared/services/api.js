@@ -36,6 +36,7 @@ export const foodPartnerService = {
   getFoodPartnerVideos: (id) => api.get(`/food-partner/${id}/videos`),
   getMyProfile: () => api.get('/food-partner/me'),
   updateMyProfile: (data) => api.patch('/food-partner/me', data),
+  getPartnerReviews: (id) => api.get(`/food-partner/${id}/reviews`),
 };
 
 // Menu Service
@@ -53,4 +54,9 @@ export const orderService = {
   getOrderById: (id) => api.get(`/orders/${id}`),
   getPartnerOrders: (status) => api.get(`/orders/partner/orders${status ? `?status=${status}` : ''}`),
   updateOrderStatus: (id, status) => api.patch(`/orders/${id}/status`, { status }),
+};
+
+// Review Service
+export const reviewService = {
+  createReview: (data) => api.post('/reviews', data),
 };
