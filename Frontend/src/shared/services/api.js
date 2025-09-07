@@ -37,3 +37,12 @@ export const foodPartnerService = {
   getMyProfile: () => api.get('/food-partner/me'),
   updateMyProfile: (data) => api.patch('/food-partner/me', data),
 };
+
+// Menu Service
+export const menuService = {
+  createMenuItem: (data) => api.post('/menu', data),
+  getMyMenuItems: () => api.get('/menu/me'),
+  getMenuItems: (partnerId) => api.get(`/menu/${partnerId}`),
+  updateMenuItem: (id, data) => api.patch(`/menu/${id}`, data),
+  deleteMenuItem: (id) => api.delete(`/menu/${id}`),
+};

@@ -49,6 +49,19 @@ async function updateFood(req, res) {
     res.status(200).json({ message: 'Food item updated successfully', food: updatedFood })
 }
 
+async function deleteFood(req, res) {
+    const { id } = req.params
+    const foodPartner = req.foodPartner
+
+    const foodItem = await foodModel.findOne({ _id: id, foodPartner: foodPartner._id })
+    if (!foodItem) {
+        return res.status(404).json({ message: 'Food item not found or unauthorized' })
+    }
+
+    await foodModel.findByIdAndDelete(id)
+    res.status(200).json({ message: 'Food item deleted successfully' })
+}
+
 async function getFoodItems(req, res) {
     const page = parseInt(req.query.page) || 1
     const limit = parseInt(req.query.limit) || 10
@@ -167,6 +180,7 @@ async function getComments(req, res) {
 module.exports = {
     createFood,
     updateFood,
+    deleteFood,
     getFoodItems,
     likeFood,
     saveFood,

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { ROUTES } from "../../routes/routeConfig";
+import { menuService } from "../../shared/services/api";
 import "./Profile.css";
 
 const Profile = () => {
@@ -10,7 +11,9 @@ const Profile = () => {
 
   const [profile, setProfile] = useState(null);
   const [videos, setVideos] = useState([]);
+  const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('videos');
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -21,6 +24,10 @@ const Profile = () => {
         );
         setProfile(response.data.foodPartner);
         setVideos(response.data.foodPartner.foodItems || []);
+        
+        const menuResponse = await menuService.getMenuItems(id);
+        setMenuItems(menuResponse.data.menuItems);
+        
         setLoading(false);
       } catch (error) {
         // Handle error silently
@@ -28,7 +35,6 @@ const Profile = () => {
       }
     };
     fetchProfile();
-    // Profile fetched
   }, [id]);
 
   if (loading) {
@@ -77,37 +83,85 @@ const Profile = () => {
 
       <div className="profile-content">
         <div className="content-tabs">
-          <button className="tab active">🎬 VIDEOS</button>
+          <button 
+            className={`tab ${activeTab === 'videos' ? 'active' : ''}`}
+            onClick={() => setActiveTab('videos')}
+          >
+            🎬 VIDEOS
+          </button>
+          <button 
+            className={`tab ${activeTab === 'menu' ? 'active' : ''}`}
+            onClick={() => setActiveTab('menu')}
+          >
+            🍽️ MENU
+          </button>
           <button className="tab">📋 TAGGED</button>
         </div>
 
-        <div className="posts-grid">
-          {videos.map((video) => (
-            <div 
-              key={video._id} 
-              className="post-item"
-              onClick={() => navigate(ROUTES.FOOD_PARTNER_VIDEOS.replace(':id', id))}
-              onMouseEnter={(e) => {
-                const videoEl = e.currentTarget.querySelector('video');
-                videoEl.play();
-              }}
-              onMouseLeave={(e) => {
-                const videoEl = e.currentTarget.querySelector('video');
-                videoEl.pause();
-                videoEl.currentTime = 0;
-              }}
-            >
-              <video src={video.video} preload="metadata" muted loop />
-              <div className="video-indicator">📹</div>
-              <div className="post-overlay">
-                <div className="overlay-content">
-                  <h4 className="video-title">{video.name}</h4>
-                  <span className="post-views">❤️ {video.likes || 0}</span>
+        {activeTab === 'videos' && (
+          <div className="posts-grid">
+            {videos.map((video) => (
+              <div 
+                key={video._id} 
+                className="post-item"
+                onClick={() => navigate(ROUTES.FOOD_PARTNER_VIDEOS.replace(':id', id))}
+                onMouseEnter={(e) => {
+                  const videoEl = e.currentTarget.querySelector('video');
+                  videoEl.play();
+                }}
+                onMouseLeave={(e) => {
+                  const videoEl = e.currentTarget.querySelector('video');
+                  videoEl.pause();
+                  videoEl.currentTime = 0;
+                }}
+              >
+                <video src={video.video} preload="metadata" muted loop />
+                <div className="video-indicator">📹</div>
+                <div className="post-overlay">
+                  <div className="overlay-content">
+                    <h4 className="video-title">{video.name}</h4>
+                    <span className="post-views">❤️ {video.likes || 0}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
+
+        {activeTab === 'menu' && (
+          <div className="menu-list">
+            {menuItems.map((item) => (
+              <div key={item._id} className="menu-item">
+                <div className="menu-item-info">
+                  <h3 className="menu-item-name">{item.name}</h3>
+                  <p className="menu-item-description">{item.description}</p>
+                  <div className="menu-item-details">
+                    <span className="price">${item.price}</span>
+                    {item.prepTime && (
+                      <span className="prep-time">
+                        ⏱️ {item.prepTime.min}-{item.prepTime.max} min
+                      </span>
+                    )}
+                    <span className={`availability ${item.isAvailable ? 'available' : 'unavailable'}`}>
+                      {item.isAvailable ? '✅ Available' : '❌ Unavailable'}
+                    </span>
+                  </div>
+                </div>
+                <div className="menu-item-actions">
+                  {item.photoUrl && (
+                    <img src={item.photoUrl} alt={item.name} className="menu-item-image" />
+                  )}
+                  <button 
+                    className="add-to-cart-btn"
+                    disabled={!item.isAvailable}
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

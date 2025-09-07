@@ -22,6 +22,11 @@ router.patch('/:id',
     foodController.updateFood
 )
 
+router.delete('/:id',
+    authMiddleware.authFoodPartnerMiddleware,
+    foodController.deleteFood
+)
+
 router.get('/',
     optionalAuthMiddleware.optionalAuthUserMiddleware,
     foodController.getFoodItems
