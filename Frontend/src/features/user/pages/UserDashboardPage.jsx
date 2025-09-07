@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { orderService, authService } from "../../../shared/services/api";
+import { orderService, authService, followService } from "../../../shared/services/api";
 import BottomNav from "../../../shared/components/layout/BottomNav/BottomNav";
 import Input from "../../../shared/components/ui/Input/Input";
 import Button from "../../../shared/components/ui/Button/Button";
@@ -11,6 +11,8 @@ const UserDashboardPage = () => {
   const [user, setUser] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [fullName, setFullName] = useState('');
+  const [followedPartners, setFollowedPartners] = useState([]);
+  const [showFollowing, setShowFollowing] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -48,6 +50,14 @@ const UserDashboardPage = () => {
         setOrders(newOrders);
         setUser(userResponse.data.user);
         setFullName(userResponse.data.user.fullName);
+        
+        // Fetch followed partners
+        try {
+          const followResponse = await followService.getFollowedPartners();
+          setFollowedPartners(followResponse.data.partners);
+        } catch (error) {
+          // Handle silently
+        }
       } catch (error) {
         console.error('Failed to fetch data:', error);
         setOrders([]);
@@ -139,13 +149,14 @@ const UserDashboardPage = () => {
             <div>
               <p><strong>Name:</strong> {user.fullName}</p>
               <p><strong>Email:</strong> {user.email}</p>
+              <Button onClick={() => setShowFollowing(true)} style={{ marginTop: "1rem" }}>View Following</Button>
             </div>
           )}
         </div>
       )}
 
       {/* Stats Cards */}
-      <div style={{ padding: "1rem", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem" }}>
+      <div style={{ padding: "1rem", display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem" }}>
         <div style={{ background: "white", padding: "1rem", borderRadius: "8px", textAlign: "center" }}>
           <div style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#16a34a" }}>{orders.length}</div>
           <div style={{ fontSize: "0.875rem", color: "#666" }}>Total Orders</div>
@@ -157,6 +168,10 @@ const UserDashboardPage = () => {
         <div style={{ background: "white", padding: "1rem", borderRadius: "8px", textAlign: "center" }}>
           <div style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#3b82f6" }}>${totalSpent.toFixed(2)}</div>
           <div style={{ fontSize: "0.875rem", color: "#666" }}>Total Spent</div>
+        </div>
+        <div style={{ background: "white", padding: "1rem", borderRadius: "8px", textAlign: "center" }}>
+          <div style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#10b981" }}>{followedPartners.length}</div>
+          <div style={{ fontSize: "0.875rem", color: "#666" }}>Following</div>
         </div>
       </div>
 
@@ -262,6 +277,33 @@ const UserDashboardPage = () => {
           </button>
         )}
       </div>
+
+      {/* Following Modal */}
+      {showFollowing && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: 'white', padding: '2rem', borderRadius: '8px', maxWidth: '400px', width: '90%', maxHeight: '70vh', overflow: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3>Following ({followedPartners.length})</h3>
+              <button onClick={() => setShowFollowing(false)} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>×</button>
+            </div>
+            {followedPartners.length === 0 ? (
+              <p style={{ textAlign: 'center', color: '#666' }}>Not following any partners yet</p>
+            ) : (
+              followedPartners.map((follow) => (
+                <div key={follow._id} style={{ padding: '0.75rem', border: '1px solid #ddd', borderRadius: '4px', marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>{follow.partner.fullName}</span>
+                  <button 
+                    onClick={() => navigate(`/food-partner/${follow.partner._id}`)}
+                    style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '0.25rem 0.5rem', borderRadius: '4px', cursor: 'pointer' }}
+                  >
+                    View
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
 
       <BottomNav />
     </div>

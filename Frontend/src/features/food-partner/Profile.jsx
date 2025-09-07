@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ROUTES } from "../../routes/routeConfig";
-import { menuService, foodPartnerService, reviewService } from "../../shared/services/api";
+import { menuService, foodPartnerService, reviewService, followService } from "../../shared/services/api";
 import { useCart } from "../../shared/contexts/CartContext";
 import CartIcon from "../../shared/components/ui/CartIcon/CartIcon";
 import "./Profile.css";
@@ -17,6 +17,8 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('videos');
   const [reviewStats, setReviewStats] = useState({ averageStars: 0, totalReviews: 0 });
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followerCount, setFollowerCount] = useState(0);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -31,6 +33,15 @@ const Profile = () => {
         const reviewResponse = await reviewService.getPartnerReviews(id);
         setReviewStats(reviewResponse.data);
         
+        // Check if user is following this partner
+        try {
+          const followedResponse = await followService.getFollowedPartners();
+          const isUserFollowing = followedResponse.data.partners.some(f => f.partner._id === id);
+          setIsFollowing(isUserFollowing);
+        } catch (error) {
+          // User not logged in
+        }
+        
         setLoading(false);
       } catch (error) {
         // Handle error silently
@@ -39,6 +50,16 @@ const Profile = () => {
     };
     fetchProfile();
   }, [id]);
+
+  const handleFollow = async () => {
+    try {
+      const response = await followService.followPartner(id);
+      setIsFollowing(response.data.following);
+      setFollowerCount(prev => response.data.following ? prev + 1 : prev - 1);
+    } catch (error) {
+      navigate('/auth/user/login');
+    }
+  };
 
   if (loading) {
     return <div className="profile-loading">Loading...</div>;
@@ -56,7 +77,9 @@ const Profile = () => {
         <div className="profile-info">
           <div className="profile-name">
             <h1>{profile.fullName}</h1>
-            <button className="contact-btn">Contact</button>
+            <button className={`contact-btn ${isFollowing ? 'following' : ''}`} onClick={handleFollow}>
+              {isFollowing ? 'Following' : 'Follow'}
+            </button>
           </div>
 
           <div className="profile-stats">
@@ -71,6 +94,10 @@ const Profile = () => {
             <div className="stat">
               <span className="stat-number">{reviewStats.totalReviews}</span>
               <span className="stat-label">reviews</span>
+            </div>
+            <div className="stat">
+              <span className="stat-number">{followerCount}</span>
+              <span className="stat-label">followers</span>
             </div>
           </div>
 

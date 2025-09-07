@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { foodPartnerService, menuService, orderService } from "../../../shared/services/api";
+import { foodPartnerService, menuService, orderService, followService } from "../../../shared/services/api";
 import Input from "../../../shared/components/ui/Input/Input";
 import Button from "../../../shared/components/ui/Button/Button";
 
@@ -18,6 +18,7 @@ const DashboardPage = () => {
   const [menuForm, setMenuForm] = useState({ name: '', description: '', price: '', prepTime: '', photoUrl: '' });
   const [orders, setOrders] = useState([]);
   const [statusFilter, setStatusFilter] = useState('');
+  const [followers, setFollowers] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,6 +36,9 @@ const DashboardPage = () => {
         
         const ordersResponse = await orderService.getPartnerOrders();
         setOrders(ordersResponse.data.orders);
+        
+        const followersResponse = await followService.getPartnerFollowers();
+        setFollowers(followersResponse.data.followers);
       } catch (err) {
         setError("Failed to load data");
       }
@@ -152,6 +156,12 @@ const DashboardPage = () => {
           style={{ padding: "0.5rem 1rem", background: activeTab === 'completed' ? '#007bff' : '#f8f9fa', color: activeTab === 'completed' ? 'white' : 'black', border: '1px solid #ddd', borderRadius: '4px' }}
         >
           Completed
+        </button>
+        <button 
+          onClick={() => setActiveTab('followers')}
+          style={{ padding: "0.5rem 1rem", background: activeTab === 'followers' ? '#007bff' : '#f8f9fa', color: activeTab === 'followers' ? 'white' : 'black', border: '1px solid #ddd', borderRadius: '4px' }}
+        >
+          Followers ({followers.length})
         </button>
       </div>
 
@@ -318,6 +328,28 @@ const DashboardPage = () => {
                       ))}
                     </div>
                   )}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'followers' && (
+        <div>
+          <h2>Followers</h2>
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            {followers.length === 0 ? (
+              <div style={{ padding: "2rem", textAlign: "center", color: "#666" }}>
+                No followers yet
+              </div>
+            ) : (
+              followers.map((follower) => (
+                <div key={follower._id} style={{ padding: "1rem", border: "1px solid #ddd", borderRadius: "4px", display: "flex", alignItems: "center" }}>
+                  <div>
+                    <h4>{follower.user.fullName}</h4>
+                    <p style={{ fontSize: "12px", color: "#666" }}>Following since {new Date(follower.createdAt).toLocaleDateString()}</p>
+                  </div>
                 </div>
               ))
             )}

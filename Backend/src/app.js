@@ -9,6 +9,7 @@ const orderRoutes = require('./routes/order.routes.js')
 const reviewRoutes = require('./routes/review.routes.js')
 const pushRoutes = require('./routes/push.routes.js')
 const notificationRoutes = require('./routes/notification.routes.js')
+const followRoutes = require('./routes/follow.routes.js')
 const cors = require('cors')
 
 const app = express()
@@ -30,6 +31,7 @@ app.use('/api/orders', orderRoutes)
 app.use('/api/reviews', reviewRoutes)
 app.use('/api/push', pushRoutes)
 app.use('/api/notifications', notificationRoutes)
+app.use('/api/follow', followRoutes)
 
 // Global error handler
 const errorHandler = require('./middleware/error.middleware.js')

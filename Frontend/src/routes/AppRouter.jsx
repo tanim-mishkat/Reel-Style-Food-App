@@ -33,6 +33,9 @@ import UserOrdersPage from "../features/orders/pages/UserOrdersPage";
 // User Pages
 import UserDashboardPage from "../features/user/pages/UserDashboardPage";
 
+// Following Page
+import FollowingPage from "../features/home/pages/FollowingPage";
+
 const NotFoundPage = () => (
   <div style={{ textAlign: "center", padding: "2rem" }}>
     <h2>404 - Page Not Found</h2>
@@ -72,6 +75,9 @@ const AppRouter = () => {
         
         {/* User Routes */}
         <Route path={ROUTES.USER_DASHBOARD} element={<PrivateRoute><UserDashboardPage /></PrivateRoute>} />
+        
+        {/* Following Route */}
+        <Route path="/following" element={<PrivateRoute><FollowingPage /></PrivateRoute>} />
         
         {/* 404 Route */}
         <Route path="*" element={<NotFoundPage />} />

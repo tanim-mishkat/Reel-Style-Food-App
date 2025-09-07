@@ -29,13 +29,13 @@ const BottomNav = () => {
       </Link>
       
       <Link 
-        to={ROUTES.USER_ORDERS} 
-        className={`${styles.navItem} ${location.pathname === ROUTES.USER_ORDERS ? styles.active : ""}`}
+        to="/following" 
+        className={`${styles.navItem} ${location.pathname === '/following' ? styles.active : ""}`}
       >
         <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M19 7h-3V6a4 4 0 0 0-8 0v1H5a1 1 0 0 0-1 1v11a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8a1 1 0 0 0-1-1zM10 6a2 2 0 0 1 4 0v1h-4V6zm8 13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V9h2v1a1 1 0 0 0 2 0V9h4v1a1 1 0 0 0 2 0V9h2v10z"/>
+          <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h2.5l-2.54-7.63A1.5 1.5 0 0 0 18.54 8H17c-.8 0-1.54.37-2.01.99l-2.98 3.67a.5.5 0 0 0 .39.84H14v6h6zm-11.5 0v-4.5h1.5v3H12V7a2 2 0 0 0-2-2H6c-1.1 0-2 .9-2 2v13.5h4.5z"/>
         </svg>
-        <span>Orders</span>
+        <span>Following</span>
       </Link>
       
       <Link 

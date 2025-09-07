@@ -65,3 +65,11 @@ export const reviewService = {
   createReview: (data) => api.post('/reviews', data),
   getPartnerReviews: (id) => api.get(`/reviews/partner/${id}`),
 };
+
+// Follow Service
+export const followService = {
+  followPartner: (partnerId) => api.post('/follow/partner', { partnerId }),
+  getFollowedPartners: () => api.get('/follow/partners'),
+  getFollowedFeed: () => api.get('/follow/feed'),
+  getPartnerFollowers: () => api.get('/follow/followers'),
+};

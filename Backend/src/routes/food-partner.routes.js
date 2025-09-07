@@ -15,6 +15,10 @@ router.patch('/me',
     foodPartnerController.updateMyProfile
 )
 
+router.get('/restaurant/:slug',
+    foodPartnerController.getFoodPartnerBySlug
+)
+
 router.get('/:id',
     foodPartnerController.getFoodPartnerById
 )
@@ -22,10 +26,6 @@ router.get('/:id',
 router.get('/:id/videos',
     optionalAuthMiddleware.optionalAuthUserMiddleware,
     foodPartnerController.getFoodPartnerVideos
-)
-
-router.get('/restaurant/:slug',
-    foodPartnerController.getFoodPartnerBySlug
 )
 
 module.exports = router
