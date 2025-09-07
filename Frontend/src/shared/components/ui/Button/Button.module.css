@@ -3,24 +3,24 @@
   align-items: center;
   justify-content: center;
   white-space: nowrap;
-  border-radius: var(--radius-md);
-  font-size: 0.875rem;
-  font-weight: 500;
-  height: 2.5rem;
-  padding: 0.5rem 1rem;
-  transition: all 0.2s ease;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  min-height: 48px;
+  padding: 12px 20px;
+  transition: all 200ms ease;
   cursor: pointer;
   border: none;
   outline: none;
   text-decoration: none;
   background-color: var(--primary);
   color: var(--primary-foreground);
+  font-family: var(--font-family);
 }
 
 .btn:hover:not(:disabled) {
-  background-color: var(--primary-hover);
+  background-color: var(--primary-pressed);
   transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
 }
 
 .btn:disabled {
@@ -30,4 +30,9 @@
 
 .btn:active {
   transform: translateY(0);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
 }

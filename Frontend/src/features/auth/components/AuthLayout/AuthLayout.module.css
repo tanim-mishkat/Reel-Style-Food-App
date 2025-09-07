@@ -1,44 +1,62 @@
 .authWrapper {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  background: var(--background);
+  display: grid;
+  place-items: center;
+  padding: var(--spacing-2);
+  background: var(--surface-light);
+  margin-top: 10vh;
 }
 
 .authContainer {
   width: 100%;
-  max-width: 400px;
-  background: var(--card);
+  max-width: 360px;
+  background: var(--surface-light);
   border: 1px solid var(--border);
-  border-radius: calc(var(--radius-md) + 2px);
-  box-shadow: var(--shadow-lg);
-  padding: 2rem;
-  transition: all 0.3s ease;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+  transition: all 250ms ease;
 }
 
 .authHeader {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-3);
 }
 
 .authTitle {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--foreground);
-  margin-bottom: 0.5rem;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
   line-height: 1.2;
 }
 
 .authSubtitle {
-  font-size: 0.875rem;
-  color: var(--muted-foreground);
+  font-size: var(--text-base);
+  color: var(--text-secondary);
   font-weight: 400;
+  line-height: 1.5;
 }
 
 .authFooter {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--spacing-2);
+}
+
+@media (min-width: 768px) {
+  .authContainer {
+    max-width: 420px;
+    padding: 28px;
+  }
+  
+  .authTitle {
+    font-size: var(--text-3xl);
+  }
+}
+
+@media (min-width: 1024px) {
+  .authWrapper {
+    margin-top: 0;
+  }
 }

@@ -1,11 +1,11 @@
 .homeContainer {
-  height: 100vh;
+  height: 100dvh;
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  background: #000;
+  background: var(--surface-dark);
 }
 
 .homeContainer::-webkit-scrollbar {
@@ -13,7 +13,7 @@
 }
 
 .videoSection {
-  height: 100vh;
+  height: 100dvh;
   width: 100vw;
   position: relative;
   scroll-snap-align: start;
@@ -28,47 +28,53 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(transparent 50%, rgba(0, 0, 0, 0.6));
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 60%);
   z-index: 1;
 }
 
 .videoInfoContainer {
   position: absolute;
-  bottom: 100px;
-  left: 20px;
-  right: 80px;
+  bottom: 88px;
+  left: 12px;
+  max-width: 72%;
   z-index: 2;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 60%);
 }
 
 .videoTitle {
-  color: white;
-  font-size: 16px;
+  color: var(--text-on-dark);
+  font-size: var(--text-md);
   font-weight: 600;
   margin: 0;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  line-height: 1.5;
 }
 
 .videoTimeline {
   width: 100%;
+  margin-top: 8px;
 }
 
 .timelineSlider {
   width: 100%;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.3);
+  height: 6px;
+  background: rgba(255, 255, 255, 0.25);
   outline: none;
-  border-radius: 2px;
+  border-radius: var(--radius-full);
   cursor: pointer;
+  appearance: none;
 }
 
 .timelineSlider::-webkit-slider-thumb {
   appearance: none;
   width: 16px;
   height: 16px;
-  background: #ff6b35;
+  background: var(--text-on-dark);
   border-radius: 50%;
   cursor: pointer;
 }
@@ -76,20 +82,28 @@
 .timelineSlider::-moz-range-thumb {
   width: 16px;
   height: 16px;
-  background: #ff6b35;
+  background: var(--text-on-dark);
   border-radius: 50%;
   cursor: pointer;
   border: none;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 768px) {
   .videoInfoContainer {
-    bottom: 80px;
-    left: 15px;
-    right: 70px;
+    left: 16px;
+    bottom: 128px;
+    max-width: 60%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .homeContainer {
+    display: flex;
+    justify-content: center;
   }
   
-  .videoTitle {
-    font-size: 14px;
+  .videoSection {
+    min-width: 480px;
+    max-width: 720px;
   }
 }
