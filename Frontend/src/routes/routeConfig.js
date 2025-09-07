@@ -7,11 +7,14 @@ export const ROUTES = {
   // Auth routes
   USER_LOGIN: '/auth/user/login',
   USER_REGISTER: '/auth/user/register',
+  USER_LOGOUT: '/auth/user/logout',
   FOOD_PARTNER_LOGIN: '/auth/food-partner/login',
   FOOD_PARTNER_REGISTER: '/auth/food-partner/register',
+  FOOD_PARTNER_LOGOUT: '/auth/food-partner/logout',
   
   // Food Partner routes
   CREATE_FOOD: '/create-food',
+  DASHBOARD: '/dashboard',
   FOOD_PARTNER_PROFILE: '/food-partner/:id',
   FOOD_PARTNER_VIDEOS: '/food-partner/:id/videos',
 };

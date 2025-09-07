@@ -1,6 +1,7 @@
 const express = require('express')
 const foodController = require('../controllers/food.controller.js')
 const authMiddleware = require('../middleware/auth.middleware.js')
+const optionalAuthMiddleware = require('../middleware/optional-auth.middleware.js')
 
 const multer = require('multer')
 
@@ -16,8 +17,13 @@ router.post('/',
     foodController.createFood
 )
 
+router.patch('/:id',
+    authMiddleware.authFoodPartnerMiddleware,
+    foodController.updateFood
+)
+
 router.get('/',
-    authMiddleware.authUserMiddleware,
+    optionalAuthMiddleware.optionalAuthUserMiddleware,
     foodController.getFoodItems
 )
 

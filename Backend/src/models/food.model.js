@@ -23,6 +23,35 @@ const foodSchema = new mongoose.Schema({
     savedCount: {
         type: Number,
         default: 0
+    },
+    price: {
+        type: Number
+    },
+    prepTime: {
+        min: {
+            type: Number
+        },
+        max: {
+            type: Number
+        }
+    },
+    isAvailable: {
+        type: Boolean,
+        default: true
+    },
+    photoUrl: {
+        type: String
+    },
+    tags: {
+        veg: {
+            type: Boolean
+        },
+        halal: {
+            type: Boolean
+        },
+        spicy: {
+            type: Boolean
+        }
     }
 
 },

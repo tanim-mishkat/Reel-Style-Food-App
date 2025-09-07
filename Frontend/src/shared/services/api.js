@@ -26,10 +26,14 @@ export const authService = {
   registerUser: (userData) => api.post('/auth/user/register', userData),
   loginFoodPartner: (credentials) => api.post('/auth/foodpartner/login', credentials),
   registerFoodPartner: (userData) => api.post('/auth/foodpartner/register', userData),
+  logoutUser: () => api.get('/auth/user/logout'),
+  logoutFoodPartner: () => api.get('/auth/foodpartner/logout'),
 };
 
 // Food Partner Service
 export const foodPartnerService = {
   getFoodPartnerById: (id) => api.get(`/food-partner/${id}`),
   getFoodPartnerVideos: (id) => api.get(`/food-partner/${id}/videos`),
+  getMyProfile: () => api.get('/food-partner/me'),
+  updateMyProfile: (data) => api.patch('/food-partner/me', data),
 };

@@ -12,29 +12,75 @@ async function createFood(req, res) {
         name: req.body.name,
         description: req.body.description,
         video: fileUploadResult.url,
-        foodPartner: req.foodPartner._id
+        foodPartner: req.foodPartner._id,
+        price: req.body.price,
+        prepTime: req.body.prepTime ? JSON.parse(req.body.prepTime) : undefined,
+        isAvailable: req.body.isAvailable !== undefined ? req.body.isAvailable === 'true' : true,
+        photoUrl: req.body.photoUrl,
+        tags: req.body.tags ? JSON.parse(req.body.tags) : undefined
     })
 
     res.status(201).json({ message: 'Food item created successfully', food: foodItem })
 }
 
+async function updateFood(req, res) {
+    const { id } = req.params
+    const foodPartner = req.foodPartner
+
+    const foodItem = await foodModel.findOne({ _id: id, foodPartner: foodPartner._id })
+    if (!foodItem) {
+        return res.status(404).json({ message: 'Food item not found or unauthorized' })
+    }
+
+    const updateData = {
+        name: req.body.name,
+        description: req.body.description,
+        price: req.body.price,
+        prepTime: req.body.prepTime ? JSON.parse(req.body.prepTime) : undefined,
+        isAvailable: req.body.isAvailable !== undefined ? req.body.isAvailable === 'true' : undefined,
+        photoUrl: req.body.photoUrl,
+        tags: req.body.tags ? JSON.parse(req.body.tags) : undefined
+    }
+
+    // Remove undefined values
+    Object.keys(updateData).forEach(key => updateData[key] === undefined && delete updateData[key])
+
+    const updatedFood = await foodModel.findByIdAndUpdate(id, updateData, { new: true })
+    res.status(200).json({ message: 'Food item updated successfully', food: updatedFood })
+}
+
 async function getFoodItems(req, res) {
-    const foodItems = await foodModel.find({})
+    const page = parseInt(req.query.page) || 1
+    const limit = parseInt(req.query.limit) || 10
+    const skip = (page - 1) * limit
+    
+    const foodItems = await foodModel.find({}).sort({ createdAt: -1 }).skip(skip).limit(limit)
     const user = req.user
     
-    // Get user's likes and saves
-    const userLikes = await likeModel.find({ user: user._id }).select('food')
-    const userSaves = await saveModel.find({ user: user._id }).select('food')
+    let foodItemsWithStatus
     
-    const likedFoodIds = userLikes.map(like => like.food.toString())
-    const savedFoodIds = userSaves.map(save => save.food.toString())
-    
-    // Add user status to each food item
-    const foodItemsWithStatus = foodItems.map(item => ({
-        ...item.toObject(),
-        isLiked: likedFoodIds.includes(item._id.toString()),
-        isSaved: savedFoodIds.includes(item._id.toString())
-    }))
+    if (user) {
+        // Get user's likes and saves
+        const userLikes = await likeModel.find({ user: user._id }).select('food')
+        const userSaves = await saveModel.find({ user: user._id }).select('food')
+        
+        const likedFoodIds = userLikes.map(like => like.food.toString())
+        const savedFoodIds = userSaves.map(save => save.food.toString())
+        
+        // Add user status to each food item
+        foodItemsWithStatus = foodItems.map(item => ({
+            ...item.toObject(),
+            isLiked: likedFoodIds.includes(item._id.toString()),
+            isSaved: savedFoodIds.includes(item._id.toString())
+        }))
+    } else {
+        // For unauthenticated users, set isLiked and isSaved to false
+        foodItemsWithStatus = foodItems.map(item => ({
+            ...item.toObject(),
+            isLiked: false,
+            isSaved: false
+        }))
+    }
     
     res.status(200).json({ message: 'Food Items fetched successfully', foodItems: foodItemsWithStatus })
 }
@@ -120,6 +166,7 @@ async function getComments(req, res) {
 
 module.exports = {
     createFood,
+    updateFood,
     getFoodItems,
     likeFood,
     saveFood,
