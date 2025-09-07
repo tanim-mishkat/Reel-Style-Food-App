@@ -5,22 +5,30 @@ const commentModel = require('../models/comment.model.js')
 const storageService = require('../services/storage.service.js')
 const { v4: uuid } = require('uuid')
 
-async function createFood(req, res) {
-    const fileUploadResult = await storageService.uploadFile(req.file.buffer, uuid())
+async function createFood(req, res, next) {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ message: 'Video file is required' });
+        }
+        
+        const fileUploadResult = await storageService.uploadFile(req.file.buffer, uuid())
 
-    const foodItem = await foodModel.create({
-        name: req.body.name,
-        description: req.body.description,
-        video: fileUploadResult.url,
-        foodPartner: req.foodPartner._id,
-        price: req.body.price,
-        prepTime: req.body.prepTime ? JSON.parse(req.body.prepTime) : undefined,
-        isAvailable: req.body.isAvailable !== undefined ? req.body.isAvailable === 'true' : true,
-        photoUrl: req.body.photoUrl,
-        tags: req.body.tags ? JSON.parse(req.body.tags) : undefined
-    })
+        const foodItem = await foodModel.create({
+            name: req.body.name,
+            description: req.body.description,
+            video: fileUploadResult.url,
+            foodPartner: req.foodPartner._id,
+            price: req.body.price,
+            prepTime: req.body.prepTime ? JSON.parse(req.body.prepTime) : undefined,
+            isAvailable: req.body.isAvailable !== undefined ? req.body.isAvailable === 'true' : true,
+            photoUrl: req.body.photoUrl,
+            tags: req.body.tags ? JSON.parse(req.body.tags) : undefined
+        })
 
-    res.status(201).json({ message: 'Food item created successfully', food: foodItem })
+        res.status(201).json({ message: 'Food item created successfully', food: foodItem })
+    } catch (error) {
+        next(error);
+    }
 }
 
 async function updateFood(req, res) {
@@ -64,7 +72,7 @@ async function deleteFood(req, res) {
 
 async function getFoodItems(req, res) {
     const page = parseInt(req.query.page) || 1
-    const limit = parseInt(req.query.limit) || 10
+    const limit = Math.min(parseInt(req.query.limit) || 12, 20)
     const skip = (page - 1) * limit
     
     const foodItems = await foodModel.find({}).sort({ createdAt: -1 }).skip(skip).limit(limit)
@@ -112,7 +120,7 @@ async function likeFood(req, res) {
             food: foodId,
             user: user._id
         })
-        await foodModel.findOneAndUpdate({ _id: foodId }, { $inc: { likesCount: -1 } })
+        await foodModel.findOneAndUpdate({ _id: foodId }, { $inc: { likesCount: -1 }, $max: { likesCount: 0 } })
         return res.status(200).json({ message: 'Food unliked successfully', liked: false })
     }
     
@@ -138,7 +146,7 @@ async function saveFood(req, res) {
             food: foodId,
             user: user._id
         })
-        await foodModel.findOneAndUpdate({ _id: foodId }, { $inc: { savedCount: -1 } })
+        await foodModel.findOneAndUpdate({ _id: foodId }, { $inc: { savedCount: -1 }, $max: { savedCount: 0 } })
         return res.status(200).json({ message: 'Food unsaved successfully', saved: false })
     }
     

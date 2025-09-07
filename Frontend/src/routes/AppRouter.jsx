@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ROUTES } from "./routeConfig";
+import PrivateRoute from "../shared/components/auth/PrivateRoute";
 
 // Auth Pages
 import UserLoginPage from "../features/auth/pages/UserLoginPage";
@@ -44,8 +45,8 @@ const AppRouter = () => {
       <Routes>
         {/* Home Routes */}
         <Route path={ROUTES.HOME} element={<HomePage />} />
-        <Route path={ROUTES.SAVED} element={<SavedPage />} />
-        <Route path={ROUTES.USER_SAVED_VIDEOS} element={<UserSavedVideosPage />} />
+        <Route path={ROUTES.SAVED} element={<PrivateRoute><SavedPage /></PrivateRoute>} />
+        <Route path={ROUTES.USER_SAVED_VIDEOS} element={<PrivateRoute><UserSavedVideosPage /></PrivateRoute>} />
         
         {/* Auth Routes */}
         <Route path={ROUTES.USER_LOGIN} element={<UserLoginPage />} />
@@ -62,15 +63,15 @@ const AppRouter = () => {
         <Route path={ROUTES.FOOD_PARTNER_VIDEOS} element={<FoodPartnerVideosPage />} />
         
         {/* Checkout Routes */}
-        <Route path={ROUTES.CHECKOUT} element={<CheckoutPage />} />
-        <Route path={ROUTES.PAYMENT} element={<PaymentPage />} />
+        <Route path={ROUTES.CHECKOUT} element={<PrivateRoute><CheckoutPage /></PrivateRoute>} />
+        <Route path={ROUTES.PAYMENT} element={<PrivateRoute><PaymentPage /></PrivateRoute>} />
         
         {/* Order Routes */}
-        <Route path={ROUTES.USER_ORDERS} element={<UserOrdersPage />} />
-        <Route path={ROUTES.ORDER_DETAIL} element={<OrderDetailPage />} />
+        <Route path={ROUTES.USER_ORDERS} element={<PrivateRoute><UserOrdersPage /></PrivateRoute>} />
+        <Route path={ROUTES.ORDER_DETAIL} element={<PrivateRoute><OrderDetailPage /></PrivateRoute>} />
         
         {/* User Routes */}
-        <Route path={ROUTES.USER_DASHBOARD} element={<UserDashboardPage />} />
+        <Route path={ROUTES.USER_DASHBOARD} element={<PrivateRoute><UserDashboardPage /></PrivateRoute>} />
         
         {/* 404 Route */}
         <Route path="*" element={<NotFoundPage />} />

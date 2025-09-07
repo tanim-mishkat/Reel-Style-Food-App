@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { orderService } from "../../../shared/services/api";
 import BottomNav from "../../../shared/components/layout/BottomNav/BottomNav";
 
 const UserOrdersPage = () => {
@@ -11,9 +11,7 @@ const UserOrdersPage = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/orders/user', {
-          withCredentials: true
-        });
+        const response = await orderService.getUserOrders();
         setOrders(response.data.orders || []);
       } catch (error) {
         console.error('Failed to fetch orders');

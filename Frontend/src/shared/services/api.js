@@ -35,6 +35,7 @@ export const authService = {
 // Food Partner Service
 export const foodPartnerService = {
   getFoodPartnerById: (id) => api.get(`/food-partner/${id}`),
+  getFoodPartnerBySlug: (slug) => api.get(`/food-partner/restaurant/${slug}`),
   getFoodPartnerVideos: (id) => api.get(`/food-partner/${id}/videos`),
   getMyProfile: () => api.get('/food-partner/me'),
   updateMyProfile: (data) => api.patch('/food-partner/me', data),
@@ -62,4 +63,5 @@ export const orderService = {
 // Review Service
 export const reviewService = {
   createReview: (data) => api.post('/reviews', data),
+  getPartnerReviews: (id) => api.get(`/reviews/partner/${id}`),
 };

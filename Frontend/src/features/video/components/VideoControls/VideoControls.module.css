@@ -1,35 +1,34 @@
 .videoControls {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 2;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 3;
 }
 
-.muteBtn {
-  background: rgba(0, 0, 0, 0.45);
-  border: none;
-  color: var(--text-on-dark);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
-  transition: all 200ms ease;
-}
-
-.muteBtn:hover {
+.controlButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   background: rgba(0, 0, 0, 0.6);
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
 }
 
-.muteBtn svg {
-  width: 28px;
-  height: 28px;
+.controlButton:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: scale(1.05);
 }
 
-@media (min-width: 768px) {
-  .videoControls {
-    top: 16px;
-    right: 16px;
-  }
+.controlButton svg {
+  width: 20px;
+  height: 20px;
 }

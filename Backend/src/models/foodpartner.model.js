@@ -18,12 +18,17 @@ const foodPartnerSchema = new mongoose.Schema({
         required: true
     },
     phone: {
-        type: Number,
+        type: String,
         required: true
     },
     address: {
         type: String,
         required: true
+    },
+    slug: {
+        type: String,
+        unique: true,
+        sparse: true
     }
 },
     { timestamps: true }

@@ -31,4 +31,8 @@ app.use('/api/reviews', reviewRoutes)
 app.use('/api/push', pushRoutes)
 app.use('/api/notifications', notificationRoutes)
 
+// Global error handler
+const errorHandler = require('./middleware/error.middleware.js')
+app.use(errorHandler)
+
 module.exports = app

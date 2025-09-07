@@ -6,7 +6,17 @@ const optionalAuthMiddleware = require('../middleware/optional-auth.middleware.j
 const multer = require('multer')
 
 const upload = multer({
-    storage: multer.memoryStorage()
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 50 * 1024 * 1024 // 50MB
+    },
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('video/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only video files are allowed'), false);
+        }
+    }
 })
 
 const router = express.Router()

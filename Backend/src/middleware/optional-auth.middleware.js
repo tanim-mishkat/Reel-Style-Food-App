@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 const userModel = require('../models/user.model.js')
 
 async function optionalAuthUserMiddleware(req, res, next) {
-    const token = req.cookies.token
+    const token = req.cookies.user_token
 
     if (!token) {
         req.user = null
@@ -11,8 +11,12 @@ async function optionalAuthUserMiddleware(req, res, next) {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        const user = await userModel.findById(decoded.id)
-        req.user = user
+        if (decoded.role === 'user') {
+            const user = await userModel.findById(decoded.id)
+            req.user = user
+        } else {
+            req.user = null
+        }
     } catch (error) {
         req.user = null
     }

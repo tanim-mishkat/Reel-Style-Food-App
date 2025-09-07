@@ -7,6 +7,7 @@ import VideoControls from "../../video/components/VideoControls/VideoControls";
 import VideoActions from "../../video/components/VideoActions/VideoActions";
 import VideoInfo from "../../video/components/VideoInfo/VideoInfo";
 import VideoComments from "../../video/components/VideoComments/VideoComments";
+import VideoProgressBar from "../../video/components/VideoProgressBar/VideoProgressBar";
 import BottomNav from "../../../shared/components/layout/BottomNav/BottomNav";
 import styles from "./HomePage.module.css";
 
@@ -81,6 +82,10 @@ const HomePage = () => {
             onTimeUpdate={() => handleTimeUpdate(video._id)}
             onLoadedMetadata={() => handleLoadedMetadata(video._id)}
             onVideoClick={() => handleVideoClick(video._id)}
+          />
+          <VideoProgressBar
+            currentTime={currentTimes[video._id] || 0}
+            duration={durations[video._id] || 0}
           />
           <div className={styles.videoOverlay}>
             <VideoControls

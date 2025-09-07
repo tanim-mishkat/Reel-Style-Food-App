@@ -20,6 +20,23 @@ async function getFoodPartnerById(req, res) {
     })
 }
 
+async function getFoodPartnerBySlug(req, res) {
+    const { slug } = req.params
+
+    const foodPartner = await foodPartnerModel.findOne({ slug })
+    if (!foodPartner) {
+        return res.status(404).json({ message: 'Food partner not found' })
+    }
+    const foodItemsByFoodPartner = await foodModel.find({ foodPartner: foodPartner._id })
+    res.status(200).json({
+        message: 'Food partner found successfully',
+        foodPartner: {
+            ...foodPartner.toObject(),
+            foodItems: foodItemsByFoodPartner
+        }
+    })
+}
+
 async function getMyProfile(req, res) {
     const foodPartner = req.foodPartner
     const foodItemsByFoodPartner = await foodModel.find({ foodPartner: foodPartner._id })
@@ -91,4 +108,4 @@ async function getFoodPartnerVideos(req, res) {
     res.status(200).json({ message: 'Food partner videos fetched successfully', foodItems: foodItemsWithStatus })
 }
 
-module.exports = { getFoodPartnerById, getMyProfile, updateMyProfile, getFoodPartnerVideos }
+module.exports = { getFoodPartnerById, getFoodPartnerBySlug, getMyProfile, updateMyProfile, getFoodPartnerVideos }

@@ -24,4 +24,8 @@ router.get('/:id/videos',
     foodPartnerController.getFoodPartnerVideos
 )
 
+router.get('/restaurant/:slug',
+    foodPartnerController.getFoodPartnerBySlug
+)
+
 module.exports = router

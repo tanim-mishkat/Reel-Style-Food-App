@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { ROUTES } from "../../routes/routeConfig";
-import { menuService } from "../../shared/services/api";
+import { menuService, foodPartnerService, reviewService } from "../../shared/services/api";
 import { useCart } from "../../shared/contexts/CartContext";
 import CartIcon from "../../shared/components/ui/CartIcon/CartIcon";
 import "./Profile.css";
@@ -22,17 +21,14 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/api/food-partner/${id}`,
-          { withCredentials: true }
-        );
+        const response = await foodPartnerService.getFoodPartnerById(id);
         setProfile(response.data.foodPartner);
         setVideos(response.data.foodPartner.foodItems || []);
         
         const menuResponse = await menuService.getMenuItems(id);
         setMenuItems(menuResponse.data.menuItems);
         
-        const reviewResponse = await axios.get(`http://localhost:3000/api/reviews/partner/${id}`);
+        const reviewResponse = await reviewService.getPartnerReviews(id);
         setReviewStats(reviewResponse.data);
         
         setLoading(false);
@@ -129,7 +125,7 @@ const Profile = () => {
                 <div className="post-overlay">
                   <div className="overlay-content">
                     <h4 className="video-title">{video.name}</h4>
-                    <span className="post-views">❤️ {video.likes || 0}</span>
+                    <span className="post-views">❤️ {video.likesCount || 0}</span>
                   </div>
                 </div>
               </div>
@@ -165,14 +161,19 @@ const Profile = () => {
                     disabled={!item.isAvailable}
                     onClick={() => {
                       console.log('Adding item:', item);
-                      addItem({
-                        id: item._id,
-                        name: item.name,
-                        price: item.price,
-                        partnerId: id,
-                        partnerName: profile.fullName
-                      });
-                      alert(`Added ${item.name} to cart!`);
+                      try {
+                        addItem({
+                          id: item._id,
+                          name: item.name,
+                          price: item.price,
+                          partnerId: id,
+                          partnerName: profile.fullName
+                        });
+                        alert(`Added ${item.name} to cart!`);
+                      } catch (error) {
+                        // If not authenticated, redirect to login
+                        navigate('/auth/user/login');
+                      }
                     }}
                   >
                     Add to Cart
