@@ -32,6 +32,8 @@ export const foodService = {
   createFood: (formData) => api.post('/food', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
+  updateFood: (id, data) => api.patch(`/food/${id}`, data),
+  deleteFood: (id) => api.delete(`/food/${id}`),
   addComment: (foodId, text, parent) => api.post('/food/comment', { foodId, text, parent }),
   getComments: (foodId) => api.get(`/food/${foodId}/comments`),
   deleteComment: (commentId) => api.delete(`/food/comment/${commentId}`),

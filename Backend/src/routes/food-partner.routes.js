@@ -19,13 +19,15 @@ router.get('/restaurant/:slug',
     foodPartnerController.getFoodPartnerBySlug
 )
 
-router.get('/:id',
-    foodPartnerController.getFoodPartnerById
-)
-
+// specific videos route must come before the generic '/:id' to avoid
+// interpreting path segments like 'dashboard' as an ObjectId
 router.get('/:id/videos',
     optionalAuthMiddleware.optionalAuthUserMiddleware,
     foodPartnerController.getFoodPartnerVideos
+)
+
+router.get('/:id',
+    foodPartnerController.getFoodPartnerById
 )
 
 module.exports = router

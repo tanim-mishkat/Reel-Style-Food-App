@@ -10,22 +10,30 @@ const Input = ({
   placeholder,
   required,
 }) => {
+  const hasValue =
+    value !== undefined && value !== null && String(value).length > 0;
+
   return (
     <div className={styles.formGroup}>
-      {label && (
-        <label htmlFor={id} className={styles.formLabel}>
-          {label}
-        </label>
-      )}
-      <input
-        id={id}
-        type={type}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        required={required}
-        className={styles.formInput}
-      />
+      <div className={styles.floatingLabelWrap}>
+        <input
+          id={id}
+          type={type}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder || " "}
+          required={required}
+          className={styles.formInput}
+        />
+        {label && (
+          <label
+            htmlFor={id}
+            className={`${styles.formLabel} ${hasValue ? styles.shrink : ""}`}
+          >
+            {label}
+          </label>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,41 +1,54 @@
 .formGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  width: 100%;
 }
 
-.formLabel {
-  font-size: var(--text-xs);
-  font-weight: 600;
-  color: var(--text-secondary);
-  line-height: 1;
+/* floating label wrapper */
+.floatingLabelWrap {
+  position: relative;
+  width: 100%;
 }
 
 .formInput {
-  height: 48px;
+  height: 44px;
   width: 100%;
-  border-radius: var(--radius-sm);
+  border-radius: 10px;
   border: 1px solid var(--border);
   background-color: var(--surface-light);
-  padding: 12px 14px;
-  font-size: var(--text-lg);
+  padding: 12px 12px 12px 12px;
+  font-size: 16px;
   color: var(--text-primary);
-  transition: all 200ms ease;
+  transition: all 180ms ease;
   outline: none;
   font-family: var(--font-family);
 }
 
 .formInput::placeholder {
-  color: var(--text-placeholder);
+  color: transparent; /* Use floating label instead */
 }
 
 .formInput:focus {
   border-color: var(--primary);
-  outline: 2px solid var(--primary);
-  outline-offset: 1px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
-.formInput:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 1px;
+.formLabel {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: all 160ms ease;
+  font-size: 16px;
+  color: var(--text-secondary);
+  pointer-events: none;
+  background: transparent;
+  padding: 0 6px;
+}
+
+.formLabel.shrink,
+.formInput:focus + .formLabel {
+  top: -8px;
+  transform: none;
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: var(--surface-light);
 }
