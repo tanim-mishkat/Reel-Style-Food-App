@@ -17,7 +17,7 @@ const FoodPartnerVideos = () => {
   const [videos, setVideos] = useState([]);
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [activeVideoId, setActiveVideoId] = useState(null);
-  
+
   const {
     containerRef,
     videoRefs,
@@ -29,16 +29,17 @@ const FoodPartnerVideos = () => {
     toggleMute,
     handleTimeUpdate,
     handleLoadedMetadata,
-    handleSeek
+    handleSeek,
   } = useVideoPlayer(videos);
-  
+
   const {
     likedVideos,
     savedVideos,
     videoCounts,
     initializeVideoStates,
     handleLike,
-    handleSave
+    handleSave,
+    handleCommentAdded,
   } = useVideoActions();
 
   useEffect(() => {
@@ -52,7 +53,7 @@ const FoodPartnerVideos = () => {
         console.error("Error fetching partner videos:", err);
       }
     };
-    
+
     fetchVideos();
   }, [id, initializeVideoStates]);
 
@@ -90,6 +91,7 @@ const FoodPartnerVideos = () => {
               isSaved={savedVideos[video._id]}
               likesCount={videoCounts[video._id]?.likes || 0}
               savesCount={videoCounts[video._id]?.saves || 0}
+              commentsCount={videoCounts[video._id]?.comments || 0}
               onLike={handleLike}
               onSave={handleSave}
               onComment={handleComment}
@@ -106,6 +108,9 @@ const FoodPartnerVideos = () => {
         videoId={activeVideoId}
         isOpen={commentsOpen}
         onClose={() => setCommentsOpen(false)}
+        onCommentPosted={(delta) =>
+          handleCommentAdded(activeVideoId, delta ?? 1)
+        }
       />
 
       <BottomNav />

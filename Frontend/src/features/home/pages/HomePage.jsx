@@ -16,7 +16,7 @@ const HomePage = () => {
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [activeVideoId, setActiveVideoId] = useState(null);
   const [showTimeline, setShowTimeline] = useState({});
-  
+
   const {
     containerRef,
     videoRefs,
@@ -38,6 +38,7 @@ const HomePage = () => {
     initializeVideoStates,
     handleLike,
     handleSave,
+    handleCommentAdded,
   } = useVideoActions();
 
   useEffect(() => {
@@ -47,7 +48,7 @@ const HomePage = () => {
         const foodItems = response.data.foodItems;
         setVideos(foodItems);
         initializeVideoStates(foodItems);
-      } catch (err) {
+      } catch {
         // Handle error silently
       }
     };
@@ -61,9 +62,9 @@ const HomePage = () => {
   };
 
   const handleDescriptionClick = (videoId) => {
-    setShowTimeline(prev => ({
+    setShowTimeline((prev) => ({
       ...prev,
-      [videoId]: !prev[videoId]
+      [videoId]: !prev[videoId],
     }));
   };
 
@@ -100,14 +101,15 @@ const HomePage = () => {
               isSaved={savedVideos[video._id]}
               likesCount={videoCounts[video._id]?.likes || 0}
               savesCount={videoCounts[video._id]?.saves || 0}
+              commentsCount={videoCounts[video._id]?.comments || 0}
               onLike={handleLike}
               onSave={handleSave}
               onComment={handleComment}
             />
             <div className={styles.videoInfoContainer}>
               <h3 className={styles.videoTitle}>{video.name}</h3>
-              <VideoInfo 
-                video={video} 
+              <VideoInfo
+                video={video}
                 onDescriptionClick={() => handleDescriptionClick(video._id)}
               />
               {showTimeline[video._id] && (
@@ -131,6 +133,9 @@ const HomePage = () => {
         videoId={activeVideoId}
         isOpen={commentsOpen}
         onClose={() => setCommentsOpen(false)}
+        onCommentPosted={(delta) =>
+          handleCommentAdded(activeVideoId, delta ?? 1)
+        }
       />
 
       <BottomNav />

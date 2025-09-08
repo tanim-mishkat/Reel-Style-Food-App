@@ -10,7 +10,7 @@ async function createFood(req, res, next) {
         if (!req.file) {
             return res.status(400).json({ message: 'Video file is required' });
         }
-        
+
         const fileUploadResult = await storageService.uploadFile(req.file.buffer, uuid())
 
         const foodItem = await foodModel.create({
@@ -74,20 +74,21 @@ async function getFoodItems(req, res) {
     const page = parseInt(req.query.page) || 1
     const limit = Math.min(parseInt(req.query.limit) || 12, 20)
     const skip = (page - 1) * limit
-    
+
     const foodItems = await foodModel.find({}).sort({ createdAt: -1 }).skip(skip).limit(limit)
     const user = req.user
-    
+
     let foodItemsWithStatus
-    
+
     if (user) {
         // Get user's likes and saves
         const userLikes = await likeModel.find({ user: user._id }).select('food')
         const userSaves = await saveModel.find({ user: user._id }).select('food')
-        
+
+
         const likedFoodIds = userLikes.map(like => like.food.toString())
         const savedFoodIds = userSaves.map(save => save.food.toString())
-        
+
         // Add user status to each food item
         foodItemsWithStatus = foodItems.map(item => ({
             ...item.toObject(),
@@ -102,7 +103,7 @@ async function getFoodItems(req, res) {
             isSaved: false
         }))
     }
-    
+
     res.status(200).json({ message: 'Food Items fetched successfully', foodItems: foodItemsWithStatus })
 }
 
@@ -114,7 +115,7 @@ async function likeFood(req, res) {
         food: foodId,
         user: user._id
     })
-    
+
     if (isAlreadyLiked) {
         await likeModel.deleteOne({
             food: foodId,
@@ -124,7 +125,7 @@ async function likeFood(req, res) {
         await foodModel.findOneAndUpdate({ _id: foodId, likesCount: { $lt: 0 } }, { $set: { likesCount: 0 } })
         return res.status(200).json({ message: 'Food unliked successfully', liked: false })
     }
-    
+
     await foodModel.findOneAndUpdate({ _id: foodId }, { $inc: { likesCount: 1 } })
     await likeModel.create({
         food: foodId,
@@ -141,7 +142,7 @@ async function saveFood(req, res) {
         food: foodId,
         user: user._id
     })
-    
+
     if (isAlreadySaved) {
         await saveModel.deleteOne({
             food: foodId,
@@ -151,7 +152,7 @@ async function saveFood(req, res) {
         await foodModel.findOneAndUpdate({ _id: foodId, savedCount: { $lt: 0 } }, { $set: { savedCount: 0 } })
         return res.status(200).json({ message: 'Food unsaved successfully', saved: false })
     }
-    
+
     await saveModel.create({
         food: foodId,
         user: user._id
@@ -170,21 +171,52 @@ async function getSavedFoodItems(req, res) {
 async function addComment(req, res) {
     const { foodId, text } = req.body
     const user = req.user
-    
+
     const comment = await commentModel.create({
         user: user._id,
         food: foodId,
         text
     })
-    
+
+    // increment commentsCount on the food item
+    await foodModel.findByIdAndUpdate(foodId, { $inc: { commentsCount: 1 } })
+    // ensure commentsCount not negative (defensive)
+    await foodModel.findOneAndUpdate({ _id: foodId, commentsCount: { $lt: 0 } }, { $set: { commentsCount: 0 } })
+
     const populatedComment = await commentModel.findById(comment._id).populate('user', 'fullName')
-    res.status(201).json({ message: 'Comment added successfully', comment: populatedComment })
+    const updatedFood = await foodModel.findById(foodId).select('commentsCount')
+    res.status(201).json({ message: 'Comment added successfully', comment: populatedComment, commentsCount: updatedFood.commentsCount })
 }
 
 async function getComments(req, res) {
     const { foodId } = req.params
     const comments = await commentModel.find({ food: foodId }).populate('user', 'fullName').sort({ createdAt: -1 })
     res.status(200).json({ message: 'Comments fetched successfully', comments })
+}
+
+async function deleteComment(req, res) {
+    const { commentId } = req.params
+    const user = req.user
+
+    const comment = await commentModel.findById(commentId)
+    if (!comment) {
+        return res.status(404).json({ message: 'Comment not found' })
+    }
+
+    // Only the comment owner can delete their comment
+    if (comment.user.toString() !== user._id.toString()) {
+        return res.status(403).json({ message: 'Forbidden: cannot delete this comment' })
+    }
+
+    const foodId = comment.food
+    await commentModel.findByIdAndDelete(commentId)
+
+    // decrement commentsCount on the food item
+    await foodModel.findByIdAndUpdate(foodId, { $inc: { commentsCount: -1 } })
+    await foodModel.findOneAndUpdate({ _id: foodId, commentsCount: { $lt: 0 } }, { $set: { commentsCount: 0 } })
+
+    const updatedFood = await foodModel.findById(foodId).select('commentsCount')
+    res.status(200).json({ message: 'Comment deleted successfully', commentsCount: updatedFood.commentsCount })
 }
 
 module.exports = {
@@ -196,6 +228,8 @@ module.exports = {
     saveFood,
     getSavedFoodItems,
     addComment,
-    getComments
+    getComments,
+    deleteComment
 }
+
 

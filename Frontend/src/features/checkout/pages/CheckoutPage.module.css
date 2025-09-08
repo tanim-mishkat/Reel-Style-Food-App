@@ -1,0 +1,109 @@
+.checkoutWrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: calc(var(--spacing-md) + var(--nav-height)) var(--spacing-md)
+    var(--spacing-md);
+  /* Ensure content doesn't sit under a fixed nav */
+  min-height: calc(100vh - var(--nav-height));
+  background: var(--surface-light);
+}
+
+.emptyState {
+  min-height: calc(100vh - var(--nav-height));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+  text-align: center;
+  background: var(--surface-light);
+}
+
+.emptyEmoji {
+  font-size: 4rem;
+  margin-bottom: var(--spacing-lg);
+  opacity: 0.3;
+}
+
+.emptyTitle {
+  font-size: var(--text-h2);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.emptyText {
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-lg);
+  font-size: var(--text-body);
+}
+
+.browseBtn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--radius-md);
+  font-size: var(--text-body);
+  font-weight: 600;
+  cursor: pointer;
+  min-height: var(--touch-target);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.25);
+}
+
+.header {
+  padding: var(--spacing-lg) 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--spacing-lg);
+}
+
+.title {
+  font-size: var(--text-h1);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.card {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.orderRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.section {
+  margin-bottom: 2rem;
+}
+
+.deliveryOptions {
+  display: flex;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.inputLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.continueBtnWrapper {
+  width: 100%;
+}
+
+.fullWidthBtn {
+  width: 100%;
+}

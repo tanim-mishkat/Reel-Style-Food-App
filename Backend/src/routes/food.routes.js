@@ -67,4 +67,9 @@ router.get('/:foodId/comments',
     foodController.getComments
 )
 
+router.delete('/comment/:commentId',
+    authMiddleware.authUserMiddleware,
+    foodController.deleteComment
+)
+
 module.exports = router

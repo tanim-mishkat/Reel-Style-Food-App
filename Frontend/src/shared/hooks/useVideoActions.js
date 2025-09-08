@@ -10,16 +10,17 @@ export const useVideoActions = () => {
     const counts = {};
     const likes = {};
     const saves = {};
-    
+
     foodItems.forEach((item) => {
       counts[item._id] = {
         likes: item.likesCount || 0,
         saves: item.savedCount || 0,
+        comments: item.commentsCount || 0,
       };
       likes[item._id] = item.isLiked || false;
       saves[item._id] = item.isSaved || false;
     });
-    
+
     setVideoCounts(counts);
     setLikedVideos(likes);
     setSavedVideos(saves);
@@ -29,12 +30,12 @@ export const useVideoActions = () => {
     try {
       const response = await foodService.likeFood(videoId);
       const isLiked = response.data.liked;
-      
+
       setLikedVideos(prev => ({
         ...prev,
         [videoId]: isLiked
       }));
-      
+
       setVideoCounts(prev => ({
         ...prev,
         [videoId]: {
@@ -42,7 +43,7 @@ export const useVideoActions = () => {
           likes: prev[videoId].likes + (isLiked ? 1 : -1)
         }
       }));
-    } catch (err) {
+    } catch {
       // Handle error silently
     }
   };
@@ -51,12 +52,12 @@ export const useVideoActions = () => {
     try {
       const response = await foodService.saveFood(videoId);
       const isSaved = response.data.saved;
-      
+
       setSavedVideos(prev => ({
         ...prev,
         [videoId]: isSaved
       }));
-      
+
       setVideoCounts(prev => ({
         ...prev,
         [videoId]: {
@@ -64,9 +65,19 @@ export const useVideoActions = () => {
           saves: prev[videoId].saves + (isSaved ? 1 : -1)
         }
       }));
-    } catch (err) {
+    } catch {
       // Handle error silently
     }
+  };
+
+  const handleCommentAdded = (videoId, delta = 1) => {
+    setVideoCounts(prev => ({
+      ...prev,
+      [videoId]: {
+        ...prev[videoId],
+        comments: (prev[videoId]?.comments || 0) + delta
+      }
+    }));
   };
 
   return {
@@ -76,5 +87,6 @@ export const useVideoActions = () => {
     initializeVideoStates,
     handleLike,
     handleSave
+    , handleCommentAdded
   };
 };

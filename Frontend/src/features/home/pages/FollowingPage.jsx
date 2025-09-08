@@ -17,7 +17,7 @@ const FollowingPage = () => {
   const [videos, setVideos] = useState([]);
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [activeVideoId, setActiveVideoId] = useState(null);
-  
+
   const {
     containerRef,
     videoRefs,
@@ -38,6 +38,7 @@ const FollowingPage = () => {
     initializeVideoStates,
     handleLike,
     handleSave,
+    handleCommentAdded,
   } = useVideoActions();
 
   const [followedPartners, setFollowedPartners] = useState([]);
@@ -48,13 +49,13 @@ const FollowingPage = () => {
       try {
         const [feedResponse, partnersResponse] = await Promise.all([
           followService.getFollowedFeed(),
-          followService.getFollowedPartners()
+          followService.getFollowedPartners(),
         ]);
         const foodItems = feedResponse.data.foodItems;
         setVideos(foodItems);
         setFollowedPartners(partnersResponse.data.partners);
         initializeVideoStates(foodItems);
-      } catch (err) {
+      } catch {
         // Handle error silently
       } finally {
         setLoading(false);
@@ -71,14 +72,23 @@ const FollowingPage = () => {
 
   if (loading) {
     return (
-      <div style={{ 
-        minHeight: "100vh", 
-        display: "flex", 
-        alignItems: "center", 
-        justifyContent: "center",
-        background: "var(--surface-light)"
-      }}>
-        <div style={{ color: "var(--text-secondary)", fontSize: "var(--text-body)" }}>Loading...</div>
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "var(--surface-light)",
+        }}
+      >
+        <div
+          style={{
+            color: "var(--text-secondary)",
+            fontSize: "var(--text-body)",
+          }}
+        >
+          Loading...
+        </div>
       </div>
     );
   }
@@ -86,34 +96,49 @@ const FollowingPage = () => {
   // Not following anyone
   if (followedPartners.length === 0) {
     return (
-      <div style={{ 
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "var(--spacing-xl)",
-        textAlign: "center",
-        background: "var(--surface-light)"
-      }}>
-        <div style={{
-          fontSize: "4rem",
-          marginBottom: "var(--spacing-lg)",
-          opacity: "0.3"
-        }}>👥</div>
-        <h2 style={{
-          fontSize: "var(--text-h2)",
-          fontWeight: "600",
-          color: "var(--text-primary)",
-          marginBottom: "var(--spacing-sm)"
-        }}>You're not following anyone yet</h2>
-        <p style={{
-          color: "var(--text-secondary)",
-          marginBottom: "var(--spacing-lg)",
-          fontSize: "var(--text-body)",
-          maxWidth: "300px"
-        }}>Discover amazing restaurants and follow them to see their latest food videos here!</p>
-        <button 
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "var(--spacing-xl)",
+          textAlign: "center",
+          background: "var(--surface-light)",
+        }}
+      >
+        <div
+          style={{
+            fontSize: "4rem",
+            marginBottom: "var(--spacing-lg)",
+            opacity: "0.3",
+          }}
+        >
+          👥
+        </div>
+        <h2
+          style={{
+            fontSize: "var(--text-h2)",
+            fontWeight: "600",
+            color: "var(--text-primary)",
+            marginBottom: "var(--spacing-sm)",
+          }}
+        >
+          You're not following anyone yet
+        </h2>
+        <p
+          style={{
+            color: "var(--text-secondary)",
+            marginBottom: "var(--spacing-lg)",
+            fontSize: "var(--text-body)",
+            maxWidth: "300px",
+          }}
+        >
+          Discover amazing restaurants and follow them to see their latest food
+          videos here!
+        </p>
+        <button
           onClick={() => navigate("/")}
           style={{
             background: "var(--primary)",
@@ -126,7 +151,7 @@ const FollowingPage = () => {
             cursor: "pointer",
             minHeight: "var(--touch-target)",
             boxShadow: "0 4px 12px rgba(255, 107, 53, 0.25)",
-            transition: "all 0.3s ease"
+            transition: "all 0.3s ease",
           }}
         >
           Discover Restaurants
@@ -139,34 +164,49 @@ const FollowingPage = () => {
   // Following but no videos
   if (videos.length === 0) {
     return (
-      <div style={{ 
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "var(--spacing-xl)",
-        textAlign: "center",
-        background: "var(--surface-light)"
-      }}>
-        <div style={{
-          fontSize: "4rem",
-          marginBottom: "var(--spacing-lg)",
-          opacity: "0.3"
-        }}>🎬</div>
-        <h2 style={{
-          fontSize: "var(--text-h2)",
-          fontWeight: "600",
-          color: "var(--text-primary)",
-          marginBottom: "var(--spacing-sm)"
-        }}>No videos yet</h2>
-        <p style={{
-          color: "var(--text-secondary)",
-          marginBottom: "var(--spacing-lg)",
-          fontSize: "var(--text-body)",
-          maxWidth: "300px"
-        }}>The restaurants you follow haven't uploaded any videos yet. Check back later or discover more restaurants!</p>
-        <button 
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "var(--spacing-xl)",
+          textAlign: "center",
+          background: "var(--surface-light)",
+        }}
+      >
+        <div
+          style={{
+            fontSize: "4rem",
+            marginBottom: "var(--spacing-lg)",
+            opacity: "0.3",
+          }}
+        >
+          🎬
+        </div>
+        <h2
+          style={{
+            fontSize: "var(--text-h2)",
+            fontWeight: "600",
+            color: "var(--text-primary)",
+            marginBottom: "var(--spacing-sm)",
+          }}
+        >
+          No videos yet
+        </h2>
+        <p
+          style={{
+            color: "var(--text-secondary)",
+            marginBottom: "var(--spacing-lg)",
+            fontSize: "var(--text-body)",
+            maxWidth: "300px",
+          }}
+        >
+          The restaurants you follow haven't uploaded any videos yet. Check back
+          later or discover more restaurants!
+        </p>
+        <button
           onClick={() => navigate("/")}
           style={{
             background: "var(--primary)",
@@ -179,7 +219,7 @@ const FollowingPage = () => {
             cursor: "pointer",
             minHeight: "var(--touch-target)",
             boxShadow: "0 4px 12px rgba(255, 107, 53, 0.25)",
-            transition: "all 0.3s ease"
+            transition: "all 0.3s ease",
           }}
         >
           Explore More
@@ -218,6 +258,7 @@ const FollowingPage = () => {
               isSaved={savedVideos[video._id]}
               likesCount={videoCounts[video._id]?.likes || 0}
               savesCount={videoCounts[video._id]?.saves || 0}
+              commentsCount={videoCounts[video._id]?.comments || 0}
               onLike={handleLike}
               onSave={handleSave}
               onComment={handleComment}
@@ -234,6 +275,9 @@ const FollowingPage = () => {
         videoId={activeVideoId}
         isOpen={commentsOpen}
         onClose={() => setCommentsOpen(false)}
+        onCommentPosted={(delta) =>
+          handleCommentAdded(activeVideoId, delta ?? 1)
+        }
       />
 
       <BottomNav />

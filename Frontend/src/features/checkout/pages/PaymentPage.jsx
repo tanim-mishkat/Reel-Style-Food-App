@@ -3,6 +3,7 @@ import { useCart } from "../../../shared/contexts/CartContext";
 import { useNavigate } from "react-router-dom";
 import { orderService } from "../../../shared/services/api";
 import Button from "../../../shared/components/ui/Button/Button";
+import styles from "./PaymentPage.module.css";
 
 const PaymentPage = () => {
   const { items, subtotal, clear } = useCart();
@@ -12,30 +13,32 @@ const PaymentPage = () => {
     try {
       const orderData = {
         restaurantId: items[0]?.partnerId,
-        items: items.map(item => ({
+        items: items.map((item) => ({
           foodId: item.id,
           name: item.name,
           qty: item.qty,
-          unitPrice: item.price
+          unitPrice: item.price,
         })),
         fulfillment: {
-          type: 'delivery',
-          address: 'Sample address'
-        }
+          type: "delivery",
+          address: "Sample address",
+        },
       };
-      
+
       const response = await orderService.createOrder(orderData);
       const orderId = response.data.order._id;
       clear();
-      
+
       // Trigger toast notification
-      window.dispatchEvent(new CustomEvent('showToast', { 
-        detail: '🍽️ Order placed successfully!' 
-      }));
-      
+      window.dispatchEvent(
+        new CustomEvent("showToast", {
+          detail: "🍽️ Order placed successfully!",
+        })
+      );
+
       alert("Payment successful! Order placed.");
       navigate(`/orders/${orderId}`);
-    } catch (error) {
+    } catch {
       alert("Failed to create order");
     }
   };
@@ -46,27 +49,25 @@ const PaymentPage = () => {
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "0 auto", padding: "2rem", textAlign: "center" }}>
+    <div className={styles.paymentWrapper}>
       <h1>Payment</h1>
-      
-      <div style={{ marginBottom: "2rem", padding: "1rem", border: "1px solid #ddd", borderRadius: "8px" }}>
+
+      <div className={styles.paymentCard}>
         <h3>Total Amount</h3>
-        <div style={{ fontSize: "2rem", fontWeight: "bold", color: "#16a34a" }}>
-          ${subtotal.toFixed(2)}
-        </div>
+        <div className={styles.totalAmount}>${subtotal.toFixed(2)}</div>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-        <Button 
+      <div className={styles.actions}>
+        <Button
           onClick={handleSuccess}
-          style={{ backgroundColor: "#16a34a", padding: "1rem" }}
+          className={`${styles.successBtn} ${styles.fullWidthBtn}`}
         >
           Simulate Success
         </Button>
-        
-        <Button 
+
+        <Button
           onClick={handleFail}
-          style={{ backgroundColor: "#dc2626", padding: "1rem" }}
+          className={`${styles.failBtn} ${styles.fullWidthBtn}`}
         >
           Simulate Fail
         </Button>

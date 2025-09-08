@@ -18,6 +18,7 @@ export const foodService = {
   }),
   addComment: (foodId, text) => api.post('/food/comment', { foodId, text }),
   getComments: (foodId) => api.get(`/food/${foodId}/comments`),
+  deleteComment: (commentId) => api.delete(`/food/comment/${commentId}`),
 };
 
 // Auth Service
