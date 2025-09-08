@@ -2,6 +2,9 @@ const foodModel = require('../models/food.model.js')
 const likeModel = require('../models/likes.model.js')
 const saveModel = require('../models/save.model.js')
 const commentModel = require('../models/comment.model.js')
+const commentLikeModel = require('../models/commentLike.model.js')
+const subscriptionModel = require('../models/subscription.model.js')
+const pushService = require('../services/push.service.js')
 const storageService = require('../services/storage.service.js')
 const { v4: uuid } = require('uuid')
 
@@ -169,29 +172,77 @@ async function getSavedFoodItems(req, res) {
 }
 
 async function addComment(req, res) {
-    const { foodId, text } = req.body
+    const { foodId, text, parent } = req.body
     const user = req.user
-
-    const comment = await commentModel.create({
+    const createData = {
         user: user._id,
         food: foodId,
         text
-    })
+    }
+    if (parent) createData.parent = parent
+
+    const comment = await commentModel.create(createData)
 
     // increment commentsCount on the food item
     await foodModel.findByIdAndUpdate(foodId, { $inc: { commentsCount: 1 } })
-    // ensure commentsCount not negative (defensive)
-    await foodModel.findOneAndUpdate({ _id: foodId, commentsCount: { $lt: 0 } }, { $set: { commentsCount: 0 } })
+    // if this is a reply, increment repliesCount on parent
+    if (parent) {
+        await commentModel.findByIdAndUpdate(parent, { $inc: { repliesCount: 1 } })
+    }
 
     const populatedComment = await commentModel.findById(comment._id).populate('user', 'fullName')
     const updatedFood = await foodModel.findById(foodId).select('commentsCount')
+
+    // If this comment is a reply, notify the parent comment user (if different)
+    try {
+        if (parent) {
+            const parentComment = await commentModel.findById(parent).populate('user', '_id fullName')
+            if (parentComment && parentComment.user && parentComment.user._id.toString() !== user._id.toString()) {
+                // find subscription for parent user
+                const sub = await subscriptionModel.findOne({ userId: parentComment.user._id })
+                if (sub) {
+                    const payload = {
+                        title: 'You were tagged in a reply',
+                        body: `${user.fullName || 'Someone'} replied: ${text.slice(0, 120)}`,
+                        data: { foodId, commentId: comment._id }
+                    }
+                    await pushService.sendNotification({ endpoint: sub.endpoint, keys: sub.keys }, payload)
+                }
+            }
+        }
+    } catch (err) {
+        // don't fail the request if notification fails
+        console.error('Failed to notify on reply:', err.message || err)
+    }
+
     res.status(201).json({ message: 'Comment added successfully', comment: populatedComment, commentsCount: updatedFood.commentsCount })
 }
 
 async function getComments(req, res) {
     const { foodId } = req.params
-    const comments = await commentModel.find({ food: foodId }).populate('user', 'fullName').sort({ createdAt: -1 })
-    res.status(200).json({ message: 'Comments fetched successfully', comments })
+    // Fetch all comments for the food and build a threaded structure (top-level comments with replies array)
+    const comments = await commentModel.find({ food: foodId }).populate('user', 'fullName').sort({ createdAt: 1 })
+
+    const byId = {}
+    comments.forEach(c => {
+        byId[c._id] = { ...c.toObject(), replies: [] }
+    })
+
+    const roots = []
+    comments.forEach(c => {
+        if (c.parent) {
+            const parent = byId[c.parent.toString()]
+            if (parent) parent.replies.push(byId[c._id])
+            else roots.push(byId[c._id])
+        } else {
+            roots.push(byId[c._id])
+        }
+    })
+
+    // return roots ordered newest-first
+    roots.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+
+    res.status(200).json({ message: 'Comments fetched successfully', comments: roots })
 }
 
 async function deleteComment(req, res) {
@@ -209,14 +260,55 @@ async function deleteComment(req, res) {
     }
 
     const foodId = comment.food
-    await commentModel.findByIdAndDelete(commentId)
 
-    // decrement commentsCount on the food item
-    await foodModel.findByIdAndUpdate(foodId, { $inc: { commentsCount: -1 } })
+    // collect comment ids to delete (the comment and all its descendant replies)
+    const toDelete = [comment._id.toString()]
+    const stack = [comment._id.toString()]
+    while (stack.length) {
+        const cur = stack.pop()
+        const children = await commentModel.find({ parent: cur }).select('_id')
+        children.forEach(ch => {
+            toDelete.push(ch._id.toString())
+            stack.push(ch._id.toString())
+        })
+    }
+
+    // delete likes tied to these comments
+    await commentLikeModel.deleteMany({ comment: { $in: toDelete } })
+
+    // delete comments
+    await commentModel.deleteMany({ _id: { $in: toDelete } })
+
+    // decrement counts accordingly
+    const deleteCount = toDelete.length
+    await foodModel.findByIdAndUpdate(foodId, { $inc: { commentsCount: -deleteCount } })
     await foodModel.findOneAndUpdate({ _id: foodId, commentsCount: { $lt: 0 } }, { $set: { commentsCount: 0 } })
+
+    // if this comment had a parent, decrement the parent's repliesCount by 1
+    if (comment.parent) {
+        await commentModel.findByIdAndUpdate(comment.parent, { $inc: { repliesCount: -1 } })
+        await commentModel.findOneAndUpdate({ _id: comment.parent, repliesCount: { $lt: 0 } }, { $set: { repliesCount: 0 } })
+    }
 
     const updatedFood = await foodModel.findById(foodId).select('commentsCount')
     res.status(200).json({ message: 'Comment deleted successfully', commentsCount: updatedFood.commentsCount })
+}
+
+async function likeComment(req, res) {
+    const { commentId } = req.body
+    const user = req.user
+
+    const existing = await commentLikeModel.findOne({ comment: commentId, user: user._id })
+    if (existing) {
+        await commentLikeModel.deleteOne({ _id: existing._id })
+        await commentModel.findByIdAndUpdate(commentId, { $inc: { likesCount: -1 } })
+        await commentModel.findOneAndUpdate({ _id: commentId, likesCount: { $lt: 0 } }, { $set: { likesCount: 0 } })
+        return res.status(200).json({ message: 'Comment unliked', liked: false })
+    }
+
+    await commentLikeModel.create({ comment: commentId, user: user._id })
+    await commentModel.findByIdAndUpdate(commentId, { $inc: { likesCount: 1 } })
+    res.status(201).json({ message: 'Comment liked', liked: true })
 }
 
 module.exports = {
@@ -229,7 +321,10 @@ module.exports = {
     getSavedFoodItems,
     addComment,
     getComments,
-    deleteComment
+    deleteComment,
+    likeComment
 }
+
+
 
 

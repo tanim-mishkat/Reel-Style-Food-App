@@ -7,6 +7,22 @@ const api = axios.create({
   withCredentials: true,
 });
 
+// Response interceptor to normalize errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response) {
+      const normalized = {
+        message: error.response.data?.message || error.message || 'Request failed',
+        status: error.response.status,
+        data: error.response.data,
+      };
+      return Promise.reject(normalized);
+    }
+    return Promise.reject({ message: error.message || 'Request failed', status: 0 });
+  }
+);
+
 // Food Service
 export const foodService = {
   getFoodItems: () => api.get('/food'),
@@ -16,9 +32,10 @@ export const foodService = {
   createFood: (formData) => api.post('/food', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
-  addComment: (foodId, text) => api.post('/food/comment', { foodId, text }),
+  addComment: (foodId, text, parent) => api.post('/food/comment', { foodId, text, parent }),
   getComments: (foodId) => api.get(`/food/${foodId}/comments`),
   deleteComment: (commentId) => api.delete(`/food/comment/${commentId}`),
+  likeComment: (commentId) => api.post('/food/comment/like', { commentId }),
 };
 
 // Auth Service

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { foodService } from "../../../shared/services/api";
+import { useLocation } from "react-router-dom";
 import { useVideoPlayer } from "../../../shared/hooks/useVideoPlayer";
 import { useVideoActions } from "../../../shared/hooks/useVideoActions";
 import VideoPlayer from "../../video/components/VideoPlayer/VideoPlayer";
@@ -17,6 +18,9 @@ const UserSavedVideosPage = () => {
   const [activeVideoId, setActiveVideoId] = useState(null);
   const [showTimeline, setShowTimeline] = useState({});
 
+  const location = useLocation();
+  const startVideoId = location?.state?.startVideoId || null;
+
   const {
     containerRef,
     videoRefs,
@@ -29,7 +33,7 @@ const UserSavedVideosPage = () => {
     handleTimeUpdate,
     handleLoadedMetadata,
     handleSeek,
-  } = useVideoPlayer(videos);
+  } = useVideoPlayer(videos, { startVideoId });
 
   const {
     likedVideos,

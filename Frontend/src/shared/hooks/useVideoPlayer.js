@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 
-export const useVideoPlayer = (videos) => {
+export const useVideoPlayer = (videos, options = {}) => {
   const containerRef = useRef(null);
   const videoRefs = useRef([]);
   const [mutedVideos, setMutedVideos] = useState({});
@@ -11,16 +11,31 @@ export const useVideoPlayer = (videos) => {
   const [savedTimes, setSavedTimes] = useState({});
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Auto-play first video when videos load
+  // Auto-play a start video (either provided by options.startVideoId) or the first video when videos load
   useEffect(() => {
     if (videos.length > 0 && !isInitialized) {
-      const firstVideo = videoRefs.current[videos[0]._id];
-      if (firstVideo) {
-        firstVideo.play();
+      const startVideoId = options.startVideoId || null;
+      let targetIndex = 0;
+      if (startVideoId) {
+        const idx = videos.findIndex((v) => v._id === startVideoId);
+        if (idx >= 0) targetIndex = idx;
+      }
+
+      const targetVideo = videoRefs.current[videos[targetIndex]._id];
+      if (targetVideo) {
+        // scroll container to the target video position
+        const container = containerRef.current;
+        const videoHeight = window.innerHeight;
+        if (container) {
+          container.scrollTo({ top: targetIndex * videoHeight, behavior: "auto" });
+        }
+        // play the target video
+        targetVideo.play();
+        setCurrentVideoIndex(targetIndex);
         setIsInitialized(true);
       }
     }
-  }, [videos, isInitialized]);
+  }, [videos, isInitialized, options.startVideoId]);
 
   useEffect(() => {
     const container = containerRef.current;

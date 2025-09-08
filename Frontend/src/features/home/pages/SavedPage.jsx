@@ -21,7 +21,7 @@ const SavedPage = () => {
         setLoading(false);
       }
     };
-    
+
     fetchSavedVideos();
   }, []);
 
@@ -50,7 +50,11 @@ const SavedPage = () => {
       <div className={styles.savedContent}>
         {savedVideos.length === 0 ? (
           <div className={styles.emptyState}>
-            <svg className={styles.emptyIcon} viewBox="0 0 24 24" fill="currentColor">
+            <svg
+              className={styles.emptyIcon}
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
               <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" />
             </svg>
             <h2>No saved videos yet</h2>
@@ -59,10 +63,14 @@ const SavedPage = () => {
         ) : (
           <div className={styles.savedGrid}>
             {savedVideos.map((video) => (
-              <div 
-                key={video._id} 
+              <div
+                key={video._id}
                 className={styles.savedVideoItem}
-                onClick={() => navigate(ROUTES.USER_SAVED_VIDEOS)}
+                onClick={() =>
+                  navigate(ROUTES.USER_SAVED_VIDEOS, {
+                    state: { startVideoId: video._id },
+                  })
+                }
               >
                 <video
                   src={video.video}

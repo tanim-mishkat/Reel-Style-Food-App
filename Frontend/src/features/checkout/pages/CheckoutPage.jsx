@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Input from "../../../shared/components/ui/Input/Input";
 import Button from "../../../shared/components/ui/Button/Button";
 import styles from "./CheckoutPage.module.css";
+import BottomNav from "../../../shared/components/layout/BottomNav/BottomNav";
 
 const CheckoutPage = () => {
   const { items, subtotal } = useCart();
@@ -30,6 +31,7 @@ const CheckoutPage = () => {
         <button className={styles.browseBtn} onClick={() => navigate("/")}>
           Start Browsing
         </button>
+        <BottomNav />
       </div>
     );
   }

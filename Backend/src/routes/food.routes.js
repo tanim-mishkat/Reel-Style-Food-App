@@ -62,6 +62,11 @@ router.post('/comment',
     foodController.addComment
 )
 
+router.post('/comment/like',
+    authMiddleware.authUserMiddleware,
+    foodController.likeComment
+)
+
 router.get('/:foodId/comments',
     authMiddleware.authUserMiddleware,
     foodController.getComments
