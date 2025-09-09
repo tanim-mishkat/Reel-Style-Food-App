@@ -11,7 +11,7 @@ const VideoComments = ({ videoId, isOpen, onClose, onCommentPosted }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState({ open: false, id: null });
   const [replyTo, setReplyTo] = useState(null);
-  const [replyText, setReplyText] = useState(""); 
+  const [replyText, setReplyText] = useState("");
   const [likedComments, setLikedComments] = useState({});
   const [replyError, setReplyError] = useState(null);
   const listRef = useRef(null);
@@ -184,124 +184,125 @@ const VideoComments = ({ videoId, isOpen, onClose, onCommentPosted }) => {
 
   if (!isOpen) return null;
 
-  const CommentItem = ({ comment, level = 0 }) => (
-    <div className={styles.commentCard} style={{ marginLeft: level * 14 }}>
-      <img
-        className={styles.avatar}
-        src={comment.user?.photoUrl || DEFAULT_AVATAR}
-        alt="avatar"
-        onError={(e) => {
-          e.target.onerror = null;
-          e.target.src = DEFAULT_AVATAR;
-        }}
-      />
-      <div className={styles.commentBody}>
-        <div className={styles.commentHeader}>
-          <span className={styles.username}>
-            {comment.user?.fullName || "User"}
-          </span>
-          <button
-            className={`${styles.likeBtn} ${
-              likedComments[comment._id] ? styles["btn-orange"] : ""
-            }`}
-            onClick={() => handleLikeComment(comment._id)}
-            type="button"
-          >
-            ❤️ {comment.likesCount || 0}
-          </button>
-        </div>
-
-        <div className={styles.commentText}>{comment.text}</div>
-
-        <div className={styles.commentFooter}>
-          <small className={styles.timestamp}>
-            {timeAgo(comment.createdAt)}
-          </small>
-          <button
-            className={styles.actionLink}
-            onMouseDown={(e) => e.preventDefault()} // don't move focus to the button
-            onClick={() => handleReply(comment)}
-            type="button"
-          >
-            Reply
-          </button>
-          {currentUser &&
-            comment.user &&
-            (comment.user._id === currentUser._id ||
-              comment.user._id === currentUser.id) && (
-              <button
-                className={styles.deleteLink}
-                onClick={() => confirmDeleteOpen(comment._id)}
-                type="button"
-              >
-                Delete
-              </button>
-            )}
-        </div>
-
-        {replyTo && replyTo._id === comment._id && (
-          <div className={styles.replyInput}>
-            <img
-              className={styles.avatarSmall}
-              src={currentUser?.photoUrl || DEFAULT_AVATAR}
-              alt="me"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = DEFAULT_AVATAR;
-              }}
-            />
-            <input
-              type="text"
-              ref={replyInputRef}
-              tabIndex={0}
-              autoFocus // extra safety: keep focus here
-              value={replyText ?? ""} // ensure not null
-              onChange={(e) => {
-                setReplyText(e.target.value);
-                if (replyError) setReplyError(null);
-              }}
-              placeholder={`Reply to ${comment.user?.fullName || "user"}`}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  submitReply(comment._id);
-                }
-              }}
-            />
-            {replyError && (
-              <div style={{ color: "#e53935", marginLeft: 8, fontSize: 12 }}>
-                {replyError}
-              </div>
-            )}
+  const CommentItem = ({ comment, level = 0 }) => {
+    const indentClass = styles[`indent${Math.min(level, 8)}`] || styles.indent0;
+    return (
+      <div className={`${styles.commentCard} ${indentClass}`}>
+        <img
+          className={styles.avatar}
+          src={comment.user?.photoUrl || DEFAULT_AVATAR}
+          alt="avatar"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = DEFAULT_AVATAR;
+          }}
+        />
+        <div className={styles.commentBody}>
+          <div className={styles.commentHeader}>
+            <span className={styles.username}>
+              {comment.user?.fullName || "User"}
+            </span>
             <button
-              className={styles.sendBtn}
-              onMouseDown={(e) => e.preventDefault()} // keep caret when clicking send
-              onClick={() => submitReply(comment._id)}
-              disabled={!replyText.trim()}
+              className={`${styles.likeBtn} ${
+                likedComments[comment._id] ? styles["btn-orange"] : ""
+              }`}
+              onClick={() => handleLikeComment(comment._id)}
               type="button"
             >
-              ➤
-            </button>
-            <button
-              className={styles["btn-grey"]}
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => {
-                setReplyTo(null);
-                setReplyText("");
-              }}
-              type="button"
-            >
-              Cancel
+              ❤️ {comment.likesCount || 0}
             </button>
           </div>
-        )}
 
-        {(comment.replies || []).map((r) => (
-          <CommentItem key={r._id} comment={r} level={level + 1} />
-        ))}
+          <div className={styles.commentText}>{comment.text}</div>
+
+          <div className={styles.commentFooter}>
+            <small className={styles.timestamp}>
+              {timeAgo(comment.createdAt)}
+            </small>
+            <button
+              className={styles.actionLink}
+              onMouseDown={(e) => e.preventDefault()} // don't move focus to the button
+              onClick={() => handleReply(comment)}
+              type="button"
+            >
+              Reply
+            </button>
+            {currentUser &&
+              comment.user &&
+              (comment.user._id === currentUser._id ||
+                comment.user._id === currentUser.id) && (
+                <button
+                  className={styles.deleteLink}
+                  onClick={() => confirmDeleteOpen(comment._id)}
+                  type="button"
+                >
+                  Delete
+                </button>
+              )}
+          </div>
+
+          {replyTo && replyTo._id === comment._id && (
+            <div className={styles.replyInput}>
+              <img
+                className={styles.avatarSmall}
+                src={currentUser?.photoUrl || DEFAULT_AVATAR}
+                alt="me"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = DEFAULT_AVATAR;
+                }}
+              />
+              <input
+                type="text"
+                ref={replyInputRef}
+                tabIndex={0}
+                autoFocus // extra safety: keep focus here
+                value={replyText ?? ""} // ensure not null
+                onChange={(e) => {
+                  setReplyText(e.target.value);
+                  if (replyError) setReplyError(null);
+                }}
+                placeholder={`Reply to ${comment.user?.fullName || "user"}`}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    submitReply(comment._id);
+                  }
+                }}
+              />
+              {replyError && (
+                <div className={styles.replyError}>{replyError}</div>
+              )}
+              <button
+                className={styles.sendBtn}
+                onMouseDown={(e) => e.preventDefault()} // keep caret when clicking send
+                onClick={() => submitReply(comment._id)}
+                disabled={!replyText.trim()}
+                type="button"
+              >
+                ➤
+              </button>
+              <button
+                className={styles["btn-grey"]}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  setReplyTo(null);
+                  setReplyText("");
+                }}
+                type="button"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+
+          {(comment.replies || []).map((r) => (
+            <CommentItem key={r._id} comment={r} level={level + 1} />
+          ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className={styles.commentsOverlay}>

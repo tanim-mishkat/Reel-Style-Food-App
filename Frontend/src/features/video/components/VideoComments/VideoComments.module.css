@@ -213,6 +213,41 @@
   background: rgba(0, 0, 0, 0.4);
 }
 
+/* indentation utility classes for nested replies (0..8) */
+.indent0 {
+  margin-left: 0;
+}
+.indent1 {
+  margin-left: 14px;
+}
+.indent2 {
+  margin-left: 28px;
+}
+.indent3 {
+  margin-left: 42px;
+}
+.indent4 {
+  margin-left: 56px;
+}
+.indent5 {
+  margin-left: 70px;
+}
+.indent6 {
+  margin-left: 84px;
+}
+.indent7 {
+  margin-left: 98px;
+}
+.indent8 {
+  margin-left: 112px;
+}
+
+.replyError {
+  color: #e53935;
+  margin-left: 8px;
+  font-size: 12px;
+}
+
 .confirmModal {
   background: white;
   padding: 16px;

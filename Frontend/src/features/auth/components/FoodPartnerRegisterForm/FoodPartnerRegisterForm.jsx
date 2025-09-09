@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import AuthLayout from "../AuthLayout/AuthLayout";
+import styles from "../AuthForm.module.css";
 import Input from "../../../../shared/components/ui/Input/Input";
 import Button from "../../../../shared/components/ui/Button/Button";
 import { ROUTES } from "../../../../routes/routeConfig";
@@ -39,10 +40,10 @@ const FoodPartnerRegisterForm = () => {
   };
 
   const footer = (
-    <div style={{ textAlign: "center" }}>
-      <p style={{ fontSize: "0.875rem", color: "var(--muted-foreground)" }}>
+    <div className={styles.formFooter}>
+      <p className={styles.smallNote}>
         Already have an account?{" "}
-        <Link to={ROUTES.FOOD_PARTNER_LOGIN} style={{ color: "var(--primary)" }}>
+        <Link to={ROUTES.FOOD_PARTNER_LOGIN} className={styles.linkPrimary}>
           Sign In
         </Link>
       </p>
@@ -55,60 +56,66 @@ const FoodPartnerRegisterForm = () => {
       subtitle="Create your partner account to get started"
       footer={footer}
     >
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-        {error && <p style={{ color: "var(--destructive)", fontSize: "0.875rem" }}>{error}</p>}
-        <Input
-          id="fullName"
-          label="Full Name"
-          placeholder="Enter your full name"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          required
-        />
-        <Input
-          id="email"
-          type="email"
-          label="Email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <Input
-          id="password"
-          type="password"
-          label="Password"
-          placeholder="Create a password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <Input
-          id="contactName"
-          label="Contact Name"
-          placeholder="Enter contact person name"
-          value={contactName}
-          onChange={(e) => setContactName(e.target.value)}
-          required
-        />
-        <Input
-          id="phone"
-          type="tel"
-          label="Phone"
-          placeholder="Enter phone number"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          required
-        />
-        <Input
-          id="address"
-          label="Address"
-          placeholder="Enter your address"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          required
-        />
-        <Button type="submit" disabled={loading}>
+      <form onSubmit={handleSubmit} className={styles.authWrapper}>
+        {error && <p className={styles.errorText}>{error}</p>}
+        <div className={styles.formCard}>
+          <Input
+            id="fullName"
+            label="Full Name"
+            placeholder="Enter your full name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            required
+          />
+          <Input
+            id="email"
+            type="email"
+            label="Email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <Input
+            id="password"
+            type="password"
+            label="Password"
+            placeholder="Create a password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <Input
+            id="contactName"
+            label="Contact Name"
+            placeholder="Enter contact person name"
+            value={contactName}
+            onChange={(e) => setContactName(e.target.value)}
+            required
+          />
+          <Input
+            id="phone"
+            type="tel"
+            label="Phone"
+            placeholder="Enter phone number"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
+          />
+          <Input
+            id="address"
+            label="Address"
+            placeholder="Enter your address"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            required
+          />
+        </div>
+        <Button
+          type="submit"
+          disabled={loading}
+          className={styles.fullWidthBtn}
+        >
           {loading ? "Creating Account..." : "Create Account"}
         </Button>
       </form>

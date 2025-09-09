@@ -1,5 +1,5 @@
 import React from "react";
-import { useCart } from "../../../shared/contexts/CartContext";
+import useCart from "../../../shared/hooks/useCart";
 import { useNavigate } from "react-router-dom";
 import { orderService } from "../../../shared/services/api";
 import Button from "../../../shared/components/ui/Button/Button";

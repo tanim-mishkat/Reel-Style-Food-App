@@ -36,11 +36,9 @@ import UserDashboardPage from "../features/user/pages/UserDashboardPage";
 // Following Page
 import FollowingPage from "../features/home/pages/FollowingPage";
 
-const NotFoundPage = () => (
-  <div style={{ textAlign: "center", padding: "2rem" }}>
-    <h2>404 - Page Not Found</h2>
-  </div>
-);
+import Loading from "../shared/components/ui/Loading/Loading";
+
+const NotFoundPage = () => <Loading>404 - Page Not Found</Loading>;
 
 const AppRouter = () => {
   return (
@@ -48,38 +46,113 @@ const AppRouter = () => {
       <Routes>
         {/* Home Routes */}
         <Route path={ROUTES.HOME} element={<HomePage />} />
-        <Route path={ROUTES.SAVED} element={<PrivateRoute><SavedPage /></PrivateRoute>} />
-        <Route path={ROUTES.USER_SAVED_VIDEOS} element={<PrivateRoute><UserSavedVideosPage /></PrivateRoute>} />
-        
+        <Route
+          path={ROUTES.SAVED}
+          element={
+            <PrivateRoute>
+              <SavedPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path={ROUTES.USER_SAVED_VIDEOS}
+          element={
+            <PrivateRoute>
+              <UserSavedVideosPage />
+            </PrivateRoute>
+          }
+        />
+
         {/* Auth Routes */}
         <Route path={ROUTES.USER_LOGIN} element={<UserLoginPage />} />
         <Route path={ROUTES.USER_REGISTER} element={<UserRegisterPage />} />
         <Route path={ROUTES.USER_LOGOUT} element={<UserLogoutPage />} />
-        <Route path={ROUTES.FOOD_PARTNER_LOGIN} element={<FoodPartnerLoginPage />} />
-        <Route path={ROUTES.FOOD_PARTNER_REGISTER} element={<FoodPartnerRegisterPage />} />
-        <Route path={ROUTES.FOOD_PARTNER_LOGOUT} element={<FoodPartnerLogoutPage />} />
-        
+        <Route
+          path={ROUTES.FOOD_PARTNER_LOGIN}
+          element={<FoodPartnerLoginPage />}
+        />
+        <Route
+          path={ROUTES.FOOD_PARTNER_REGISTER}
+          element={<FoodPartnerRegisterPage />}
+        />
+        <Route
+          path={ROUTES.FOOD_PARTNER_LOGOUT}
+          element={<FoodPartnerLogoutPage />}
+        />
+
         {/* Food Partner Routes */}
         <Route path={ROUTES.CREATE_FOOD} element={<CreateFoodPage />} />
         <Route path={ROUTES.PARTNER_DASHBOARD} element={<DashboardPage />} />
         <Route path={ROUTES.FOOD_PARTNER_PROFILE} element={<ProfilePage />} />
-        <Route path={ROUTES.FOOD_PARTNER_VIDEOS} element={<FoodPartnerVideosPage />} />
-        
+        <Route
+          path={ROUTES.FOOD_PARTNER_VIDEOS}
+          element={<FoodPartnerVideosPage />}
+        />
+
         {/* Checkout Routes */}
-        <Route path={ROUTES.CHECKOUT} element={<PrivateRoute><CheckoutPage /></PrivateRoute>} />
-        <Route path={ROUTES.PAYMENT} element={<PrivateRoute><PaymentPage /></PrivateRoute>} />
-        
+        <Route
+          path={ROUTES.CHECKOUT}
+          element={
+            <PrivateRoute>
+              <CheckoutPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path={ROUTES.PAYMENT}
+          element={
+            <PrivateRoute>
+              <PaymentPage />
+            </PrivateRoute>
+          }
+        />
+
         {/* Order Routes */}
-        <Route path={ROUTES.USER_ORDERS} element={<PrivateRoute><UserOrdersPage /></PrivateRoute>} />
-        <Route path={ROUTES.ORDER_DETAIL} element={<PrivateRoute><OrderDetailPage /></PrivateRoute>} />
-        
+        <Route
+          path={ROUTES.USER_ORDERS}
+          element={
+            <PrivateRoute>
+              <UserOrdersPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path={ROUTES.ORDER_DETAIL}
+          element={
+            <PrivateRoute>
+              <OrderDetailPage />
+            </PrivateRoute>
+          }
+        />
+
         {/* User Routes */}
-        <Route path={ROUTES.USER_DASHBOARD} element={<PrivateRoute><UserDashboardPage /></PrivateRoute>} />
-        <Route path={ROUTES.USER_ORDERS} element={<PrivateRoute><UserOrdersPage /></PrivateRoute>} />
-        
+        <Route
+          path={ROUTES.USER_DASHBOARD}
+          element={
+            <PrivateRoute>
+              <UserDashboardPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path={ROUTES.USER_ORDERS}
+          element={
+            <PrivateRoute>
+              <UserOrdersPage />
+            </PrivateRoute>
+          }
+        />
+
         {/* Following Route */}
-        <Route path="/following" element={<PrivateRoute><FollowingPage /></PrivateRoute>} />
-        
+        <Route
+          path="/following"
+          element={
+            <PrivateRoute>
+              <FollowingPage />
+            </PrivateRoute>
+          }
+        />
+
         {/* 404 Route */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

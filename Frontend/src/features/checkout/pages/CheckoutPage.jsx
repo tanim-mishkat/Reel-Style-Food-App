@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useCart } from "../../../shared/contexts/CartContext";
+import useCart from "../../../shared/hooks/useCart";
 import { useNavigate } from "react-router-dom";
 import Input from "../../../shared/components/ui/Input/Input";
 import Button from "../../../shared/components/ui/Button/Button";

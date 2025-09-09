@@ -73,6 +73,36 @@
   white-space: nowrap;
 }
 
+.errorText {
+  color: var(--error);
+}
+.successText {
+  color: #16a34a;
+}
+.summaryBtn {
+  list-style: none;
+  cursor: pointer;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+}
+.dropdownContent {
+  position: absolute;
+  right: 0;
+  z-index: 20;
+  margin-top: 8px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
 .sectionCard {
   background: var(--card-bg);
   padding: 12px;
@@ -80,6 +110,281 @@
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border);
   margin-bottom: 12px;
+}
+
+.formColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 88px;
+}
+
+.colStack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.h3 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.rowBetween {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.h2Small {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.formCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-card);
+}
+
+/* Menu list */
+.menuList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.menuItem {
+  background: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e9eef4;
+}
+.itemInfo {
+  display: block;
+}
+.itemTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+.itemDesc {
+  margin: 0;
+  color: #666;
+}
+.itemPrice {
+  margin: 0;
+  font-weight: 700;
+}
+.itemActions {
+  display: flex;
+  gap: 8px;
+}
+
+/* small buttons used across the page */
+.btnSmall {
+  background: var(--surface-card);
+  color: var(--text-primary);
+  border: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.btnSmallPrimary {
+  background: var(--primary);
+  color: white;
+}
+.btnSmallDanger {
+  background: var(--error);
+  color: white;
+}
+.mutedText {
+  color: #666;
+}
+
+/* contextual menu */
+.contextMenu {
+  position: absolute;
+  right: 8px;
+  top: 36px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  z-index: 40;
+  overflow: hidden;
+}
+.contextMenuItem {
+  padding: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.contextMenuDanger {
+  color: var(--error);
+}
+
+/* modal actions */
+.modalActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.modalBtn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.modalBtnGhost {
+  border: 1px solid var(--border);
+  background: white;
+}
+
+/* reels */
+.reelsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.inlineActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.completedLabel {
+  color: #16a34a;
+  font-weight: 700;
+}
+.reelsEmpty {
+  text-align: center;
+}
+.reelsEmptyBtn {
+  margin-top: 12px;
+}
+
+.subHeading {
+  margin: 0 0 0.5rem 0;
+  font-size: 14px;
+}
+
+.itemText {
+  font-size: 12px;
+  color: #666;
+}
+
+.smallText {
+  font-size: 12px;
+}
+
+.bigMutedEmoji {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  opacity: 0.3;
+}
+
+/* detail controls */
+.detailControls {
+  margin-top: 8px;
+  display: flex;
+  gap: 12px;
+}
+.detailControlBtn {
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.detailControlGroup {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+/* orders select */
+.selectSmall {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.mutedSmall {
+  font-size: 12px;
+  color: #666;
+}
+
+.itemSummary {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background: #f9fafb;
+  border-radius: 4px;
+}
+
+/* followers */
+.followersList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.followerCard {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+
+/* delete modal buttons reuse modalBtn and btnSmallDanger */
+
+/* sticky save bar adjustments */
+.stickyBar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 12px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.98)
+  );
+  display: flex;
+  justify-content: center;
+}
+.saveBtn {
+  width: 94%;
+  max-width: 800px;
+  color: white;
+  border: none;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.saveBtnLoading {
+  background: var(--muted);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.saveBtnReady {
+  background: var(--primary);
+  box-shadow: 0 6px 18px rgba(255, 107, 53, 0.18);
 }
 
 .reelsGrid {

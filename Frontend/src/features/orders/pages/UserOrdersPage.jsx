@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { orderService } from "../../../shared/services/api";
 import BottomNav from "../../../shared/components/layout/BottomNav/BottomNav";
+import Loading from "../../../shared/components/ui/Loading/Loading";
+import pageStyles from "../../../shared/components/ui/Page/Page.module.css";
+import styles from "./Orders.module.css";
+import utils from "../../../shared/components/ui/Utils.module.css";
 
 const UserOrdersPage = () => {
   const [orders, setOrders] = useState([]);
@@ -14,7 +18,7 @@ const UserOrdersPage = () => {
         const response = await orderService.getUserOrders();
         setOrders(response.data.orders || []);
       } catch (error) {
-        console.error('Failed to fetch orders');
+        console.error("Failed to fetch orders");
       } finally {
         setLoading(false);
       }
@@ -23,65 +27,60 @@ const UserOrdersPage = () => {
     fetchOrders();
   }, []);
 
-  if (loading) return <div style={{ padding: "2rem" }}>Loading orders...</div>;
+  if (loading) return <Loading />;
 
   return (
-    <div style={{ minHeight: "100vh", paddingBottom: "80px" }}>
-      <div style={{ padding: "1rem", borderBottom: "1px solid #ddd" }}>
+    <div className={pageStyles.pageContainer}>
+      <div className={pageStyles.pageHeader}>
         <h1>My Orders</h1>
       </div>
-      
-      <div style={{ padding: "1rem" }}>
+
+      <div className={styles.containerPadding}>
         {orders.length === 0 ? (
-          <div style={{ 
-            textAlign: "center", 
-            padding: "var(--spacing-xxl)", 
-            color: "var(--text-secondary)"
-          }}>
-            <div style={{
-              fontSize: "3rem",
-              marginBottom: "var(--spacing-md)",
-              opacity: "0.3"
-            }}>📝</div>
-            <h3 style={{
-              fontSize: "var(--text-h3)",
-              fontWeight: "600",
-              color: "var(--text-primary)",
-              marginBottom: "var(--spacing-sm)"
-            }}>No orders yet</h3>
-            <p style={{ fontSize: "var(--text-body)", margin: "0" }}>Your order history will appear here</p>
+          <div className={styles.emptyState}>
+            <div className={styles.emptyIcon}>📝</div>
+            <h3 className={styles.emptyTitle}>No orders yet</h3>
+            <p className={styles.smallNote}>
+              Your order history will appear here
+            </p>
           </div>
         ) : (
           orders.map((order) => (
-            <div 
-              key={order._id} 
+            <div
+              key={order._id}
               onClick={() => navigate(`/orders/${order._id}`)}
-              style={{ 
-                padding: "1rem", 
-                border: "1px solid #ddd", 
-                borderRadius: "8px", 
-                marginBottom: "1rem",
-                cursor: "pointer",
-                background: "white"
-              }}
+              className={`${pageStyles.cardNoBorder} ${pageStyles.cardClickable} ${styles.cardSpacing}`}
             >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div className={utils.flexBetween}>
                 <div>
                   <h3>Order #{order._id.slice(-6)}</h3>
-                  <p style={{ color: "#666", margin: "4px 0" }}>
-                    Status: <span style={{ fontWeight: "bold", color: order.status === 'COMPLETED' ? '#16a34a' : '#f59e0b' }}>
+                  <p className={styles.muted}>
+                    Status:{" "}
+                    <span
+                      className={`${styles.statusBold} ${
+                        order.status === "COMPLETED"
+                          ? styles.statusCompleted
+                          : styles.statusOther
+                      }`}
+                    >
                       {order.status}
                     </span>
                   </p>
-                  <p style={{ fontSize: "12px", color: "#999" }}>
+                  <p className={styles.mutedSmall}>
                     {new Date(order.createdAt).toLocaleDateString()}
                   </p>
                 </div>
-                <div style={{ textAlign: "right" }}>
-                  <p style={{ fontWeight: "bold" }}>
-                    ${order.items?.reduce((sum, item) => sum + (item.unitPrice * item.qty), 0).toFixed(2)}
+                <div className={styles.rightAligned}>
+                  <p className={styles.statusBold}>
+                    $
+                    {order.items
+                      ?.reduce(
+                        (sum, item) => sum + item.unitPrice * item.qty,
+                        0
+                      )
+                      .toFixed(2)}
                   </p>
-                  <p style={{ fontSize: "12px", color: "#666" }}>
+                  <p className={styles.smallNote}>
                     {order.items?.length} items
                   </p>
                 </div>
@@ -90,7 +89,7 @@ const UserOrdersPage = () => {
           ))
         )}
       </div>
-      
+
       <BottomNav />
     </div>
   );

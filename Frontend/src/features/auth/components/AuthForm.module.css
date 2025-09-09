@@ -1,0 +1,42 @@
+.authWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+}
+.formCard {
+  background: var(--surface-card);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+.formFooter {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  font-size: var(--text-small);
+  color: var(--text-secondary);
+}
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.fullWidthBtn {
+  width: 100%;
+}
+.smallNote {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+.linkPrimary {
+  color: var(--primary);
+  text-decoration: none;
+}
+.errorText {
+  color: var(--destructive);
+  font-size: 0.875rem;
+}

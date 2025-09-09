@@ -1,18 +1,27 @@
-import React from 'react';
-import styles from './Button.module.css';
+import React from "react";
+import styles from "./Button.module.css";
 
-const Button = ({ 
-  children, 
-  variant = 'primary', 
-  size = 'medium',
+const Button = ({
+  children,
+  variant = "primary",
+  size = "medium",
   disabled = false,
   onClick,
-  type = 'button',
-  style,
-  ...props 
+  type = "button",
+  style, // kept as opt-in override
+  className: extraClassName = "",
+  ...props
 }) => {
-  const className = `${styles.button} ${styles[variant]} ${styles[size]} ${disabled ? styles.disabled : ''}`;
-  
+  const className = [
+    styles.button,
+    styles[variant],
+    styles[size],
+    disabled ? styles.disabled : "",
+    extraClassName,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <button
       type={type}

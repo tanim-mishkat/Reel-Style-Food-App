@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ROUTES } from "../../routes/routeConfig";
-import { menuService, foodPartnerService, reviewService, followService } from "../../shared/services/api";
-import { useCart } from "../../shared/contexts/CartContext";
+import {
+  menuService,
+  foodPartnerService,
+  reviewService,
+  followService,
+} from "../../shared/services/api";
+import useCart from "../../shared/hooks/useCart";
 import CartIcon from "../../shared/components/ui/CartIcon/CartIcon";
-import "./Profile.css";
+import styles from "./Profile.module.css";
 
 const Profile = () => {
   const { id } = useParams();
@@ -15,8 +20,11 @@ const Profile = () => {
   const [videos, setVideos] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('videos');
-  const [reviewStats, setReviewStats] = useState({ averageStars: 0, totalReviews: 0 });
+  const [activeTab, setActiveTab] = useState("videos");
+  const [reviewStats, setReviewStats] = useState({
+    averageStars: 0,
+    totalReviews: 0,
+  });
   const [isFollowing, setIsFollowing] = useState(false);
   const [followerCount, setFollowerCount] = useState(0);
 
@@ -26,22 +34,24 @@ const Profile = () => {
         const response = await foodPartnerService.getFoodPartnerById(id);
         setProfile(response.data.foodPartner);
         setVideos(response.data.foodPartner.foodItems || []);
-        
+
         const menuResponse = await menuService.getMenuItems(id);
         setMenuItems(menuResponse.data.menuItems);
-        
+
         const reviewResponse = await reviewService.getPartnerReviews(id);
         setReviewStats(reviewResponse.data);
-        
+
         // Check if user is following this partner
         try {
           const followedResponse = await followService.getFollowedPartners();
-          const isUserFollowing = followedResponse.data.partners.some(f => f.partner._id === id);
+          const isUserFollowing = followedResponse.data.partners.some(
+            (f) => f.partner._id === id
+          );
           setIsFollowing(isUserFollowing);
         } catch (error) {
           // User not logged in
         }
-        
+
         setLoading(false);
       } catch (error) {
         // Handle error silently
@@ -55,163 +65,196 @@ const Profile = () => {
     try {
       const response = await followService.followPartner(id);
       setIsFollowing(response.data.following);
-      setFollowerCount(prev => response.data.following ? prev + 1 : prev - 1);
+      setFollowerCount((prev) =>
+        response.data.following ? prev + 1 : prev - 1
+      );
     } catch (error) {
-      navigate('/auth/user/login');
+      navigate("/auth/user/login");
     }
   };
 
   if (loading) {
-    return <div className="profile-loading">Loading...</div>;
+    return <div className={styles.profileLoading}>Loading...</div>;
   }
 
   return (
     <>
       <CartIcon />
-      <div className="profile-container">
-      <div className="profile-header">
-        <div className="profile-avatar">
-          <img src={profile.avatar || "/default_image.jpeg"} alt={profile.fullName} />
-        </div>
-
-        <div className="profile-info">
-          <div className="profile-name">
-            <h1>{profile.fullName}</h1>
-            <button className={`contact-btn ${isFollowing ? 'following' : ''}`} onClick={handleFollow}>
-              {isFollowing ? 'Following' : 'Follow'}
-            </button>
+      <div className={styles.profileContainer}>
+        <div className={styles.profileHeader}>
+          <div className={styles.profileAvatar}>
+            <img
+              src={profile.avatar || "/default_image.jpeg"}
+              alt={profile.fullName}
+            />
           </div>
 
-          <div className="profile-stats">
-            <div className="stat">
-              <span className="stat-number">{videos.length}</span>
-              <span className="stat-label">posts</span>
-            </div>
-            <div className="stat">
-              <span className="stat-number">{reviewStats.averageStars}⭐</span>
-              <span className="stat-label">rating</span>
-            </div>
-            <div className="stat">
-              <span className="stat-number">{reviewStats.totalReviews}</span>
-              <span className="stat-label">reviews</span>
-            </div>
-            <div className="stat">
-              <span className="stat-number">{followerCount}</span>
-              <span className="stat-label">followers</span>
-            </div>
-          </div>
-
-          <div className="profile-address">
-            <p>📍 {profile.address}</p>
-          </div>
-
-          <div className="profile-bio">
-            <p>
-              Contact: {profile.contactName} | Phone: {profile.phone}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="profile-content">
-        <div className="content-tabs">
-          <button 
-            className={`tab ${activeTab === 'videos' ? 'active' : ''}`}
-            onClick={() => setActiveTab('videos')}
-          >
-            🎬 VIDEOS
-          </button>
-          <button 
-            className={`tab ${activeTab === 'menu' ? 'active' : ''}`}
-            onClick={() => setActiveTab('menu')}
-          >
-            🍽️ MENU
-          </button>
-          <button className="tab">📋 TAGGED</button>
-        </div>
-
-        {activeTab === 'videos' && (
-          <div className="posts-grid">
-            {videos.map((video) => (
-              <div 
-                key={video._id} 
-                className="post-item"
-                onClick={() => navigate(ROUTES.FOOD_PARTNER_VIDEOS.replace(':id', id))}
-                onMouseEnter={(e) => {
-                  const videoEl = e.currentTarget.querySelector('video');
-                  videoEl.play();
-                }}
-                onMouseLeave={(e) => {
-                  const videoEl = e.currentTarget.querySelector('video');
-                  videoEl.pause();
-                  videoEl.currentTime = 0;
-                }}
+          <div className={styles.profileInfo}>
+            <div className={styles.profileName}>
+              <h1>{profile.fullName}</h1>
+              <button
+                className={`${styles.contactBtn} ${
+                  isFollowing ? styles.following : ""
+                }`}
+                onClick={handleFollow}
               >
-                <video src={video.video} preload="metadata" muted loop />
-                <div className="video-indicator">📹</div>
-                <div className="post-overlay">
-                  <div className="overlay-content">
-                    <h4 className="video-title">{video.name}</h4>
-                    <span className="post-views">❤️ {video.likesCount || 0}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+                {isFollowing ? "Following" : "Follow"}
+              </button>
+            </div>
 
-        {activeTab === 'menu' && (
-          <div className="menu-list">
-            {menuItems.map((item) => (
-              <div key={item._id} className="menu-item">
-                <div className="menu-item-info">
-                  <h3 className="menu-item-name">{item.name}</h3>
-                  <p className="menu-item-description">{item.description}</p>
-                  <div className="menu-item-details">
-                    <span className="price">${item.price}</span>
-                    {item.prepTime && (
-                      <span className="prep-time">
-                        ⏱️ {item.prepTime.min}-{item.prepTime.max} min
+            <div className={styles.profileStats}>
+              <div className={styles.stat}>
+                <span className={styles.statNumber}>{videos.length}</span>
+                <span className={styles.statLabel}>posts</span>
+              </div>
+              <div className={styles.stat}>
+                <span className={styles.statNumber}>
+                  {reviewStats.averageStars}⭐
+                </span>
+                <span className={styles.statLabel}>rating</span>
+              </div>
+              <div className={styles.stat}>
+                <span className={styles.statNumber}>
+                  {reviewStats.totalReviews}
+                </span>
+                <span className={styles.statLabel}>reviews</span>
+              </div>
+              <div className={styles.stat}>
+                <span className={styles.statNumber}>{followerCount}</span>
+                <span className={styles.statLabel}>followers</span>
+              </div>
+            </div>
+
+            <div className={styles.profileAddress}>
+              <p>📍 {profile.address}</p>
+            </div>
+
+            <div className={styles.profileBio}>
+              <p>
+                Contact: {profile.contactName} | Phone: {profile.phone}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.profileContent}>
+          <div className={styles.contentTabs}>
+            <button
+              className={`${styles.tab} ${
+                activeTab === "videos" ? styles.active : ""
+              }`}
+              onClick={() => setActiveTab("videos")}
+            >
+              🎬 VIDEOS
+            </button>
+            <button
+              className={`${styles.tab} ${
+                activeTab === "menu" ? styles.active : ""
+              }`}
+              onClick={() => setActiveTab("menu")}
+            >
+              🍽️ MENU
+            </button>
+            <button className={styles.tab}>📋 TAGGED</button>
+          </div>
+
+          {activeTab === "videos" && (
+            <div className={styles.postsGrid}>
+              {videos.map((video) => (
+                <div
+                  key={video._id}
+                  className={styles.postItem}
+                  onClick={() =>
+                    navigate(ROUTES.FOOD_PARTNER_VIDEOS.replace(":id", id))
+                  }
+                  onMouseEnter={(e) => {
+                    const videoEl = e.currentTarget.querySelector("video");
+                    videoEl.play();
+                  }}
+                  onMouseLeave={(e) => {
+                    const videoEl = e.currentTarget.querySelector("video");
+                    videoEl.pause();
+                    videoEl.currentTime = 0;
+                  }}
+                >
+                  <video src={video.video} preload="metadata" muted loop />
+                  <div className={styles.videoIndicator}>📹</div>
+                  <div className={styles.postOverlay}>
+                    <div className={styles.overlayContent}>
+                      <h4 className={styles.videoTitle}>{video.name}</h4>
+                      <span className={styles.postViews}>
+                        ❤️ {video.likesCount || 0}
                       </span>
-                    )}
-                    <span className={`availability ${item.isAvailable ? 'available' : 'unavailable'}`}>
-                      {item.isAvailable ? '✅ Available' : '❌ Unavailable'}
-                    </span>
+                    </div>
                   </div>
                 </div>
-                <div className="menu-item-actions">
-                  {item.photoUrl && (
-                    <img src={item.photoUrl} alt={item.name} className="menu-item-image" />
-                  )}
-                  <button 
-                    className="add-to-cart-btn"
-                    disabled={!item.isAvailable}
-                    onClick={() => {
-                      console.log('Adding item:', item);
-                      try {
-                        addItem({
-                          id: item._id,
-                          name: item.name,
-                          price: item.price,
-                          partnerId: id,
-                          partnerName: profile.fullName
-                        });
-                        alert(`Added ${item.name} to cart!`);
-                      } catch (error) {
-                        // If not authenticated, redirect to login
-                        navigate('/auth/user/login');
-                      }
-                    }}
-                  >
-                    Add to Cart
-                  </button>
+              ))}
+            </div>
+          )}
+
+          {activeTab === "menu" && (
+            <div className={styles.menuList}>
+              {menuItems.map((item) => (
+                <div key={item._id} className={styles.menuItem}>
+                  <div className={styles.menuItemInfo}>
+                    <h3 className={styles.menuItemName}>{item.name}</h3>
+                    <p className={styles.menuItemDescription}>
+                      {item.description}
+                    </p>
+                    <div className={styles.menuItemDetails}>
+                      <span className={styles.price}>${item.price}</span>
+                      {item.prepTime && (
+                        <span className={styles.prepTime}>
+                          ⏱️ {item.prepTime.min}-{item.prepTime.max} min
+                        </span>
+                      )}
+                      <span
+                        className={`${styles.availability} ${
+                          item.isAvailable
+                            ? styles.available
+                            : styles.unavailable
+                        }`}
+                      >
+                        {item.isAvailable ? "✅ Available" : "❌ Unavailable"}
+                      </span>
+                    </div>
+                  </div>
+                  <div className={styles.menuItemActions}>
+                    {item.photoUrl && (
+                      <img
+                        src={item.photoUrl}
+                        alt={item.name}
+                        className={styles.menuItemImage}
+                      />
+                    )}
+                    <button
+                      className={styles.addToCartBtn}
+                      disabled={!item.isAvailable}
+                      onClick={() => {
+                        try {
+                          addItem({
+                            id: item._id,
+                            name: item.name,
+                            price: item.price,
+                            partnerId: id,
+                            partnerName: profile.fullName,
+                          });
+                          alert(`Added ${item.name} to cart!`);
+                        } catch (error) {
+                          // If not authenticated, redirect to login
+                          navigate("/auth/user/login");
+                        }
+                      }}
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
     </>
   );
 };

@@ -1,0 +1,154 @@
+.profileContainer {
+  padding: 16px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.profileHeader {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.profileAvatar img {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.profileInfo {
+  flex: 1;
+}
+
+.profileName {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.contactBtn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--primary-color, #1f6feb);
+  background: transparent;
+  cursor: pointer;
+}
+
+.following {
+  background: var(--primary-color, #1f6feb);
+  color: #fff;
+}
+
+.profileStats {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.statNumber {
+  font-weight: 700;
+}
+
+.profileAddress,
+.profileBio {
+  margin-top: 8px;
+  color: var(--muted, #666);
+}
+
+.contentTabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tab {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: transparent;
+  border: 1px solid #eee;
+  cursor: pointer;
+}
+
+.active {
+  background: var(--primary-color, #1f6feb);
+  color: #fff;
+}
+
+.postsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.postItem {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.postItem video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.postOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.35));
+}
+
+.overlayContent {
+  padding: 8px;
+  color: #fff;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.menuList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.menuItem {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.menuItemImage {
+  width: 96px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.addToCartBtn {
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--accent, #ff6b6b);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.profileLoading {
+  padding: 40px;
+  text-align: center;
+  color: var(--muted, #666);
+}

@@ -1,6 +1,7 @@
 import React from "react";
-import { useCart } from "../../../contexts/CartContext";
+import useCart from "../../../hooks/useCart";
 import { useNavigate } from "react-router-dom";
+import styles from "./CartIcon.module.css";
 
 const CartIcon = () => {
   const { items, subtotal } = useCart();
@@ -10,20 +11,12 @@ const CartIcon = () => {
   if (itemCount === 0) return null;
 
   return (
-    <div 
+    <div
+      className={styles.cart}
       onClick={() => navigate("/checkout")}
-      style={{
-        position: "fixed",
-        top: "20px",
-        right: "20px",
-        background: "#16a34a",
-        color: "white",
-        padding: "10px 15px",
-        borderRadius: "25px",
-        cursor: "pointer",
-        zIndex: 1000,
-        boxShadow: "0 2px 10px rgba(0,0,0,0.2)"
-      }}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === "Enter" && navigate("/checkout")}
     >
       🛒 {itemCount} items - ${subtotal.toFixed(2)}
     </div>

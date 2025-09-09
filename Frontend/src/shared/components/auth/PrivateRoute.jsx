@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
-import { authService } from '../../services/api';
-import { ROUTES } from '../../../routes/routeConfig';
+import React, { useState, useEffect } from "react";
+import { Navigate } from "react-router-dom";
+import { authService } from "../../services/api";
+import { ROUTES } from "../../../routes/routeConfig";
+import Loading from "../ui/Loading/Loading";
 
 const PrivateRoute = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
@@ -19,10 +20,14 @@ const PrivateRoute = ({ children }) => {
   }, []);
 
   if (isAuthenticated === null) {
-    return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading...</div>;
+    return <Loading>Loading...</Loading>;
   }
 
-  return isAuthenticated ? children : <Navigate to={ROUTES.USER_LOGIN} replace />;
+  return isAuthenticated ? (
+    children
+  ) : (
+    <Navigate to={ROUTES.USER_LOGIN} replace />
+  );
 };
 
 export default PrivateRoute;

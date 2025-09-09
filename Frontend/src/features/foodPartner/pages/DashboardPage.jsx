@@ -313,69 +313,27 @@ const DashboardPage = () => {
   const moreTabs = allTabs.slice(3);
 
   return (
-    <div
-      style={{
-        maxWidth: 800,
-        margin: "0 auto",
-        padding: "16px",
-        overflowX: "hidden",
-        minHeight: "100vh",
-        background: "var(--surface-light)",
-        position: "relative",
-      }}
-    >
+    <div className={styles.container}>
       {/* Compact header with back arrow */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          padding: "8px 0",
-          borderBottom: "1px solid var(--border)",
-          marginBottom: 12,
-        }}
-      >
+      <div className={styles.header}>
         <button
           onClick={() => window.history.back()}
-          style={{
-            border: "none",
-            background: "transparent",
-            fontSize: 20,
-            padding: 8,
-            cursor: "pointer",
-          }}
+          className={styles.summaryBtn}
         >
           ←
         </button>
-        <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>Dashboard</h2>
+        <h2 className={styles.h2Small}>Dashboard</h2>
       </div>
 
       {/* Tab buttons (mobile friendly) */}
-      <div
-        style={{
-          display: "flex",
-          gap: 8,
-          marginBottom: 16,
-          alignItems: "center",
-        }}
-      >
+      <div className={styles.tabs}>
         {primaryTabs.map((t) => (
           <button
             key={t.key}
             onClick={() => setActiveTab(t.key)}
-            style={{
-              flex: 1,
-              padding: "10px 12px",
-              background:
-                activeTab === t.key ? "var(--primary)" : "var(--surface-card)",
-              color: activeTab === t.key ? "white" : "var(--text-primary)",
-              border: "1px solid var(--border)",
-              borderRadius: 10,
-              fontSize: 16,
-              fontWeight: 600,
-              minHeight: 44,
-              cursor: "pointer",
-            }}
+            className={`${styles.tabBtn} ${
+              activeTab === t.key ? styles.tabBtnActive : ""
+            }`}
           >
             {t.label}
           </button>
@@ -383,30 +341,16 @@ const DashboardPage = () => {
 
         {/* More dropdown for extra tabs */}
         {moreTabs.length > 0 && (
-          <div style={{ position: "relative" }}>
-            <details style={{ position: "relative" }} id="more-panel">
+          <div className={styles.moreDropdown}>
+            <details id="more-panel">
               <summary
                 onClick={(e) => {
-                  // toggle open programmatically on click (prevents summary default caret behavior)
                   const d = e.target.closest("details");
                   if (d) d.open = !d.open;
                   e.preventDefault();
                 }}
-                style={{
-                  listStyle: "none",
-                  cursor: "pointer",
-                  padding: "10px 12px",
-                  borderRadius: 10,
-                  border: "1px solid var(--border)",
-                  background: "var(--surface-card)",
-                  minWidth: 44,
-                  textAlign: "center",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
+                className={styles.summaryBtn}
               >
-                {/* 3-dot icon */}
                 <svg
                   width="18"
                   height="6"
@@ -419,35 +363,17 @@ const DashboardPage = () => {
                   <circle cx="15" cy="3" r="2" fill="currentColor" />
                 </svg>
               </summary>
-              <div
-                style={{
-                  position: "absolute",
-                  right: 0,
-                  zIndex: 20,
-                  marginTop: 8,
-                  background: "white",
-                  border: "1px solid var(--border)",
-                  borderRadius: 8,
-                  boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
-                  overflow: "hidden",
-                }}
-              >
+              <div className={styles.dropdownContent}>
                 {moreTabs.map((mt) => (
                   <div
                     key={mt.key}
                     onClick={() => {
                       setActiveTab(mt.key);
-                      // close details
                       const det = document.getElementById("more-panel");
                       if (det) det.open = false;
                       document.activeElement.blur();
                     }}
-                    style={{
-                      padding: 12,
-                      minWidth: 140,
-                      cursor: "pointer",
-                      whiteSpace: "nowrap",
-                    }}
+                    className={styles.moreItem}
                   >
                     {mt.label}
                   </div>
@@ -458,33 +384,15 @@ const DashboardPage = () => {
         )}
       </div>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {success && <p style={{ color: "green" }}>{success}</p>}
+      {error && <p className={styles.errorText}>{error}</p>}
+      {success && <p className={styles.successText}>{success}</p>}
 
       {/* PROFILE */}
       {activeTab === "profile" && (
-        <form
-          onSubmit={handleSubmit}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 12,
-            paddingBottom: 88,
-          }}
-        >
-          <section
-            style={{
-              background: "var(--surface-card)",
-              padding: 12,
-              borderRadius: 12,
-              boxShadow: "var(--shadow-sm)",
-              border: "1px solid var(--border)",
-            }}
-          >
-            <h3 style={{ margin: "0 0 8px 0", fontSize: 14, fontWeight: 700 }}>
-              Personal Info
-            </h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <form onSubmit={handleSubmit} className={styles.formColumn}>
+          <section className={styles.sectionCard}>
+            <h3 className={styles.h3}>Personal Info</h3>
+            <div className={styles.colStack}>
               <Input
                 label="Full Name"
                 value={fullName}
@@ -500,19 +408,9 @@ const DashboardPage = () => {
             </div>
           </section>
 
-          <section
-            style={{
-              background: "var(--surface-card)",
-              padding: 12,
-              borderRadius: 12,
-              boxShadow: "var(--shadow-sm)",
-              border: "1px solid var(--border)",
-            }}
-          >
-            <h3 style={{ margin: "0 0 8px 0", fontSize: 14, fontWeight: 700 }}>
-              Contact Info
-            </h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <section className={styles.sectionCard}>
+            <h3 className={styles.h3}>Contact Info</h3>
+            <div className={styles.colStack}>
               <Input
                 label="Phone"
                 value={phone}
@@ -534,45 +432,19 @@ const DashboardPage = () => {
 
       {/* MENU */}
       {activeTab === "menu" && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>
-              Menu Items
-            </h3>
+        <div className={styles.colStack}>
+          <div className={styles.rowBetween}>
+            <h3 className={styles.h2Small}>Menu Items</h3>
             <button
               onClick={() => setShowAddMenu(true)}
-              style={{
-                background: "var(--primary)",
-                color: "white",
-                border: "none",
-                padding: "10px 12px",
-                borderRadius: 10,
-                fontWeight: 600,
-              }}
+              className={styles.summaryBtn}
             >
               Add
             </button>
           </div>
 
           {showAddMenu && (
-            <form
-              onSubmit={handleAddMenuItem}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 12,
-                padding: 12,
-                borderRadius: 10,
-                border: "1px solid var(--border)",
-                background: "var(--surface-card)",
-              }}
-            >
+            <form onSubmit={handleAddMenuItem} className={styles.formCard}>
               <Input
                 label="Name"
                 value={menuForm.name}
@@ -604,31 +476,17 @@ const DashboardPage = () => {
                   setMenuForm({ ...menuForm, photoUrl: e.target.value })
                 }
               />
-              <div style={{ display: "flex", gap: 8 }}>
+              <div className={styles.modalActions}>
                 <button
                   type="submit"
-                  style={{
-                    flex: 1,
-                    background: "var(--primary)",
-                    color: "white",
-                    padding: "10px 12px",
-                    borderRadius: 10,
-                    border: "none",
-                    fontWeight: 700,
-                  }}
+                  className={`${styles.modalBtn} ${styles.btnSmallPrimary}`}
                 >
                   Add Item
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowAddMenu(false)}
-                  style={{
-                    flex: 1,
-                    background: "var(--surface-card)",
-                    border: "1px solid var(--border)",
-                    padding: "10px 12px",
-                    borderRadius: 10,
-                  }}
+                  className={`${styles.modalBtn} ${styles.modalBtnGhost}`}
                 >
                   Cancel
                 </button>
@@ -636,51 +494,28 @@ const DashboardPage = () => {
             </form>
           )}
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div className={styles.menuList}>
             {menuItems.map((item) => (
-              <div
-                key={item._id}
-                style={{
-                  padding: 12,
-                  borderRadius: 10,
-                  border: "1px solid var(--border)",
-                  background: "white",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <div>
-                  <h4 style={{ margin: 0, fontSize: 15 }}>{item.name}</h4>
-                  <p style={{ margin: 0, color: "#666" }}>{item.description}</p>
-                  <p style={{ margin: 0, fontWeight: 700 }}>${item.price}</p>
+              <div key={item._id} className={styles.menuItem}>
+                <div className={styles.itemInfo}>
+                  <h4 className={styles.itemTitle}>{item.name}</h4>
+                  <p className={styles.itemDesc}>{item.description}</p>
+                  <p className={styles.itemPrice}>${item.price}</p>
                 </div>
-                <div style={{ display: "flex", gap: 8 }}>
+                <div className={styles.itemActions}>
                   <button
                     onClick={() => openEditMenuItem(item)}
                     disabled={menuSavingId === item._id}
-                    style={{
-                      background: "var(--primary)",
-                      color: "white",
-                      border: "none",
-                      padding: "8px 10px",
-                      borderRadius: 8,
-                      opacity: menuSavingId === item._id ? 0.6 : 1,
-                    }}
+                    className={`${styles.btnSmall} ${styles.btnSmallPrimary}`}
+                    style={{ opacity: menuSavingId === item._id ? 0.6 : 1 }}
                   >
                     {menuSavingId === item._id ? "Saving..." : "Edit"}
                   </button>
                   <button
                     onClick={() => handleDeleteMenuItem(item._id)}
                     disabled={menuSavingId === item._id}
-                    style={{
-                      background: "var(--error)",
-                      color: "white",
-                      border: "none",
-                      padding: "8px 10px",
-                      borderRadius: 8,
-                      opacity: menuSavingId === item._id ? 0.6 : 1,
-                    }}
+                    className={`${styles.btnSmall} ${styles.btnSmallDanger}`}
+                    style={{ opacity: menuSavingId === item._id ? 0.6 : 1 }}
                   >
                     Delete
                   </button>
@@ -701,7 +536,7 @@ const DashboardPage = () => {
             className={styles.bottomSheet}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 style={{ marginTop: 0 }}>Edit Menu Item</h3>
+            <h3 className={styles.h3}>Edit Menu Item</h3>
             <Input
               label="Name"
               value={editingMenuItem.name}
@@ -733,22 +568,16 @@ const DashboardPage = () => {
                 }))
               }
             />
-            <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+            <div className={styles.modalActions}>
               <button
                 onClick={() => setEditingMenuItem(null)}
-                style={{
-                  flex: 1,
-                  padding: 10,
-                  borderRadius: 8,
-                  border: "1px solid var(--border)",
-                }}
+                className={`${styles.modalBtn} ${styles.modalBtnGhost}`}
               >
                 Cancel
               </button>
               <button
                 onClick={() => saveEditMenuItem(editingMenuItem)}
-                style={{ flex: 1, padding: 10, borderRadius: 8 }}
-                className={`${styles.btnPrimary}`}
+                className={`${styles.modalBtn} ${styles.btnSmallPrimary}`}
               >
                 Save
               </button>
@@ -766,15 +595,8 @@ const DashboardPage = () => {
         : null}
       {activeTab === "reels" && (
         <div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 12,
-            }}
-          >
-            <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700 }}>Reels</h3>
+          <div className={styles.reelsHeader}>
+            <h3 className={styles.h2Small}>Reels</h3>
           </div>
 
           {reelsLoading ? (
@@ -784,13 +606,12 @@ const DashboardPage = () => {
               ))}
             </div>
           ) : reels.length === 0 ? (
-            <div className={styles.emptyState}>
+            <div className={`${styles.emptyState} ${styles.reelsEmpty}`}>
               <h3>No reels yet</h3>
               <p>Upload your first reel to engage your audience.</p>
               <button
                 onClick={() => {}}
-                className={`${styles.stickyBtn} ${styles.btnPrimary}`}
-                style={{ marginTop: 12 }}
+                className={`${styles.stickyBtn} ${styles.btnPrimary} ${styles.reelsEmptyBtn}`}
               >
                 Upload your first reel
               </button>
@@ -810,32 +631,18 @@ const DashboardPage = () => {
                   {/* contextual menu for the card */}
                   {openMenuFor === r._id && (
                     <div
-                      style={{
-                        position: "absolute",
-                        right: 8,
-                        top: 36,
-                        background: "white",
-                        border: "1px solid var(--border)",
-                        borderRadius: 8,
-                        boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
-                        zIndex: 40,
-                        overflow: "hidden",
-                      }}
+                      className={styles.contextMenu}
                       onClick={(e) => e.stopPropagation()}
                     >
                       <div
+                        className={styles.contextMenuItem}
                         onClick={() => handleEditFromMenu(r)}
-                        style={{ padding: 10, cursor: "pointer" }}
                       >
                         Edit
                       </div>
                       <div
+                        className={`${styles.contextMenuItem} ${styles.contextMenuDanger}`}
                         onClick={() => handleDeleteFromMenu(r)}
-                        style={{
-                          padding: 10,
-                          cursor: "pointer",
-                          color: "var(--error)",
-                        }}
                       >
                         Delete
                       </div>
@@ -865,20 +672,13 @@ const DashboardPage = () => {
 
       {(activeTab === "orders" || activeTab === "completed") && (
         <div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "1rem",
-            }}
-          >
+          <div className={styles.headerRow}>
             <h2>Orders</h2>
             {activeTab !== "completed" && (
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                style={{ padding: "0.5rem" }}
+                className={styles.selectSmall}
               >
                 <option value="">All Active Orders</option>
                 <option value="PLACED">Placed</option>
@@ -890,13 +690,9 @@ const DashboardPage = () => {
             )}
           </div>
 
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-          >
+          <div className={styles.followersList}>
             {filteredOrders.length === 0 ? (
-              <div
-                style={{ padding: "2rem", textAlign: "center", color: "#666" }}
-              >
+              <div className={styles.emptyState}>
                 {activeTab === "completed"
                   ? "No completed orders yet"
                   : "No active orders"}
@@ -926,7 +722,7 @@ const DashboardPage = () => {
                       </p>
                       <p>Items: {order.items?.length || 0}</p>
                       {activeTab === "completed" && (
-                        <p style={{ fontSize: "12px", color: "#666" }}>
+                        <p className={styles.mutedSmall}>
                           Completed:{" "}
                           {order.timeline?.find((t) => t.status === "COMPLETED")
                             ?.at
@@ -939,9 +735,9 @@ const DashboardPage = () => {
                         </p>
                       )}
                     </div>
-                    <div style={{ display: "flex", gap: "0.5rem" }}>
+                    <div className={styles.inlineActions}>
                       {activeTab === "completed" ? (
-                        <span style={{ color: "#16a34a", fontWeight: "bold" }}>
+                        <span className={styles.completedLabel}>
                           ✅ Completed
                         </span>
                       ) : (
@@ -987,22 +783,10 @@ const DashboardPage = () => {
                     </div>
                   </div>
                   {activeTab === "completed" && order.items && (
-                    <div
-                      style={{
-                        marginTop: "1rem",
-                        padding: "0.5rem",
-                        background: "#f9fafb",
-                        borderRadius: "4px",
-                      }}
-                    >
-                      <h5 style={{ margin: "0 0 0.5rem 0", fontSize: "14px" }}>
-                        Order Items:
-                      </h5>
+                    <div className={styles.itemSummary}>
+                      <h5 className={styles.subHeading}>Order Items:</h5>
                       {order.items.map((item, idx) => (
-                        <div
-                          key={idx}
-                          style={{ fontSize: "12px", color: "#666" }}
-                        >
+                        <div key={idx} className={styles.itemText}>
                           {item.name} x {item.qty} - $
                           {(item.unitPrice * item.qty).toFixed(2)}
                         </div>
@@ -1019,55 +803,23 @@ const DashboardPage = () => {
       {activeTab === "followers" && (
         <div>
           <h2>Followers</h2>
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-          >
+          <div className={styles.followersList}>
             {followers.length === 0 ? (
-              <div
-                style={{
-                  padding: "var(--spacing-xxl)",
-                  textAlign: "center",
-                  color: "var(--text-secondary)",
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: "3rem",
-                    marginBottom: "var(--spacing-md)",
-                    opacity: "0.3",
-                  }}
-                >
+              <div className={styles.emptyState}>
+                <div className={`${styles.mutedText} ${styles.bigMutedEmoji}`}>
                   👥
                 </div>
-                <h3
-                  style={{
-                    fontSize: "var(--text-h3)",
-                    fontWeight: "600",
-                    color: "var(--text-primary)",
-                    marginBottom: "var(--spacing-sm)",
-                  }}
-                >
-                  No followers yet
-                </h3>
-                <p style={{ fontSize: "var(--text-body)", margin: "0" }}>
+                <h3 className={styles.h3}>No followers yet</h3>
+                <p className={styles.mutedText}>
                   Share great content to attract followers!
                 </p>
               </div>
             ) : (
               followers.map((follower) => (
-                <div
-                  key={follower._id}
-                  style={{
-                    padding: "1rem",
-                    border: "1px solid #ddd",
-                    borderRadius: "4px",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
+                <div key={follower._id} className={styles.followerCard}>
                   <div>
                     <h4>{follower.user.fullName}</h4>
-                    <p style={{ fontSize: "12px", color: "#666" }}>
+                    <p className={`${styles.mutedText} ${styles.smallText}`}>
                       Following since{" "}
                       {new Date(follower.createdAt).toLocaleDateString()}
                     </p>
@@ -1089,7 +841,7 @@ const DashboardPage = () => {
             className={styles.bottomSheet}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 style={{ marginTop: 0 }}>Edit Post</h3>
+            <h3 className={styles.h3}>Edit Post</h3>
             <Input
               label="Post name"
               value={editingReel.name}
@@ -1107,22 +859,16 @@ const DashboardPage = () => {
                 }))
               }
             />
-            <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+            <div className={styles.modalActions}>
               <button
                 onClick={() => setEditingReel(null)}
-                style={{
-                  flex: 1,
-                  padding: 10,
-                  borderRadius: 8,
-                  border: "1px solid var(--border)",
-                }}
+                className={`${styles.modalBtn} ${styles.modalBtnGhost}`}
               >
                 Cancel
               </button>
               <button
                 onClick={() => saveEditReel(editingReel)}
-                style={{ flex: 1, padding: 10, borderRadius: 8 }}
-                className={`${styles.btnPrimary}`}
+                className={`${styles.modalBtn} ${styles.btnSmallPrimary}`}
               >
                 Save
               </button>
@@ -1143,17 +889,16 @@ const DashboardPage = () => {
           >
             <h3>Delete Post</h3>
             <p>Are you sure you want to delete this post?</p>
-            <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+            <div className={styles.modalActions}>
               <button
                 onClick={() => setDeletingReel(null)}
-                style={{ flex: 1, padding: 10, borderRadius: 8 }}
+                className={`${styles.modalBtn} ${styles.modalBtnGhost}`}
               >
                 Cancel
               </button>
               <button
                 onClick={() => deleteReel(deletingReel._id)}
-                style={{ flex: 1, padding: 10, borderRadius: 8 }}
-                className={`${styles.btnDanger}`}
+                className={`${styles.modalBtn} ${styles.btnSmallDanger}`}
               >
                 Delete
               </button>
@@ -1179,13 +924,13 @@ const DashboardPage = () => {
             <div className={styles.detailDesc}>
               {reels[detailIndex].description}
             </div>
-            <div style={{ marginTop: 8, display: "flex", gap: 12 }}>
+            <div className={styles.detailControls}>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   openEditReel(reels[detailIndex]);
                 }}
-                style={{ padding: "8px 10px", borderRadius: 8 }}
+                className={styles.detailControlBtn}
               >
                 Edit
               </button>
@@ -1194,18 +939,17 @@ const DashboardPage = () => {
                   e.stopPropagation();
                   confirmDeleteReel(reels[detailIndex]);
                 }}
-                style={{ padding: "8px 10px", borderRadius: 8 }}
-                className={`${styles.btnDanger}`}
+                className={`${styles.detailControlBtn} ${styles.btnSmallDanger}`}
               >
                 Delete
               </button>
-              <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
+              <div className={styles.detailControlGroup}>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     goDetailPrev();
                   }}
-                  style={{ padding: "8px 10px", borderRadius: 8 }}
+                  className={styles.detailControlBtn}
                 >
                   Prev
                 </button>
@@ -1214,7 +958,7 @@ const DashboardPage = () => {
                     e.stopPropagation();
                     goDetailNext();
                   }}
-                  style={{ padding: "8px 10px", borderRadius: 8 }}
+                  className={styles.detailControlBtn}
                 >
                   Next
                 </button>
@@ -1223,35 +967,13 @@ const DashboardPage = () => {
           </div>
         </div>
       )}
-      <div
-        style={{
-          position: "fixed",
-          left: 0,
-          right: 0,
-          bottom: 0,
-          padding: 12,
-          background:
-            "linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,0.98))",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
+      <div className={styles.stickyBar}>
         <button
           onClick={handleSubmit}
           disabled={loading}
-          style={{
-            width: "94%",
-            maxWidth: 800,
-            background: loading ? "var(--muted)" : "var(--primary)",
-            color: "white",
-            border: "none",
-            padding: "14px 18px",
-            borderRadius: 12,
-            fontSize: 18,
-            fontWeight: 800,
-            boxShadow: loading ? "none" : "0 6px 18px rgba(255,107,53,0.18)",
-            cursor: loading ? "not-allowed" : "pointer",
-          }}
+          className={`${styles.saveBtn} ${
+            loading ? styles.saveBtnLoading : styles.saveBtnReady
+          }`}
         >
           {loading ? "Saving..." : "Save Changes"}
         </button>

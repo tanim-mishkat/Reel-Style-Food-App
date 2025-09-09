@@ -1,0 +1,9 @@
+.center {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.smallPad {
+  padding: 2rem;
+}

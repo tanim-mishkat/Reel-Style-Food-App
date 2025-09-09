@@ -1,0 +1,15 @@
+.fullWidthCenterBtn {
+  width: 100%;
+  padding: var(--spacing-md);
+  text-align: center;
+  display: inline-block;
+}
+.centerPadding {
+  text-align: center;
+  padding: 2rem;
+}
+.flexBetween {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

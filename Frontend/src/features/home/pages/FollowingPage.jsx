@@ -11,6 +11,8 @@ import VideoComments from "../../video/components/VideoComments/VideoComments";
 import VideoProgressBar from "../../video/components/VideoProgressBar/VideoProgressBar";
 import BottomNav from "../../../shared/components/layout/BottomNav/BottomNav";
 import styles from "./HomePage.module.css";
+import pageStyles from "./FollowingPage.module.css";
+import Loading from "../../../shared/components/ui/Loading/Loading";
 
 const FollowingPage = () => {
   const navigate = useNavigate();
@@ -72,23 +74,8 @@ const FollowingPage = () => {
 
   if (loading) {
     return (
-      <div
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "var(--surface-light)",
-        }}
-      >
-        <div
-          style={{
-            color: "var(--text-secondary)",
-            fontSize: "var(--text-body)",
-          }}
-        >
-          Loading...
-        </div>
+      <div className={pageStyles.emptyContainer}>
+        <Loading />
       </div>
     );
   }
@@ -96,64 +83,16 @@ const FollowingPage = () => {
   // Not following anyone
   if (followedPartners.length === 0) {
     return (
-      <div
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "var(--spacing-xl)",
-          textAlign: "center",
-          background: "var(--surface-light)",
-        }}
-      >
-        <div
-          style={{
-            fontSize: "4rem",
-            marginBottom: "var(--spacing-lg)",
-            opacity: "0.3",
-          }}
-        >
-          👥
-        </div>
-        <h2
-          style={{
-            fontSize: "var(--text-h2)",
-            fontWeight: "600",
-            color: "var(--text-primary)",
-            marginBottom: "var(--spacing-sm)",
-          }}
-        >
+      <div className={pageStyles.emptyContainer}>
+        <div className={pageStyles.emptyIcon}>👥</div>
+        <h2 className={pageStyles.emptyTitle}>
           You're not following anyone yet
         </h2>
-        <p
-          style={{
-            color: "var(--text-secondary)",
-            marginBottom: "var(--spacing-lg)",
-            fontSize: "var(--text-body)",
-            maxWidth: "300px",
-          }}
-        >
+        <p className={pageStyles.emptyBody}>
           Discover amazing restaurants and follow them to see their latest food
           videos here!
         </p>
-        <button
-          onClick={() => navigate("/")}
-          style={{
-            background: "var(--primary)",
-            color: "white",
-            border: "none",
-            padding: "var(--spacing-md) var(--spacing-xl)",
-            borderRadius: "var(--radius-md)",
-            fontSize: "var(--text-body)",
-            fontWeight: "600",
-            cursor: "pointer",
-            minHeight: "var(--touch-target)",
-            boxShadow: "0 4px 12px rgba(255, 107, 53, 0.25)",
-            transition: "all 0.3s ease",
-          }}
-        >
+        <button onClick={() => navigate("/")} className={pageStyles.ctaBtn}>
           Discover Restaurants
         </button>
         <BottomNav />
@@ -164,64 +103,14 @@ const FollowingPage = () => {
   // Following but no videos
   if (videos.length === 0) {
     return (
-      <div
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "var(--spacing-xl)",
-          textAlign: "center",
-          background: "var(--surface-light)",
-        }}
-      >
-        <div
-          style={{
-            fontSize: "4rem",
-            marginBottom: "var(--spacing-lg)",
-            opacity: "0.3",
-          }}
-        >
-          🎬
-        </div>
-        <h2
-          style={{
-            fontSize: "var(--text-h2)",
-            fontWeight: "600",
-            color: "var(--text-primary)",
-            marginBottom: "var(--spacing-sm)",
-          }}
-        >
-          No videos yet
-        </h2>
-        <p
-          style={{
-            color: "var(--text-secondary)",
-            marginBottom: "var(--spacing-lg)",
-            fontSize: "var(--text-body)",
-            maxWidth: "300px",
-          }}
-        >
+      <div className={pageStyles.emptyContainer}>
+        <div className={pageStyles.emptyIcon}>🎬</div>
+        <h2 className={pageStyles.emptyTitle}>No videos yet</h2>
+        <p className={pageStyles.emptyBody}>
           The restaurants you follow haven't uploaded any videos yet. Check back
           later or discover more restaurants!
         </p>
-        <button
-          onClick={() => navigate("/")}
-          style={{
-            background: "var(--primary)",
-            color: "white",
-            border: "none",
-            padding: "var(--spacing-md) var(--spacing-xl)",
-            borderRadius: "var(--radius-md)",
-            fontSize: "var(--text-body)",
-            fontWeight: "600",
-            cursor: "pointer",
-            minHeight: "var(--touch-target)",
-            boxShadow: "0 4px 12px rgba(255, 107, 53, 0.25)",
-            transition: "all 0.3s ease",
-          }}
-        >
+        <button onClick={() => navigate("/")} className={pageStyles.ctaBtn}>
           Explore More
         </button>
         <BottomNav />

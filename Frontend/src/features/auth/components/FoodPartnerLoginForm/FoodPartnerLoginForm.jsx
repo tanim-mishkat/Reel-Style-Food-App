@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import AuthLayout from "../AuthLayout/AuthLayout";
+import styles from "../AuthForm.module.css";
 import Input from "../../../../shared/components/ui/Input/Input";
 import Button from "../../../../shared/components/ui/Button/Button";
 import { ROUTES } from "../../../../routes/routeConfig";
@@ -35,10 +36,10 @@ const FoodPartnerLoginForm = () => {
   };
 
   const footer = (
-    <div style={{ textAlign: "center" }}>
-      <p style={{ fontSize: "0.875rem", color: "var(--muted-foreground)" }}>
+    <div className={styles.formFooter}>
+      <p className={styles.smallNote}>
         Don't have an account?{" "}
-        <Link to={ROUTES.FOOD_PARTNER_REGISTER} style={{ color: "var(--primary)" }}>
+        <Link to={ROUTES.FOOD_PARTNER_REGISTER} className={styles.linkPrimary}>
           Sign Up
         </Link>
       </p>
@@ -51,27 +52,33 @@ const FoodPartnerLoginForm = () => {
       subtitle="Login to access your dashboard"
       footer={footer}
     >
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-        {error && <p style={{ color: "var(--destructive)", fontSize: "0.875rem" }}>{error}</p>}
-        <Input
-          id="email"
-          type="email"
-          label="Email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <Input
-          id="password"
-          type="password"
-          label="Password"
-          placeholder="Enter your password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <Button type="submit" disabled={loading}>
+      <form onSubmit={handleSubmit} className={styles.authWrapper}>
+        {error && <p className={styles.errorText}>{error}</p>}
+        <div className={styles.formCard}>
+          <Input
+            id="email"
+            type="email"
+            label="Email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <Input
+            id="password"
+            type="password"
+            label="Password"
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <Button
+          type="submit"
+          disabled={loading}
+          className={styles.fullWidthBtn}
+        >
           {loading ? "Signing In..." : "Sign In"}
         </Button>
       </form>
