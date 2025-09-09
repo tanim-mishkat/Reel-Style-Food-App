@@ -43,24 +43,28 @@
 .commentsList {
   flex: 1;
   overflow-y: auto;
-  padding: 20px;
-  padding-bottom: 80px;
+  padding: 16px;
+  padding-bottom: 96px;
 }
 
 .commentItem {
   margin-bottom: 12px;
-  padding: 0; /* inner card handles padding */
+  padding: 0;
   background: transparent;
+  list-style: none;
+  width: 100%;
 }
 
 .commentCard {
   display: flex;
   gap: 12px;
   background: rgb(248, 249, 250);
-  padding: 16px;
-  margin: 12px 0;
+  padding: 12px;
+  margin: 8px 0;
   border-radius: 12px;
   align-items: flex-start;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .avatar {
@@ -68,6 +72,7 @@
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
+  flex-shrink: 0;
 }
 
 .avatarSmall {
@@ -79,6 +84,7 @@
 
 .commentBody {
   flex: 1;
+  min-width: 0; /* prevents overflow */
 }
 
 .commentHeader {
@@ -106,6 +112,7 @@
   font-size: 14px;
   line-height: 1.4;
   color: #333;
+  word-break: break-word; /* prevent overflow */
 }
 
 .commentFooter {
@@ -113,6 +120,7 @@
   display: flex;
   gap: 12px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .actionLink {
@@ -218,28 +226,26 @@
   margin-left: 0;
 }
 .indent1 {
-  margin-left: 14px;
+  margin-left: 8px;
 }
 .indent2 {
-  margin-left: 28px;
+  margin-left: 16px;
 }
 .indent3 {
-  margin-left: 42px;
+  margin-left: 28px;
 }
 .indent4 {
-  margin-left: 56px;
+  margin-left: 36px;
 }
-.indent5 {
-  margin-left: 70px;
-}
-.indent6 {
-  margin-left: 84px;
-}
-.indent7 {
-  margin-left: 98px;
-}
-.indent8 {
-  margin-left: 112px;
+
+/* cap indentation visually so content never overflows on small screens */
+.reply {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.02),
+    rgba(0, 0, 0, 0)
+  );
+  border-left: 3px solid rgba(0, 0, 0, 0.04);
 }
 
 .replyError {
@@ -272,6 +278,53 @@
   border-top: 1px solid #eee;
   gap: 12px;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* replies list layout */
+.repliesWrap {
+  margin-top: 8px;
+}
+.repliesList {
+  margin: 8px 0 0 0;
+  padding: 0;
+  list-style: none;
+}
+.viewMoreWrap {
+  margin-top: 6px;
+}
+.viewMore {
+  background: transparent;
+  border: none;
+  color: #1976d2;
+  padding: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+/* small screens: ensure content wraps and doesn't cause horizontal scroll */
+@media (max-width: 480px) {
+  .commentCard {
+    padding: 10px;
+  }
+  .avatar {
+    width: 36px;
+    height: 36px;
+  }
+  .commentText {
+    font-size: 13px;
+  }
+  .username {
+    font-size: 13px;
+  }
+}
+
+@media (min-width: 481px) {
+  .commentsModal {
+    width: 600px;
+    margin: 0 auto;
+    border-radius: 12px;
+    height: 80vh;
+  }
 }
 
 .commentForm .avatarSmall {
