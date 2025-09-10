@@ -15,7 +15,18 @@ const cors = require('cors')
 const app = express()
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+
+        // Allow any localhost origin for development
+        if (origin.startsWith('http://localhost:')) {
+            return callback(null, true);
+        }
+
+        // For production, you would check against specific domains
+        callback(new Error('Not allowed by CORS'));
+    },
     credentials: true
 }))
 

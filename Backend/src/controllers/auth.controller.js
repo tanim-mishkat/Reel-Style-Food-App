@@ -95,13 +95,13 @@ async function getUserProfile(req, res) {
 async function updateUserProfile(req, res) {
     const user = req.user
     const { fullName } = req.body
-    
+
     const updatedUser = await userModel.findByIdAndUpdate(
-        user._id, 
-        { fullName }, 
+        user._id,
+        { fullName },
         { new: true }
     )
-    
+
     res.status(200).json({
         message: 'Profile updated successfully',
         user: {
@@ -115,67 +115,104 @@ async function updateUserProfile(req, res) {
 
 // food partner auth controller
 
-async function registerFoodPartner(req, res) {
-    const { fullName, email, password, contactName, phone, address } = req.body
-    if (!fullName || !email || !password || !contactName || !phone || !address) {
-        return res.status(400).json({ message: 'All fields are required' })
-    }
+async function registerFoodPartner(req, res, next) {
+    try {
 
-    const isFoodPartnerExist = await foodPartnerModel.findOne({ email })
-    if (isFoodPartnerExist) {
-        return res.status(400).json({ message: 'Food partner already exist' })
-    }
 
-    const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(password, salt)
+        const { fullName, email, password, contactName, phone, address } = req.body
 
-    const foodPartner = await foodPartnerModel.create({ fullName, email, password: hashedPassword, contactName, phone, address })
-
-    const token = jwt.sign({ id: foodPartner._id, role: 'partner' }, process.env.JWT_SECRET, { expiresIn: '1d' })
-
-    res.cookie('partner_token', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 })
-
-    res.status(201).json({
-        message: 'Food partner registered successfully',
-        foodPartner: {
-            _id: foodPartner._id,
-            fullName: foodPartner.fullName,
-            email: foodPartner.email,
-            contactName: foodPartner.contactName,
-            phone: foodPartner.phone,
-            address: foodPartner.address
+        if (!fullName || !email || !password || !contactName || !phone || !address) {
+            return res.status(400).json({ message: 'All fields are required' })
         }
-    })
+
+        const isFoodPartnerExist = await foodPartnerModel.findOne({ email })
+        if (isFoodPartnerExist) {
+            return res.status(400).json({ message: 'Food partner already exist' })
+        }
+
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(password, salt)
+
+        // Handle profile image upload if provided
+        let profileImgUrl = null
+        if (req.file) {
+            try {
+                const storageService = require('../services/storage.service.js')
+                const filename = `partner-${Date.now()}-${req.file.originalname}`
+                const uploadResult = await storageService.uploadFile(req.file.buffer, filename)
+                profileImgUrl = uploadResult.url
+
+            } catch (uploadError) {
+                console.error('Image upload failed:', uploadError)
+                // Continue with registration even if image upload fails
+                profileImgUrl = null
+            }
+        }
+
+        const foodPartner = await foodPartnerModel.create({
+            fullName,
+            email,
+            password: hashedPassword,
+            contactName,
+            phone,
+            address,
+            profileImg: profileImgUrl
+        })
+
+        const token = jwt.sign({ id: foodPartner._id, role: 'partner' }, process.env.JWT_SECRET, { expiresIn: '1d' })
+
+        res.cookie('partner_token', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 })
+
+        res.status(201).json({
+            message: 'Food partner registered successfully',
+            foodPartner: {
+                _id: foodPartner._id,
+                fullName: foodPartner.fullName,
+                email: foodPartner.email,
+                contactName: foodPartner.contactName,
+                phone: foodPartner.phone,
+                address: foodPartner.address,
+                profileImg: foodPartner.profileImg
+            }
+        })
+    } catch (error) {
+        console.error('Registration error:', error);
+        next(error);
+    }
 }
 
-async function loginFoodPartner(req, res) {
-    const { email, password } = req.body
+async function loginFoodPartner(req, res, next) {
+    try {
+        const { email, password } = req.body
 
-    if (!email || !password) {
-        return res.status(400).json({ message: 'All fields are required' })
-    }
-
-    const foodPartner = await foodPartnerModel.findOne({ email })
-    if (!foodPartner) {
-        return res.status(400).json({ message: 'Invalid email or password' })
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, foodPartner.password)
-    if (!isPasswordValid) {
-        return res.status(400).json({ message: 'Invalid email or password' })
-    }
-
-    const token = jwt.sign({ id: foodPartner._id, role: 'partner' }, process.env.JWT_SECRET, { expiresIn: '1d' })
-
-    res.cookie('partner_token', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 })
-    res.status(200).json({
-        message: 'Food partner logged in successfully',
-        foodPartner: {
-            _id: foodPartner._id,
-            fullName: foodPartner.fullName,
-            email: foodPartner.email
+        if (!email || !password) {
+            return res.status(400).json({ message: 'All fields are required' })
         }
-    })
+
+        const foodPartner = await foodPartnerModel.findOne({ email })
+        if (!foodPartner) {
+            return res.status(400).json({ message: 'Invalid email or password' })
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, foodPartner.password)
+        if (!isPasswordValid) {
+            return res.status(400).json({ message: 'Invalid email or password' })
+        }
+
+        const token = jwt.sign({ id: foodPartner._id, role: 'partner' }, process.env.JWT_SECRET, { expiresIn: '1d' })
+
+        res.cookie('partner_token', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 })
+        res.status(200).json({
+            message: 'Food partner logged in successfully',
+            foodPartner: {
+                _id: foodPartner._id,
+                fullName: foodPartner.fullName,
+                email: foodPartner.email
+            }
+        })
+    } catch (error) {
+        next(error);
+    }
 }
 
 

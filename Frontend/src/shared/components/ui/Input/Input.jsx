@@ -21,7 +21,7 @@ const Input = ({
           type={type}
           value={value}
           onChange={onChange}
-          placeholder={placeholder || " "}
+          placeholder=" "
           required={required}
           className={styles.formInput}
         />

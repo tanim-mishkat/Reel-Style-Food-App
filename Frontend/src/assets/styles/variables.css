@@ -1,40 +1,43 @@
 :root {
   /* Design System Colors */
-  --primary: #FF6B35;
-  --primary-pressed: #E55A2B;
-  --accent: #FF6B35;
-  --text-primary: #1F2937;
-  --text-secondary: #6B7280;
-  --text-placeholder: #9CA3AF;
-  --surface-light: #FFFFFF;
+  --primary: #ff6b35;
+  --primary-pressed: #e55a2b;
+  --accent: #ff6b35;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-placeholder: #9ca3af;
+  --surface-light: #ffffff;
   --surface-dark: #111827;
-  --surface-card: #FFFFFF;
-  --border: #E5E7EB;
-  --error: #DC2626;
-  --text-on-dark: #FFFFFF;
-  --text-on-dark-secondary: #F3F4F6;
+  --surface-card: #ffffff;
+  --border: #e5e7eb;
+  --error: #dc2626;
+  --error-pressed: #b91c1c;
+  --text-on-dark: #ffffff;
+  --text-on-dark-secondary: #f3f4f6;
+  --surface-hover: #f9fafb;
+  --card-bg: var(--surface-card);
   --glass-bg: rgba(255, 255, 255, 0.85);
   --glass-border: rgba(255, 255, 255, 0.2);
   --overlay-dark: rgba(0, 0, 0, 0.3);
-  
+
   /* Legacy mappings */
   --background: var(--surface-light);
   --foreground: var(--text-primary);
   --card: var(--surface-light);
   --card-foreground: var(--text-primary);
-  --primary-foreground: #FFFFFF;
+  --primary-foreground: #ffffff;
   --primary-hover: var(--primary-pressed);
-  --muted: #F8FAFC;
+  --muted: #f8fafc;
   --muted-foreground: var(--text-secondary);
   --destructive: var(--error);
-  --destructive-foreground: #FFFFFF;
+  --destructive-foreground: #ffffff;
   --input: var(--border);
   --ring: var(--primary);
-  
+
   /* Video Actions */
   --like-color: var(--accent);
   --save-color: #ffd700;
-  
+
   /* Mobile-First Spacing System */
   --spacing-micro: 4px;
   --spacing-xs: 8px;
@@ -43,22 +46,22 @@
   --spacing-lg: 24px;
   --spacing-xl: 32px;
   --spacing-xxl: 48px;
-  
+
   /* Layout Margins */
   --margin-mobile: 16px;
   --margin-tablet: 24px;
   --margin-desktop: 32px;
-  
+
   /* Component Heights */
   --nav-height: 60px;
   --header-height: 80px;
   --card-height: 120px;
-  
+
   /* Border Radius */
   --radius-sm: 12px;
   --radius-md: 16px;
   --radius-full: 999px;
-  
+
   /* Legacy mappings */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
@@ -68,7 +71,7 @@
   --spacing-xxl: 48px;
   --radius-lg: var(--radius-md);
   --radius-xl: var(--radius-md);
-  
+
   /* Glassmorphism & Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -76,32 +79,33 @@
   --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.12);
   --backdrop-blur: blur(20px);
   --backdrop-blur-sm: blur(8px);
-  
+
   /* Typography Hierarchy */
-  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'SF Pro Display', Roboto, sans-serif;
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "SF Pro Display",
+    Roboto, sans-serif;
   --text-small: 12px;
   --text-caption: 14px;
   --text-body: 16px;
   --text-h3: 18px;
   --text-h2: 20px;
   --text-h1: 24px;
-  
+
   /* Line Heights */
   --line-height-tight: 1.2;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.4;
-  
+
   /* Touch Targets */
   --touch-target: 44px;
   --touch-target-lg: 56px;
-  
+
   /* Elevation */
   --shadow-0: none;
   --shadow-2: 0 2px 4px rgba(0, 0, 0, 0.06);
   --shadow-6: 0 6px 16px rgba(0, 0, 0, 0.12);
   --shadow-card: 0 6px 20px rgba(17, 24, 39, 0.08);
   --shadow-dark: 0 6px 20px rgba(0, 0, 0, 0.25);
-  
+
   /* Z-index */
   --z-dropdown: 1000;
   --z-sticky: 1020;

@@ -5,6 +5,7 @@ import AuthLayout from "../AuthLayout/AuthLayout";
 import styles from "../AuthForm.module.css";
 import Input from "../../../../shared/components/ui/Input/Input";
 import Button from "../../../../shared/components/ui/Button/Button";
+import LoadingSpinner from "../../../../shared/components/ui/LoadingSpinner/LoadingSpinner";
 import { ROUTES } from "../../../../routes/routeConfig";
 
 const UserRegisterForm = () => {
@@ -19,6 +20,18 @@ const UserRegisterForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Basic validation
+    if (!fullName.trim() || !email.trim() || !password.trim()) {
+      setError("Please fill in all fields");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
@@ -83,13 +96,20 @@ const UserRegisterForm = () => {
             required
           />
         </div>
-        <Button
+        <button
           type="submit"
           disabled={loading}
           className={styles.fullWidthBtn}
         >
-          {loading ? "Creating Account..." : "Create Account"}
-        </Button>
+          {loading ? (
+            <>
+              <LoadingSpinner size="small" color="white" />
+              Creating Account...
+            </>
+          ) : (
+            "Create Account"
+          )}
+        </button>
       </form>
     </AuthLayout>
   );

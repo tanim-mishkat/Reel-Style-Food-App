@@ -25,6 +25,9 @@ const foodPartnerSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    profileImg: {
+        type: String,
+    },
     slug: {
         type: String,
         unique: true,

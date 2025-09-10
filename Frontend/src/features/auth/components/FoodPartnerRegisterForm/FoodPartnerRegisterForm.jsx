@@ -4,7 +4,8 @@ import axios from "axios";
 import AuthLayout from "../AuthLayout/AuthLayout";
 import styles from "../AuthForm.module.css";
 import Input from "../../../../shared/components/ui/Input/Input";
-import Button from "../../../../shared/components/ui/Button/Button";
+import LoadingSpinner from "../../../../shared/components/ui/LoadingSpinner/LoadingSpinner";
+import ImageUpload from "../../../../shared/components/ui/ImageUpload/ImageUpload";
 import { ROUTES } from "../../../../routes/routeConfig";
 
 const FoodPartnerRegisterForm = () => {
@@ -14,6 +15,7 @@ const FoodPartnerRegisterForm = () => {
   const [contactName, setContactName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [profileImg, setProfileImg] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -22,14 +24,52 @@ const FoodPartnerRegisterForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Basic validation
+    if (
+      !fullName.trim() ||
+      !email.trim() ||
+      !password.trim() ||
+      !contactName.trim() ||
+      !phone.trim() ||
+      !address.trim()
+    ) {
+      setError("Please fill in all fields");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
     try {
-      await axios.post(
+      // Create FormData to handle file upload
+      const formData = new FormData();
+      formData.append("fullName", fullName);
+      formData.append("email", email);
+      formData.append("password", password);
+      formData.append("contactName", contactName);
+      formData.append("phone", phone);
+      formData.append("address", address);
+
+      if (profileImg) {
+        formData.append("profileImg", profileImg);
+      }
+
+      const response = await axios.post(
         `${API_URL}/auth/foodpartner/register`,
-        { fullName, email, password, contactName, phone, address },
-        { withCredentials: true }
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          timeout: 30000, // 30 second timeout
+        }
       );
       navigate(ROUTES.CREATE_FOOD);
     } catch (err) {
@@ -61,8 +101,8 @@ const FoodPartnerRegisterForm = () => {
         <div className={styles.formCard}>
           <Input
             id="fullName"
-            label="Full Name"
-            placeholder="Enter your full name"
+            label="Restaurant Name"
+            placeholder="Enter your restaurant name"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             required
@@ -105,19 +145,34 @@ const FoodPartnerRegisterForm = () => {
           <Input
             id="address"
             label="Address"
-            placeholder="Enter your address"
+            placeholder="Enter your restaurant address"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             required
           />
+          <ImageUpload
+            id="profileImg"
+            label="Restaurant Logo (Optional)"
+            value={profileImg}
+            onChange={setProfileImg}
+            accept="image/*"
+            maxSize={5 * 1024 * 1024} // 5MB
+          />
         </div>
-        <Button
+        <button
           type="submit"
           disabled={loading}
           className={styles.fullWidthBtn}
         >
-          {loading ? "Creating Account..." : "Create Account"}
-        </Button>
+          {loading ? (
+            <>
+              <LoadingSpinner size="small" color="white" />
+              Creating Account...
+            </>
+          ) : (
+            "Create Account"
+          )}
+        </button>
       </form>
     </AuthLayout>
   );

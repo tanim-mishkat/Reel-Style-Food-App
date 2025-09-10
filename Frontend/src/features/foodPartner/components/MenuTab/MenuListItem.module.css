@@ -1,0 +1,128 @@
+.menuItem {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.2s ease;
+}
+
+.menuItem:hover {
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.itemContent {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.itemInfo {
+  flex: 1;
+}
+
+.itemTitle {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.itemDesc {
+  margin: 0 0 12px 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.itemMeta {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.itemPrice {
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 16px;
+}
+
+.itemTime {
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: var(--surface-card);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.itemImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.itemImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.itemActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.actionBtn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.editBtn {
+  background: var(--surface-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.editBtn:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.deleteBtn {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--error);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.deleteBtn:hover {
+  background: var(--error);
+  color: white;
+  border-color: var(--error);
+}
+
+@media (max-width: 480px) {
+  .itemContent {
+    flex-direction: column;
+  }
+
+  .itemImage {
+    width: 100%;
+    height: 120px;
+  }
+
+  .itemActions {
+    justify-content: stretch;
+  }
+
+  .actionBtn {
+    flex: 1;
+  }
+}

@@ -15,6 +15,11 @@ router.patch('/me',
     foodPartnerController.updateMyProfile
 )
 
+router.get('/me/reels',
+    authMiddleware.authFoodPartnerMiddleware,
+    foodPartnerController.getMyReels
+)
+
 router.get('/restaurant/:slug',
     foodPartnerController.getFoodPartnerBySlug
 )

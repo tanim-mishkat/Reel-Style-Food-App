@@ -19,6 +19,7 @@ import UserSavedVideosPage from "../features/home/pages/UserSavedVideosPage";
 // Food Partner Pages
 import CreateFoodPage from "../features/foodPartner/pages/CreateFoodPage";
 import DashboardPage from "../features/foodPartner/pages/DashboardPage";
+import PartnerReelsPage from "../features/foodPartner/pages/PartnerReelsPage";
 import ProfilePage from "../features/foodPartner/pages/ProfilePage";
 import FoodPartnerVideosPage from "../features/foodPartner/pages/FoodPartnerVideosPage";
 
@@ -83,6 +84,7 @@ const AppRouter = () => {
         {/* Food Partner Routes */}
         <Route path={ROUTES.CREATE_FOOD} element={<CreateFoodPage />} />
         <Route path={ROUTES.PARTNER_DASHBOARD} element={<DashboardPage />} />
+        <Route path={ROUTES.PARTNER_REELS} element={<PartnerReelsPage />} />
         <Route path={ROUTES.FOOD_PARTNER_PROFILE} element={<ProfilePage />} />
         <Route
           path={ROUTES.FOOD_PARTNER_VIDEOS}

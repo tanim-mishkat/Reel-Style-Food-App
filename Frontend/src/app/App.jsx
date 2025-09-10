@@ -8,8 +8,8 @@ import "../assets/styles/global.css";
 
 const App = () => {
   useEffect(() => {
-    initPushNotifications().catch(console.error)
-  }, [])
+    initPushNotifications().catch(console.error);
+  }, []);
 
   return (
     <CartProvider>

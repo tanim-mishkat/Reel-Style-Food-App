@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { foodService } from "../../shared/services/api";
 import "./CreateFood.css";
 
@@ -11,11 +11,47 @@ const CreateFood = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [posted, setPosted] = useState(false);
+  const videoInputRef = useRef(null);
+
+  // Cleanup video preview URL on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (videoPreview) {
+        URL.revokeObjectURL(videoPreview);
+      }
+    };
+  }, [videoPreview]);
+
+  const resetForm = () => {
+    setName("");
+    setDescription("");
+    setVideo(null);
+    setVideoPreview(null);
+    setPosted(false);
+    setSuccess("");
+    setError("");
+    // Reset file input using ref
+    if (videoInputRef.current) {
+      videoInputRef.current.value = "";
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name || !description || !video) {
+
+    // Validation
+    if (!name.trim() || !description.trim() || !video) {
       setError("All fields are required");
+      return;
+    }
+
+    if (name.trim().length < 2) {
+      setError("Food name must be at least 2 characters long");
+      return;
+    }
+
+    if (description.trim().length < 10) {
+      setError("Description must be at least 10 characters long");
       return;
     }
 
@@ -23,25 +59,21 @@ const CreateFood = () => {
     setError("");
 
     const formData = new FormData();
-    formData.append("name", name);
-    formData.append("description", description);
+    formData.append("name", name.trim());
+    formData.append("description", description.trim());
     formData.append("video", video);
 
     try {
       await foodService.createFood(formData);
-      setSuccess("Food item created successfully!");
+      setSuccess("Food reel created successfully!");
       setPosted(true);
+
+      // Auto-reset after 3 seconds
       setTimeout(() => {
-        setName("");
-        setDescription("");
-        setVideo(null);
-        setVideoPreview(null);
-        setPosted(false);
-        setSuccess("");
-        document.getElementById("video-input").value = "";
+        resetForm();
       }, 3000);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to create food item");
+      setError(err.response?.data?.message || "Failed to create food reel");
     } finally {
       setLoading(false);
     }
@@ -63,6 +95,9 @@ const CreateFood = () => {
             <div className="success-icon">✓</div>
             <h2>Posted Successfully!</h2>
             <p>Your food reel is now live</p>
+            <button onClick={resetForm} className="create-another-btn">
+              Create Another Reel
+            </button>
           </div>
         ) : (
           <div className="form-layout">
@@ -98,13 +133,32 @@ const CreateFood = () => {
                 <div className="file-input-wrapper">
                   <input
                     id="video-input"
+                    ref={videoInputRef}
                     type="file"
                     accept="video/*"
                     onChange={(e) => {
                       const file = e.target.files[0];
-                      setVideo(file);
                       if (file) {
+                        // Validate file size (50MB limit)
+                        if (file.size > 50 * 1024 * 1024) {
+                          setError("Video file must be less than 50MB");
+                          return;
+                        }
+
+                        // Clean up previous preview URL to prevent memory leaks
+                        if (videoPreview) {
+                          URL.revokeObjectURL(videoPreview);
+                        }
+
+                        setVideo(file);
                         setVideoPreview(URL.createObjectURL(file));
+                        setError(""); // Clear any previous errors
+                      } else {
+                        setVideo(null);
+                        if (videoPreview) {
+                          URL.revokeObjectURL(videoPreview);
+                        }
+                        setVideoPreview(null);
                       }
                     }}
                     className="file-input-hidden"

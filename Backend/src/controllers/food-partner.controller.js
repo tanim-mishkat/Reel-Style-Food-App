@@ -49,22 +49,40 @@ async function getMyProfile(req, res) {
     })
 }
 
+async function getMyReels(req, res) {
+    const foodPartner = req.foodPartner
+
+    // Get only food items with videos
+    const reels = await foodModel.find({
+        foodPartner: foodPartner._id,
+        $or: [
+            { video: { $exists: true, $ne: null } },
+            { videoUrl: { $exists: true, $ne: null } }
+        ]
+    }).sort({ createdAt: -1 })
+
+    res.status(200).json({
+        message: 'Reels fetched successfully',
+        reels
+    })
+}
+
 async function updateMyProfile(req, res) {
     const foodPartner = req.foodPartner
     const { fullName, contactName, phone, address } = req.body
-    
+
     const updateData = {}
     if (fullName) updateData.fullName = fullName
     if (contactName) updateData.contactName = contactName
     if (phone) updateData.phone = phone
     if (address) updateData.address = address
-    
+
     const updatedPartner = await foodPartnerModel.findByIdAndUpdate(
-        foodPartner._id, 
-        updateData, 
+        foodPartner._id,
+        updateData,
         { new: true }
     )
-    
+
     res.status(200).json({
         message: 'Profile updated successfully',
         foodPartner: updatedPartner
@@ -74,24 +92,24 @@ async function updateMyProfile(req, res) {
 async function getFoodPartnerVideos(req, res) {
     const { id } = req.params
     const user = req.user
-    
+
     const foodItems = await foodModel.find({ foodPartner: id })
-    
+
     let foodItemsWithStatus
-    
+
     if (user) {
-        const userLikes = await likeModel.find({ 
-            user: user._id, 
-            food: { $in: foodItems.map(item => item._id) } 
+        const userLikes = await likeModel.find({
+            user: user._id,
+            food: { $in: foodItems.map(item => item._id) }
         }).select('food')
-        const userSaves = await saveModel.find({ 
-            user: user._id, 
-            food: { $in: foodItems.map(item => item._id) } 
+        const userSaves = await saveModel.find({
+            user: user._id,
+            food: { $in: foodItems.map(item => item._id) }
         }).select('food')
-        
+
         const likedFoodIds = userLikes.map(like => like.food.toString())
         const savedFoodIds = userSaves.map(save => save.food.toString())
-        
+
         foodItemsWithStatus = foodItems.map(item => ({
             ...item.toObject(),
             isLiked: likedFoodIds.includes(item._id.toString()),
@@ -104,8 +122,8 @@ async function getFoodPartnerVideos(req, res) {
             isSaved: false
         }))
     }
-    
+
     res.status(200).json({ message: 'Food partner videos fetched successfully', foodItems: foodItemsWithStatus })
 }
 
-module.exports = { getFoodPartnerById, getFoodPartnerBySlug, getMyProfile, updateMyProfile, getFoodPartnerVideos }
+module.exports = { getFoodPartnerById, getFoodPartnerBySlug, getMyProfile, updateMyProfile, getFoodPartnerVideos, getMyReels }

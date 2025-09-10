@@ -58,6 +58,7 @@ export const foodPartnerService = {
   getFoodPartnerBySlug: (slug) => api.get(`/food-partner/restaurant/${slug}`),
   getFoodPartnerVideos: (id) => api.get(`/food-partner/${id}/videos`),
   getMyProfile: () => api.get('/food-partner/me'),
+  getMyReels: () => api.get('/food-partner/me/reels'),
   updateMyProfile: (data) => api.patch('/food-partner/me', data),
   getPartnerReviews: (id) => api.get(`/food-partner/${id}/reviews`),
 };

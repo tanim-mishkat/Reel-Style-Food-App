@@ -1,0 +1,140 @@
+.filterContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.filterButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 140px;
+}
+
+.filterButton:hover {
+  background: var(--surface-card);
+  border-color: var(--primary);
+}
+
+.filterButton:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.filterIcon {
+  width: 16px;
+  height: 16px;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.chevron {
+  width: 16px;
+  height: 16px;
+  color: var(--text-secondary);
+  transition: transform 0.2s ease;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.chevronUp {
+  transform: rotate(180deg);
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  margin-top: 4px;
+  overflow: hidden;
+  animation: dropdownSlide 0.2s ease-out;
+}
+
+@keyframes dropdownSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownItem {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  text-align: left;
+  font-size: 14px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.dropdownItem:hover {
+  background: var(--surface-card);
+}
+
+.dropdownItem:focus {
+  outline: none;
+  background: var(--surface-card);
+}
+
+.dropdownItem.active {
+  background: var(--primary);
+  color: white;
+}
+
+.dropdownItem.active:hover {
+  background: var(--primary-pressed);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .filterButton {
+    padding: 8px 12px;
+    font-size: 13px;
+    min-width: 120px;
+  }
+
+  .filterIcon,
+  .chevron {
+    width: 14px;
+    height: 14px;
+  }
+
+  .dropdownItem {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .chevron,
+  .dropdownItem,
+  .filterButton {
+    transition: none;
+  }
+
+  .dropdown {
+    animation: none;
+  }
+}
