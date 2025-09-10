@@ -49,11 +49,19 @@ const UserSavedVideosPage = () => {
     const fetchSavedVideos = async () => {
       try {
         const response = await foodService.getSavedFoodItems();
-        const savedFoodItems = response.data.savedFoodItems;
-        setVideos(savedFoodItems);
-        initializeVideoStates(savedFoodItems);
-      } catch {
-        // Handle error silently
+        // Filter out null/undefined items and ensure they have required properties
+        const validVideos = (response.data.savedFoodItems || [])
+          .filter((video) => video && video._id && video.video)
+          .map((video) => ({
+            ...video,
+            name: video.name || "Untitled",
+            description: video.description || "No description",
+          }));
+        setVideos(validVideos);
+        initializeVideoStates(validVideos);
+      } catch (err) {
+        console.error("Error fetching saved videos:", err);
+        setVideos([]);
       }
     };
 
@@ -78,60 +86,69 @@ const UserSavedVideosPage = () => {
 
   return (
     <div className={styles.homeContainer} ref={containerRef}>
-      {videos.map((video) => (
-        <div key={video._id} className={styles.videoSection}>
-          <VideoPlayer
-            video={video}
-            videoRef={(el) => (videoRefs.current[video._id] = el)}
-            muted={mutedVideos[video._id] === true}
-            onTimeUpdate={() => handleTimeUpdate(video._id)}
-            onLoadedMetadata={() => handleLoadedMetadata(video._id)}
-            onVideoClick={() => handleVideoClick(video._id)}
-          />
-          <VideoProgressBar
-            currentTime={currentTimes[video._id] || 0}
-            duration={durations[video._id] || 0}
-          />
-          <div className={styles.videoOverlay}>
-            <VideoControls
-              isPaused={pausedVideos[video._id]}
-              isMuted={mutedVideos[video._id]}
-              onPlayPause={() => togglePlayPause(video._id)}
-              onMute={() => toggleMute(video._id)}
+      {videos.map((video) => {
+        // Additional safety check
+        if (!video || !video._id || !video.video) {
+          return null;
+        }
+
+        return (
+          <div key={video._id} className={styles.videoSection}>
+            <VideoPlayer
+              video={video}
+              videoRef={(el) => (videoRefs.current[video._id] = el)}
+              muted={mutedVideos[video._id] === true}
+              onTimeUpdate={() => handleTimeUpdate(video._id)}
+              onLoadedMetadata={() => handleLoadedMetadata(video._id)}
+              onVideoClick={() => handleVideoClick(video._id)}
             />
-            <VideoActions
-              videoId={video._id}
-              isLiked={likedVideos[video._id]}
-              isSaved={savedVideos[video._id]}
-              likesCount={videoCounts[video._id]?.likes || 0}
-              savesCount={videoCounts[video._id]?.saves || 0}
-              commentsCount={videoCounts[video._id]?.comments || 0}
-              onLike={handleLike}
-              onSave={handleSave}
-              onComment={handleComment}
+            <VideoProgressBar
+              currentTime={currentTimes[video._id] || 0}
+              duration={durations[video._id] || 0}
             />
-            <div className={styles.videoInfoContainer}>
-              <h3 className={styles.videoTitle}>{video.name}</h3>
-              <VideoInfo
-                video={video}
-                onDescriptionClick={() => handleDescriptionClick(video._id)}
+            <div className={styles.videoOverlay}>
+              <VideoControls
+                isPaused={pausedVideos[video._id]}
+                isMuted={mutedVideos[video._id]}
+                onPlayPause={() => togglePlayPause(video._id)}
+                onMute={() => toggleMute(video._id)}
               />
-              {showTimeline[video._id] && (
-                <div className={styles.videoTimeline}>
-                  <input
-                    type="range"
-                    min="0"
-                    max={durations[video._id] || 0}
-                    value={currentTimes[video._id] || 0}
-                    onChange={(e) => handleSeek(video._id, e.target.value)}
-                    className={styles.timelineSlider}
-                  />
-                </div>
-              )}
+              <VideoActions
+                videoId={video._id}
+                isLiked={likedVideos[video._id]}
+                isSaved={savedVideos[video._id]}
+                likesCount={videoCounts[video._id]?.likes || 0}
+                savesCount={videoCounts[video._id]?.saves || 0}
+                commentsCount={videoCounts[video._id]?.comments || 0}
+                onLike={handleLike}
+                onSave={handleSave}
+                onComment={handleComment}
+              />
+              <div className={styles.videoInfoContainer}>
+                <h3 className={styles.videoTitle}>
+                  {video.name || "Untitled"}
+                </h3>
+                <VideoInfo
+                  video={video}
+                  onDescriptionClick={() => handleDescriptionClick(video._id)}
+                />
+                {showTimeline[video._id] && (
+                  <div className={styles.videoTimeline}>
+                    <input
+                      type="range"
+                      min="0"
+                      max={durations[video._id] || 0}
+                      value={currentTimes[video._id] || 0}
+                      onChange={(e) => handleSeek(video._id, e.target.value)}
+                      className={styles.timelineSlider}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       <VideoComments
         videoId={activeVideoId}

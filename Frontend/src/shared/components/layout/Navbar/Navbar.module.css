@@ -1,0 +1,173 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  z-index: 1000;
+  box-shadow: var(--shadow-sm);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 4rem; /* 64px */
+}
+
+/* Brand/Logo */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  text-decoration: none;
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 20px;
+  transition: all 0.2s ease;
+}
+
+.brand:hover {
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.logo {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
+.brandText {
+  background: linear-gradient(135deg, var(--primary), #ff8a65);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Removed navigation links - simplified navbar */
+
+/* Right Actions */
+.rightActions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.navbarNotifications {
+  display: flex;
+  align-items: center;
+  position: fixed;
+  right: 5.5rem;
+}
+
+/* Logout Button */
+.logoutButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-primary);
+}
+
+.logoutButton:hover {
+  background: rgba(0, 0, 0, 0.05);
+  transform: scale(1.05);
+}
+
+.logoutButton svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Removed dropdown styles - simplified navbar */
+
+/* Login Button */
+.loginButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  text-decoration: none;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.loginButton:hover {
+  background: rgba(0, 0, 0, 0.05);
+  transform: scale(1.05);
+}
+
+.loginButton svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Removed mobile menu styles - simplified navbar */
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--spacing-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    height: 3.5rem; /* 56px */
+  }
+
+  .brandText {
+    font-size: 18px;
+  }
+
+  .logo {
+    width: 28px;
+    height: 28px;
+  }
+
+  .logo svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Focus States for Accessibility */
+.logoutButton:focus,
+.loginButton:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .navbar {
+    border-bottom-width: 2px;
+  }
+}

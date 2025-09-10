@@ -5,7 +5,7 @@ export { default as Loading } from './ui/Loading/Loading';
 export { default as LoadingSpinner } from './ui/LoadingSpinner/LoadingSpinner';
 export { default as ImageUpload } from './ui/ImageUpload/ImageUpload';
 export { default as Toast } from './ui/Toast/Toast';
-export { default as NotificationBell } from './ui/NotificationBell/NotificationBell';
+
 export { default as CartIcon } from './ui/CartIcon/CartIcon';
 export { default as DropdownFilter } from './ui/DropdownFilter/DropdownFilter';
 

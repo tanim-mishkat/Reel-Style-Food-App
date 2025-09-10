@@ -1,10 +1,8 @@
 .bellContainer {
   position: fixed !important;
-  top: 16px !important;
-  right: 16px !important;
   z-index: 999999 !important;
   cursor: pointer;
-  background: rgba(0, 0, 0, 0.8) !important;
+  background: var(--primary) !important;
   border-radius: 50%;
   width: 36px;
   height: 36px;
@@ -12,12 +10,13 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3) !important;
 }
 
 .bellContainer:hover {
-  background: rgba(0, 0, 0, 0.9);
+  background: var(--primary-pressed) !important;
   transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4) !important;
 }
 
 .bellIcon {
@@ -32,9 +31,9 @@
   right: 2px;
   min-width: 14px;
   height: 14px;
-  background: #ff4444;
+  background: #dc2626;
   border-radius: 50%;
-  border: 1px solid white;
+  border: 2px solid white;
   animation: pulse 2s infinite;
   display: flex;
   align-items: center;
@@ -43,6 +42,7 @@
   font-weight: bold;
   color: white;
   padding: 0 1px;
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.3);
 }
 
 .notificationPanel {
@@ -135,7 +135,13 @@
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }

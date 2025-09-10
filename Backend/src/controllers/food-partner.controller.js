@@ -126,4 +126,204 @@ async function getFoodPartnerVideos(req, res) {
     res.status(200).json({ message: 'Food partner videos fetched successfully', foodItems: foodItemsWithStatus })
 }
 
+// Helper function to escape regex special characters
+function escapeRegex(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+// Helper function to create fuzzy search pattern
+function createFuzzyPattern(query) {
+    // Allow for 1 character difference per 4 characters
+    const tolerance = Math.floor(query.length / 4)
+    if (tolerance === 0) return escapeRegex(query)
+
+    // Create pattern that allows for character substitutions
+    return query.split('').map(char => {
+        if (/[a-zA-Z]/.test(char)) {
+            return `[${char}${char.toLowerCase()}${char.toUpperCase()}]?`
+        }
+        return escapeRegex(char) + '?'
+    }).join('.*?')
+}
+
+// Helper function to determine match type for ranking
+function getMatchType(partner, query) {
+    const lowerQuery = query.toLowerCase()
+    const lowerName = partner.fullName.toLowerCase()
+    const lowerAddress = partner.address?.toLowerCase() || ''
+    const cuisines = partner.cuisineType?.map(c => c.toLowerCase()) || []
+
+    if (lowerName.startsWith(lowerQuery)) return 'name_start'
+    if (lowerName.includes(lowerQuery)) return 'name_contains'
+    if (cuisines.some(c => c.includes(lowerQuery))) return 'cuisine_match'
+    if (lowerAddress.includes(lowerQuery)) return 'address_match'
+    return 'fuzzy_match'
+}
+
+async function searchPartners(req, res) {
+    try {
+        const { q, cuisine, limit = 10 } = req.query
+
+        // Input validation
+        if (!q) {
+            return res.status(400).json({
+                message: 'Search query is required',
+                partners: []
+            })
+        }
+
+        const searchQuery = q.trim()
+
+        if (searchQuery.length < 1) {
+            return res.status(400).json({
+                message: 'Search query cannot be empty',
+                partners: []
+            })
+        }
+
+        if (searchQuery.length > 100) {
+            return res.status(400).json({
+                message: 'Search query too long (max 100 characters)',
+                partners: []
+            })
+        }
+
+        const searchLimit = Math.min(parseInt(limit) || 10, 20) // Max 20 results
+
+        let searchResults = []
+
+        // Strategy 1: Full-text search (most relevant)
+        if (searchQuery.length >= 2) {
+            try {
+                const textSearchQuery = {
+                    $text: { $search: searchQuery },
+                    isActive: true
+                }
+
+                // Add cuisine filter if specified
+                if (cuisine && cuisine.trim()) {
+                    textSearchQuery.cuisineType = {
+                        $in: [new RegExp(cuisine.trim(), 'i')]
+                    }
+                }
+
+                const textResults = await foodPartnerModel.find(
+                    textSearchQuery,
+                    { score: { $meta: 'textScore' } }
+                )
+                    .select('fullName address profileImg slug cuisineType rating totalReviews')
+                    .sort({ score: { $meta: 'textScore' }, rating: -1 })
+                    .limit(searchLimit)
+
+                searchResults = textResults
+            } catch (textSearchError) {
+                console.log('Text search not available, falling back to regex')
+            }
+        }
+
+        // Strategy 2: Regex search with fuzzy matching (fallback)
+        if (searchResults.length < searchLimit) {
+            const remainingLimit = searchLimit - searchResults.length
+
+            // Create fuzzy regex patterns
+            const fuzzyPattern = createFuzzyPattern(searchQuery)
+            const exactPattern = new RegExp(escapeRegex(searchQuery), 'i')
+
+            const regexQuery = {
+                $and: [
+                    { isActive: { $ne: false } }, // Include undefined as active
+                    {
+                        $or: [
+                            { fullName: { $regex: exactPattern } },
+                            { address: { $regex: exactPattern } },
+                            { cuisineType: { $in: [exactPattern] } },
+                            { fullName: { $regex: fuzzyPattern, $options: 'i' } }
+                        ]
+                    }
+                ]
+            }
+
+            // Add cuisine filter if specified
+            if (cuisine && cuisine.trim()) {
+                regexQuery.$and.push({
+                    cuisineType: { $in: [new RegExp(cuisine.trim(), 'i')] }
+                })
+            }
+
+            // Exclude already found results
+            if (searchResults.length > 0) {
+                const foundIds = searchResults.map(r => r._id)
+                regexQuery.$and.push({ _id: { $nin: foundIds } })
+            }
+
+            const regexResults = await foodPartnerModel.find(regexQuery)
+                .select('fullName address profileImg slug cuisineType rating totalReviews')
+                .sort({ rating: -1, totalReviews: -1, fullName: 1 })
+                .limit(remainingLimit)
+
+            searchResults = [...searchResults, ...regexResults]
+        }
+
+        // Strategy 3: Partial match on cuisine types (if still need more results)
+        if (searchResults.length < searchLimit && searchQuery.length >= 3) {
+            const remainingLimit = searchLimit - searchResults.length
+
+            const cuisineQuery = {
+                $and: [
+                    { isActive: { $ne: false } },
+                    { cuisineType: { $in: [new RegExp(searchQuery, 'i')] } }
+                ]
+            }
+
+            // Exclude already found results
+            if (searchResults.length > 0) {
+                const foundIds = searchResults.map(r => r._id)
+                cuisineQuery.$and.push({ _id: { $nin: foundIds } })
+            }
+
+            const cuisineResults = await foodPartnerModel.find(cuisineQuery)
+                .select('fullName address profileImg slug cuisineType rating totalReviews')
+                .sort({ rating: -1, totalReviews: -1 })
+                .limit(remainingLimit)
+
+            searchResults = [...searchResults, ...cuisineResults]
+        }
+
+        // Enhance results with additional metadata
+        const enhancedResults = searchResults.map(partner => ({
+            ...partner.toObject(),
+            matchType: getMatchType(partner, searchQuery),
+            displayCuisine: partner.cuisineType?.slice(0, 2).join(', ') || ''
+        }))
+
+        res.status(200).json({
+            message: 'Search completed successfully',
+            partners: enhancedResults,
+            total: enhancedResults.length,
+            query: searchQuery,
+            ...(cuisine && { cuisineFilter: cuisine })
+        })
+
+    } catch (error) {
+        console.error('Search error:', error)
+
+        // Return user-friendly error messages
+        let errorMessage = 'Search temporarily unavailable'
+
+        if (error.name === 'ValidationError') {
+            errorMessage = 'Invalid search parameters'
+        } else if (error.name === 'MongoNetworkError') {
+            errorMessage = 'Database connection error'
+        } else if (error.code === 11000) {
+            errorMessage = 'Search index error'
+        }
+
+        res.status(500).json({
+            message: errorMessage,
+            partners: [],
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        })
+    }
+}
+
 module.exports = { getFoodPartnerById, getFoodPartnerBySlug, getMyProfile, updateMyProfile, getFoodPartnerVideos, getMyReels }

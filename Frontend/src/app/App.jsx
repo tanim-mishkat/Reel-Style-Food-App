@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import AppRouter from "../routes/AppRouter";
 import { CartProvider } from "../shared/contexts/CartContext";
 import { initPushNotifications } from "../shared/services/push";
-import NotificationBell from "../shared/components/ui/NotificationBell/NotificationBell";
 import Toast from "../shared/components/ui/Toast/Toast";
 import "../assets/styles/global.css";
 
@@ -14,7 +13,6 @@ const App = () => {
   return (
     <CartProvider>
       <AppRouter />
-      <NotificationBell />
       <Toast />
     </CartProvider>
   );

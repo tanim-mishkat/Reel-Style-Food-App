@@ -14,9 +14,18 @@ const SavedPage = () => {
     const fetchSavedVideos = async () => {
       try {
         const response = await foodService.getSavedFoodItems();
-        setSavedVideos(response.data.savedFoodItems);
+        // Filter out null/undefined items and ensure they have required properties
+        const validVideos = (response.data.savedFoodItems || [])
+          .filter((video) => video && video._id && video.video)
+          .map((video) => ({
+            ...video,
+            name: video.name || "Untitled",
+            description: video.description || "No description",
+          }));
+        setSavedVideos(validVideos);
       } catch (err) {
-        // Handle error silently
+        console.error("Error fetching saved videos:", err);
+        setSavedVideos([]);
       } finally {
         setLoading(false);
       }
@@ -62,32 +71,39 @@ const SavedPage = () => {
           </div>
         ) : (
           <div className={styles.savedGrid}>
-            {savedVideos.map((video) => (
-              <div
-                key={video._id}
-                className={styles.savedVideoItem}
-                onClick={() =>
-                  navigate(ROUTES.USER_SAVED_VIDEOS, {
-                    state: { startVideoId: video._id },
-                  })
-                }
-              >
-                <video
-                  src={video.video}
-                  className={styles.savedVideo}
-                  muted
-                  onMouseEnter={(e) => e.target.play()}
-                  onMouseLeave={(e) => {
-                    e.target.pause();
-                    e.target.currentTime = 0;
-                  }}
-                />
-                <div className={styles.savedVideoInfo}>
-                  <h3>{video.name}</h3>
-                  <p>{video.description}</p>
+            {savedVideos.map((video) => {
+              // Additional safety check
+              if (!video || !video._id || !video.video) {
+                return null;
+              }
+
+              return (
+                <div
+                  key={video._id}
+                  className={styles.savedVideoItem}
+                  onClick={() =>
+                    navigate(ROUTES.USER_SAVED_VIDEOS, {
+                      state: { startVideoId: video._id },
+                    })
+                  }
+                >
+                  <video
+                    src={video.video}
+                    className={styles.savedVideo}
+                    muted
+                    preload="metadata"
+                    onError={(e) => {
+                      console.error("Error loading video:", video.video);
+                      e.target.style.display = "none";
+                    }}
+                  />
+                  <div className={styles.savedVideoInfo}>
+                    <h3>{video.name || "Untitled"}</h3>
+                    <p>{video.description || "No description"}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
