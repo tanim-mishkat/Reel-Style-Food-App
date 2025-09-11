@@ -2,20 +2,12 @@ import { useState } from "react";
 import { ORDER_STATUSES } from "../../constants/dashboard";
 import styles from "./OrderItem.module.css";
 
-const STATUS_COLORS = {
-  [ORDER_STATUSES.PENDING]: "#f59e0b",
-  [ORDER_STATUSES.CONFIRMED]: "#3b82f6",
-  [ORDER_STATUSES.PREPARING]: "#8b5cf6",
-  [ORDER_STATUSES.READY]: "#10b981",
-  [ORDER_STATUSES.DELIVERED]: "#16a34a",
-  [ORDER_STATUSES.CANCELLED]: "#ef4444",
-};
-
+// UI mapping for colors is handled in CSS (see module) using status class names.
 const NEXT_STATUS = {
-  [ORDER_STATUSES.PENDING]: ORDER_STATUSES.CONFIRMED,
-  [ORDER_STATUSES.CONFIRMED]: ORDER_STATUSES.PREPARING,
+  [ORDER_STATUSES.PLACED]: ORDER_STATUSES.ACCEPTED,
+  [ORDER_STATUSES.ACCEPTED]: ORDER_STATUSES.PREPARING,
   [ORDER_STATUSES.PREPARING]: ORDER_STATUSES.READY,
-  [ORDER_STATUSES.READY]: ORDER_STATUSES.DELIVERED,
+  [ORDER_STATUSES.READY]: ORDER_STATUSES.COMPLETED,
 };
 
 const OrderItem = ({ order, onStatusUpdate }) => {
@@ -56,8 +48,9 @@ const OrderItem = ({ order, onStatusUpdate }) => {
           </span>
         </div>
         <div
-          className={styles.statusBadge}
-          style={{ backgroundColor: STATUS_COLORS[order.status] }}
+          className={`${styles.statusBadge} ${
+            styles[`status_${order.status}`]
+          }`}
         >
           {order.status}
         </div>
@@ -89,7 +82,7 @@ const OrderItem = ({ order, onStatusUpdate }) => {
             {updating ? "Updating..." : `Mark as ${nextStatus}`}
           </button>
 
-          {order.status === ORDER_STATUSES.PENDING && (
+          {order.status === ORDER_STATUSES.PLACED && (
             <button
               onClick={() => handleStatusUpdate(ORDER_STATUSES.CANCELLED)}
               disabled={updating}

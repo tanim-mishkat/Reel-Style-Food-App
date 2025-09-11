@@ -4,11 +4,11 @@ import styles from "./OrderStatusFilter.module.css";
 
 const STATUS_OPTIONS = [
   { value: "", label: "All Orders" },
-  { value: ORDER_STATUSES.PENDING, label: "Pending" },
-  { value: ORDER_STATUSES.CONFIRMED, label: "Confirmed" },
+  { value: ORDER_STATUSES.PLACED, label: "Placed" },
+  { value: ORDER_STATUSES.ACCEPTED, label: "Accepted" },
   { value: ORDER_STATUSES.PREPARING, label: "Preparing" },
   { value: ORDER_STATUSES.READY, label: "Ready" },
-  { value: ORDER_STATUSES.DELIVERED, label: "Delivered" },
+  { value: ORDER_STATUSES.COMPLETED, label: "Completed" },
   { value: ORDER_STATUSES.CANCELLED, label: "Cancelled" },
 ];
 

@@ -46,6 +46,35 @@
   letter-spacing: 0.5px;
 }
 
+/* Perfect circular small status indicator when needed */
+.statusCircle {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+/* Status color variants */
+.status_PLACED {
+  background: #f59e0b;
+}
+.status_ACCEPTED {
+  background: #3b82f6;
+}
+.status_PREPARING {
+  background: #8b5cf6;
+}
+.status_READY {
+  background: #10b981;
+}
+.status_COMPLETED {
+  background: #16a34a;
+}
+.status_CANCELLED {
+  background: #ef4444;
+}
+
 .orderDetails {
   margin-bottom: 16px;
 }

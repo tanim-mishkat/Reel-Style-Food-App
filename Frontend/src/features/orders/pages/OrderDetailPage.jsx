@@ -13,13 +13,7 @@ const OrderDetailPage = () => {
   const [selectedStars, setSelectedStars] = useState(0);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
-  const statusSteps = [
-    "PLACED",
-    "CONFIRMED",
-    "PREPARING",
-    "READY",
-    "DELIVERED",
-  ];
+  const statusSteps = ["PLACED", "ACCEPTED", "PREPARING", "READY", "COMPLETED"];
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -156,16 +150,22 @@ const OrderDetailPage = () => {
           <div className={pageStyles.modalBackdrop}>
             <div className={pageStyles.modalContent}>
               <h3>Rate your order</h3>
-              <div className={styles.starRow}>
+              <div
+                className={styles.starRow}
+                role="radiogroup"
+                aria-label="Rate this order"
+              >
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
                     key={star}
                     onClick={() => setSelectedStars(star)}
+                    aria-pressed={star <= selectedStars}
+                    aria-label={`${star} star${star > 1 ? "s" : ""}`}
                     className={`${styles.starBtn} ${
                       star <= selectedStars ? styles.starSelected : ""
                     }`}
                   >
-                    \u2605
+                    {"★"}
                   </button>
                 ))}
               </div>

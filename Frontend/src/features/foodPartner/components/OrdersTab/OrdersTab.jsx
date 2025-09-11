@@ -12,32 +12,30 @@ const OrdersTab = () => {
   const [statusFilter, setStatusFilter] = useState("");
 
   useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+        const response = await orderService.getPartnerOrders(statusFilter);
+        setOrders(response.data.orders || []);
+      } catch (err) {
+        setError(err?.message || "Failed to load orders");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchOrders();
   }, [statusFilter]);
 
-  const fetchOrders = async () => {
-    try {
-      setLoading(true);
-      const response = await orderService.getPartnerOrders(statusFilter);
-      setOrders(response.data.orders || []);
-    } catch (err) {
-      setError("Failed to load orders");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleStatusUpdate = async (orderId, newStatus) => {
     try {
-      await orderService.updateOrderStatus(orderId, newStatus);
-      // Update local state
-      setOrders((prev) =>
-        prev.map((order) =>
-          order._id === orderId ? { ...order, status: newStatus } : order
-        )
-      );
+      setError("");
+      const response = await orderService.updateOrderStatus(orderId, newStatus);
+      const updated = response.data.order;
+      // Replace the order with server-updated order (keeps timeline etc.)
+      setOrders((prev) => prev.map((o) => (o._id === orderId ? updated : o)));
     } catch (err) {
-      setError("Failed to update order status");
+      setError(err?.message || "Failed to update order status");
     }
   };
 

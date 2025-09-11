@@ -145,7 +145,14 @@ const Profile = () => {
               }`}
               onClick={() => setActiveTab("videos")}
             >
-              🎬 VIDEOS
+              <svg
+                className={styles.tabIcon}
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" />
+              </svg>
+              VIDEOS
             </button>
             <button
               className={`${styles.tab} ${
@@ -153,9 +160,15 @@ const Profile = () => {
               }`}
               onClick={() => setActiveTab("menu")}
             >
-              🍽️ MENU
+              <svg
+                className={styles.tabIcon}
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M8.1 13.34l2.83-2.83L3.91 3.5c-1.56 1.56-1.56 4.09 0 5.66l4.19 4.18zm6.78-1.81c1.53.71 3.68.21 5.27-1.38 1.91-1.91 2.28-4.65.81-6.12-1.46-1.46-4.2-1.1-6.12.81-1.59 1.59-2.09 3.74-1.38 5.27L3.7 19.87l1.41 1.41L12 14.41l6.88 6.88 1.41-1.41L13.41 13l1.47-1.47z" />
+              </svg>
+              MENU
             </button>
-            <button className={styles.tab}>📋 TAGGED</button>
           </div>
 
           {activeTab === "videos" && (
@@ -167,24 +180,22 @@ const Profile = () => {
                   onClick={() =>
                     navigate(ROUTES.FOOD_PARTNER_VIDEOS.replace(":id", id))
                   }
-                  onMouseEnter={(e) => {
-                    const videoEl = e.currentTarget.querySelector("video");
-                    videoEl.play();
-                  }}
-                  onMouseLeave={(e) => {
-                    const videoEl = e.currentTarget.querySelector("video");
-                    videoEl.pause();
-                    videoEl.currentTime = 0;
-                  }}
                 >
                   <video src={video.video} preload="metadata" muted loop />
-                  <div className={styles.videoIndicator}>📹</div>
-                  <div className={styles.postOverlay}>
-                    <div className={styles.overlayContent}>
-                      <h4 className={styles.videoTitle}>{video.name}</h4>
-                      <span className={styles.postViews}>
-                        ❤️ {video.likesCount || 0}
-                      </span>
+                  <div className={styles.videoOverlay}>
+                    <div className={styles.videoStats}>
+                      <div className={styles.stat}>
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+                        <span>{video.likesCount || 0}</span>
+                      </div>
+                      <div className={styles.stat}>
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" />
+                        </svg>
+                        <span>{video.savedCount || 0}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -196,39 +207,57 @@ const Profile = () => {
             <div className={styles.menuList}>
               {menuItems.map((item) => (
                 <div key={item._id} className={styles.menuItem}>
-                  <div className={styles.menuItemInfo}>
-                    <h3 className={styles.menuItemName}>{item.name}</h3>
+                  {item.photoUrl && (
+                    <div className={styles.menuItemImageContainer}>
+                      <img
+                        src={item.photoUrl}
+                        alt={item.name}
+                        className={styles.menuItemImage}
+                      />
+                    </div>
+                  )}
+                  <div className={styles.menuItemContent}>
+                    <div className={styles.menuItemHeader}>
+                      <h3 className={styles.menuItemName}>{item.name}</h3>
+                      <div className={styles.menuItemPrice}>${item.price}</div>
+                    </div>
                     <p className={styles.menuItemDescription}>
                       {item.description}
                     </p>
                     <div className={styles.menuItemDetails}>
-                      <span className={styles.price}>${item.price}</span>
                       {item.prepTime && (
-                        <span className={styles.prepTime}>
-                          ⏱️ {item.prepTime.min}-{item.prepTime.max} min
-                        </span>
+                        <div className={styles.prepTime}>
+                          <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22C6.47,22 2,17.5 2,12A10,10 0 0,1 12,2M12.5,7V12.25L17,14.92L16.25,16.15L11,13V7H12.5Z" />
+                          </svg>
+                          <span>
+                            {item.prepTime.min}-{item.prepTime.max} min
+                          </span>
+                        </div>
                       )}
-                      <span
+                      <div
                         className={`${styles.availability} ${
                           item.isAvailable
                             ? styles.available
                             : styles.unavailable
                         }`}
                       >
-                        {item.isAvailable ? "✅ Available" : "❌ Unavailable"}
-                      </span>
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          {item.isAvailable ? (
+                            <path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z" />
+                          ) : (
+                            <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+                          )}
+                        </svg>
+                        <span>
+                          {item.isAvailable ? "Available" : "Unavailable"}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                  <div className={styles.menuItemActions}>
-                    {item.photoUrl && (
-                      <img
-                        src={item.photoUrl}
-                        alt={item.name}
-                        className={styles.menuItemImage}
-                      />
-                    )}
                     <button
-                      className={styles.addToCartBtn}
+                      className={`${styles.orderButton} ${
+                        !item.isAvailable ? styles.disabled : ""
+                      }`}
                       disabled={!item.isAvailable}
                       onClick={() => {
                         try {
@@ -246,7 +275,10 @@ const Profile = () => {
                         }
                       }}
                     >
-                      Add to Cart
+                      <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M7,18C5.89,18 5,18.89 5,20A2,2 0 0,0 7,22A2,2 0 0,0 9,20C9,18.89 8.1,18 7,18M1,2V4H3L6.6,11.59L5.24,14.04C5.09,14.32 5,14.65 5,15A2,2 0 0,0 7,17H19V15H7.42A0.25,0.25 0 0,1 7.17,14.75C7.17,14.7 7.18,14.66 7.2,14.63L8.1,13H15.55C16.3,13 16.96,12.58 17.3,11.97L20.88,5H5.21L4.27,3H1M17,18C15.89,18 15,18.89 15,20A2,2 0 0,0 17,22A2,2 0 0,0 19,20C19,18.89 18.1,18 17,18Z" />
+                      </svg>
+                      Order Now
                     </button>
                   </div>
                 </div>

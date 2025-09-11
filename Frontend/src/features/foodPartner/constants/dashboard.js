@@ -7,12 +7,12 @@ export const DASHBOARD_TABS = {
 };
 
 export const ORDER_STATUSES = {
-    PENDING: "pending",
-    CONFIRMED: "confirmed",
-    PREPARING: "preparing",
-    READY: "ready",
-    DELIVERED: "delivered",
-    CANCELLED: "cancelled",
+    PLACED: "PLACED",
+    ACCEPTED: "ACCEPTED",
+    PREPARING: "PREPARING",
+    READY: "READY",
+    COMPLETED: "COMPLETED",
+    CANCELLED: "CANCELLED",
 };
 
 export const MENU_FORM_INITIAL_STATE = {

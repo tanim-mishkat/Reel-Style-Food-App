@@ -62,7 +62,10 @@
   .notificationPanel {
     width: calc(100vw - 16px);
     right: 8px;
+    left: 8px;
     top: 56px;
+    max-height: calc(100vh - 96px);
+    border-radius: 10px;
   }
 }
 
@@ -72,6 +75,13 @@
   align-items: center;
   padding: 16px;
   border-bottom: 1px solid #e5e7eb;
+}
+
+.panelHeader {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 2;
 }
 
 .panelHeader h3 {
@@ -99,12 +109,18 @@
 .notificationList {
   max-height: 300px;
   overflow-y: auto;
+  padding-bottom: env(safe-area-inset-bottom, 12px);
 }
 
 .notificationItem {
   padding: 12px 16px;
   border-bottom: 1px solid #f3f4f6;
   transition: background 0.2s;
+}
+
+.notificationItem .notificationMessage {
+  word-break: break-word;
+  white-space: pre-wrap;
 }
 
 .notificationItem:hover {
@@ -132,6 +148,16 @@
   text-align: center;
   color: #6b7280;
   font-size: 14px;
+}
+
+@media (max-width: 480px) {
+  .panelHeader h3 {
+    font-size: 15px;
+  }
+
+  .notificationItem {
+    padding: 12px;
+  }
 }
 
 @keyframes pulse {
