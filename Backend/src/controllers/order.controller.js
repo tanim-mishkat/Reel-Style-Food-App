@@ -40,14 +40,16 @@ async function getOrderById(req, res) {
         return res.status(404).json({ message: 'Order not found' })
     }
 
-    res.status(200).json({ 
-        message: 'Order found', 
+    res.status(200).json({
+        message: 'Order found',
         order: {
             _id: order._id,
             status: order.status,
             timeline: order.timeline,
             items: order.items,
-            fulfillment: order.fulfillment
+            fulfillment: order.fulfillment,
+            restaurantId: order.restaurantId,
+            userId
         }
     })
 }
@@ -78,7 +80,7 @@ async function updateOrderStatus(req, res) {
 
     const order = await orderModel.findOneAndUpdate(
         { _id: id, restaurantId: partnerId },
-        { 
+        {
             status,
             $push: { timeline: { at: new Date(), status, note: `Status updated to ${status}` } }
         },
@@ -115,7 +117,7 @@ async function batchUpdateOrderStatus(req, res) {
 
     const result = await orderModel.updateMany(
         { _id: { $in: orderIds }, restaurantId: partnerId },
-        { 
+        {
             status,
             $push: { timeline: { at: new Date(), status, note: `Batch updated to ${status}` } }
         }

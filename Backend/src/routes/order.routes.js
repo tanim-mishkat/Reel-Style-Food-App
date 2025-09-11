@@ -14,15 +14,15 @@ router.get('/user',
     orderController.getUserOrders
 )
 
+router.get('/partner/orders',
+    authMiddleware.authFoodPartnerMiddleware,
+    orderController.getPartnerOrders
+)
 router.get('/:id',
     authMiddleware.authUserMiddleware,
     orderController.getOrderById
 )
 
-router.get('/partner/orders',
-    authMiddleware.authFoodPartnerMiddleware,
-    orderController.getPartnerOrders
-)
 
 router.patch('/:id/status',
     authMiddleware.authFoodPartnerMiddleware,

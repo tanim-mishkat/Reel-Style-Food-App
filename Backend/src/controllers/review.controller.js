@@ -22,15 +22,20 @@ async function createReview(req, res) {
         stars
     })
 
+    console.log(
+
+        `New review created: User ${userId} rated Order ${orderId} with ${stars} stars`
+    )
+
     res.status(201).json({ message: 'Review created successfully', review })
 }
 
 async function getPartnerReviews(req, res) {
     const { id } = req.params
-    
+
     const reviews = await reviewModel.find({ restaurantId: id })
     const averageStars = reviews.length > 0 ? reviews.reduce((sum, review) => sum + review.stars, 0) / reviews.length : 0
-    
+
     res.status(200).json({ averageStars: averageStars.toFixed(1), totalReviews: reviews.length })
 }
 
