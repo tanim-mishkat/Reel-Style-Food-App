@@ -1,8 +1,9 @@
-const orderModel = require('../models/order.model.js')
+const orderModel = require('../models/order.model.js');
+const { emitTo } = require('../socket/index.js');
 
 async function createOrder(req, res) {
-    const { restaurantId, items, fulfillment } = req.body
-    const userId = req.user._id
+    const { restaurantId, items, fulfillment } = req.body;
+    const userId = req.user._id;
 
     const order = await orderModel.create({
         userId,
@@ -15,29 +16,35 @@ async function createOrder(req, res) {
             status: 'PLACED',
             note: 'Order placed successfully'
         }]
-    })
-
-    console.log('Order placed:', order._id)
-
-    // Notify partner of new order
-    global.partnerNotifications = global.partnerNotifications || [];
-    global.partnerNotifications.push({
-        id: Date.now(),
-        message: `📋 New order #${order._id.toString().slice(-6)} received!`,
-        time: new Date().toLocaleTimeString(),
-        partnerId: restaurantId
     });
 
-    res.status(201).json({ message: 'Order created successfully', order })
+    console.log('Order placed:', order._id);
+
+    // 🔔 Realtime: notify partner
+    await emitTo({
+        toRole: 'partner',
+        toId: restaurantId,
+        type: 'order:created',
+        payload: {
+            orderId: order._id,
+            userId,
+            items,
+            fulfillment,
+            status: order.status,
+            createdAt: order.createdAt
+        }
+    });
+
+    res.status(201).json({ message: 'Order created successfully', order });
 }
 
 async function getOrderById(req, res) {
-    const { id } = req.params
-    const userId = req.user._id
+    const { id } = req.params;
+    const userId = req.user._id;
 
-    const order = await orderModel.findOne({ _id: id, userId })
+    const order = await orderModel.findOne({ _id: id, userId });
     if (!order) {
-        return res.status(404).json({ message: 'Order not found' })
+        return res.status(404).json({ message: 'Order not found' });
     }
 
     res.status(200).json({
@@ -51,32 +58,32 @@ async function getOrderById(req, res) {
             restaurantId: order.restaurantId,
             userId
         }
-    })
+    });
 }
 
 async function getUserOrders(req, res) {
-    const userId = req.user._id
-    const orders = await orderModel.find({ userId }).sort({ createdAt: -1 })
-    res.status(200).json({ orders })
+    const userId = req.user._id;
+    const orders = await orderModel.find({ userId }).sort({ createdAt: -1 });
+    res.status(200).json({ orders });
 }
 
 async function getPartnerOrders(req, res) {
-    const partnerId = req.foodPartner._id
-    const { status } = req.query
+    const partnerId = req.foodPartner._id;
+    const { status } = req.query;
 
-    const filter = { restaurantId: partnerId }
+    const filter = { restaurantId: partnerId };
     if (status) {
-        filter.status = status
+        filter.status = status;
     }
 
-    const orders = await orderModel.find(filter).sort({ createdAt: -1 })
-    res.status(200).json({ orders })
+    const orders = await orderModel.find(filter).sort({ createdAt: -1 });
+    res.status(200).json({ orders });
 }
 
 async function updateOrderStatus(req, res) {
-    const { id } = req.params
-    const { status } = req.body
-    const partnerId = req.foodPartner._id
+    const { id } = req.params;
+    const { status } = req.body;
+    const partnerId = req.foodPartner._id;
 
     const order = await orderModel.findOneAndUpdate(
         { _id: id, restaurantId: partnerId },
@@ -85,35 +92,28 @@ async function updateOrderStatus(req, res) {
             $push: { timeline: { at: new Date(), status, note: `Status updated to ${status}` } }
         },
         { new: true }
-    )
+    );
 
     if (!order) {
-        return res.status(404).json({ message: 'Order not found' })
+        return res.status(404).json({ message: 'Order not found' });
     }
 
-    console.log('Order status updated:', order._id, status)
+    console.log('Order status updated:', order._id, status);
 
-    // Notify user of status update
-    global.userNotifications = global.userNotifications || [];
-    const statusMessages = {
-        'ACCEPTED': '✅ Your order has been accepted!',
-        'PREPARING': '👨🍳 Your order is being prepared!',
-        'READY': '🎉 Your order is ready for pickup!',
-        'COMPLETED': '✨ Order completed! Please rate your experience.'
-    };
-    global.userNotifications.push({
-        id: Date.now(),
-        message: statusMessages[status] || `Order status: ${status}`,
-        time: new Date().toLocaleTimeString(),
-        userId: order.userId
+    //  Realtime: notify user
+    await emitTo({
+        toRole: 'user',
+        toId: order.userId,
+        type: 'order:statusUpdated',
+        payload: { orderId: order._id, status, at: new Date() }
     });
 
-    res.status(200).json({ message: 'Order status updated', order })
+    res.status(200).json({ message: 'Order status updated', order });
 }
 
 async function batchUpdateOrderStatus(req, res) {
-    const { orderIds, status } = req.body
-    const partnerId = req.foodPartner._id
+    const { orderIds, status } = req.body;
+    const partnerId = req.foodPartner._id;
 
     const result = await orderModel.updateMany(
         { _id: { $in: orderIds }, restaurantId: partnerId },
@@ -121,9 +121,9 @@ async function batchUpdateOrderStatus(req, res) {
             status,
             $push: { timeline: { at: new Date(), status, note: `Batch updated to ${status}` } }
         }
-    )
+    );
 
-    res.status(200).json({ message: `${result.modifiedCount} orders updated`, modifiedCount: result.modifiedCount })
+    res.status(200).json({ message: `${result.modifiedCount} orders updated`, modifiedCount: result.modifiedCount });
 }
 
 module.exports = {
@@ -133,4 +133,4 @@ module.exports = {
     getPartnerOrders,
     updateOrderStatus,
     batchUpdateOrderStatus
-}
+};

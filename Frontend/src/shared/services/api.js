@@ -94,3 +94,11 @@ export const followService = {
   getFollowedFeed: () => api.get('/follow/feed'),
   getPartnerFollowers: () => api.get('/follow/followers'),
 };
+
+// Notification Service
+export const notificationService = {
+  getUserNotifications: () => api.get('/notifications/user'),
+  getPartnerNotifications: () => api.get('/notifications/partner'),
+  markUserRead: (id) => api.patch(`/notifications/user/${id}/read`),
+  markPartnerRead: (id) => api.patch(`/notifications/partner/${id}/read`)
+};

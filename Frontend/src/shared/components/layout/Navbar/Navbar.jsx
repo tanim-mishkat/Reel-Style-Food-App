@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { authService, foodPartnerService } from "../../../services/api";
 import NotificationBell from "../../ui/NotificationBell/NotificationBell";
+import useRealtime from "../../../hooks/useRealtime";
 import LogoutModal from "../../ui/LogoutModal/LogoutModal";
 import styles from "./Navbar.module.css";
 
@@ -74,6 +75,9 @@ const Navbar = () => {
 
   const isAuthenticated = user || partner;
 
+  // Connect socket as soon as we know who is logged in
+  useRealtime(user ? "user" : partner ? "partner" : null);
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.container}>
@@ -90,7 +94,9 @@ const Navbar = () => {
           {/* Notification Bell */}
           {isAuthenticated && (
             <div className={styles.navbarNotifications}>
-              <NotificationBell />
+              <NotificationBell
+                role={user ? "user" : partner ? "partner" : null}
+              />
             </div>
           )}
 

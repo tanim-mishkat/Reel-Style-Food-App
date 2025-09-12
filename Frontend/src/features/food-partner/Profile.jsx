@@ -31,30 +31,35 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
+        // Partner + videos
         const response = await foodPartnerService.getFoodPartnerById(id);
-        setProfile(response.data.foodPartner);
-        setVideos(response.data.foodPartner.foodItems || []);
+        const p = response?.data?.foodPartner || null;
+        setProfile(p);
+        setVideos(Array.isArray(p?.foodItems) ? p.foodItems : []);
 
+        // Menu
         const menuResponse = await menuService.getMenuItems(id);
-        setMenuItems(menuResponse.data.menuItems);
+        setMenuItems(menuResponse?.data?.menuItems || []);
 
+        // Reviews
         const reviewResponse = await reviewService.getPartnerReviews(id);
-        setReviewStats(reviewResponse.data);
+        setReviewStats(
+          reviewResponse?.data || { averageStars: 0, totalReviews: 0 }
+        );
 
-        // Check if user is following this partner
+        // Following (user-only; ignore errors if not logged in)
         try {
           const followedResponse = await followService.getFollowedPartners();
-          const isUserFollowing = followedResponse.data.partners.some(
-            (f) => f.partner._id === id
+          const isUserFollowing = (followedResponse?.data?.partners || []).some(
+            (f) => f?.partner?._id === id
           );
           setIsFollowing(isUserFollowing);
-        } catch (error) {
-          // User not logged in
+        } catch {
+          /* ignore */
         }
-
-        setLoading(false);
       } catch (error) {
-        // Handle error silently
+        // could set an error state here
+      } finally {
         setLoading(false);
       }
     };
@@ -64,17 +69,24 @@ const Profile = () => {
   const handleFollow = async () => {
     try {
       const response = await followService.followPartner(id);
-      setIsFollowing(response.data.following);
+      const following = !!response?.data?.following;
+      setIsFollowing(following);
       setFollowerCount((prev) =>
-        response.data.following ? prev + 1 : prev - 1
+        following ? prev + 1 : Math.max(0, prev - 1)
       );
-    } catch (error) {
+    } catch {
+      // not logged in -> go to login
       navigate("/auth/user/login");
     }
   };
 
   if (loading) {
     return <div className={styles.profileLoading}>Loading...</div>;
+  }
+
+  // Guard for failed load
+  if (!profile) {
+    return <div className={styles.profileLoading}>Partner not found.</div>;
   }
 
   return (
@@ -84,14 +96,14 @@ const Profile = () => {
         <div className={styles.profileHeader}>
           <div className={styles.profileAvatar}>
             <img
-              src={profile.avatar || "/default_image.jpeg"}
-              alt={profile.fullName}
+              src={profile.profileImg || "/default_image.jpeg"}
+              alt={profile.fullName || "Food partner"}
             />
           </div>
 
           <div className={styles.profileInfo}>
             <div className={styles.profileName}>
-              <h1>{profile.fullName}</h1>
+              <h1>{profile.fullName || "Unnamed Partner"}</h1>
               <button
                 className={`${styles.contactBtn} ${
                   isFollowing ? styles.following : ""
@@ -126,12 +138,13 @@ const Profile = () => {
             </div>
 
             <div className={styles.profileAddress}>
-              <p>📍 {profile.address}</p>
+              <p>📍 {profile.address || ""}</p>
             </div>
 
             <div className={styles.profileBio}>
               <p>
-                Contact: {profile.contactName} | Phone: {profile.phone}
+                Contact: {profile.contactName || "-"} | Phone:{" "}
+                {profile.phone || "-"}
               </p>
             </div>
           </div>
@@ -269,8 +282,7 @@ const Profile = () => {
                             partnerName: profile.fullName,
                           });
                           alert(`Added ${item.name} to cart!`);
-                        } catch (error) {
-                          // If not authenticated, redirect to login
+                        } catch {
                           navigate("/auth/user/login");
                         }
                       }}

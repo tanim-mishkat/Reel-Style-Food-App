@@ -1,18 +1,38 @@
+const Notification = require('../models/notification.model.js');
+
 async function getUserNotifications(req, res) {
-    const userId = req.user._id.toString();
-    const notifications = global.userNotifications || [];
-    const userNotifications = notifications.filter(n => n.userId.toString() === userId);
-    res.status(200).json({ notifications: userNotifications });
+    const userId = req.user._id;
+    const notifications = await Notification
+        .find({ to: userId, toRole: 'user' })
+        .sort({ createdAt: -1 });
+    res.status(200).json({ notifications });
 }
 
 async function getPartnerNotifications(req, res) {
-    const partnerId = req.foodPartner._id.toString();
-    const notifications = global.partnerNotifications || [];
-    const partnerNotifications = notifications.filter(n => n.partnerId.toString() === partnerId);
-    res.status(200).json({ notifications: partnerNotifications });
+    const partnerId = req.foodPartner._id;
+    const notifications = await Notification
+        .find({ to: partnerId, toRole: 'partner' })
+        .sort({ createdAt: -1 });
+    res.status(200).json({ notifications });
+}
+
+async function markUserRead(req, res) {
+    const userId = req.user._id;
+    const { id } = req.params;
+    await Notification.findOneAndUpdate({ _id: id, to: userId, toRole: 'user' }, { readAt: new Date() });
+    res.status(200).json({ ok: true });
+}
+
+async function markPartnerRead(req, res) {
+    const partnerId = req.foodPartner._id;
+    const { id } = req.params;
+    await Notification.findOneAndUpdate({ _id: id, to: partnerId, toRole: 'partner' }, { readAt: new Date() });
+    res.status(200).json({ ok: true });
 }
 
 module.exports = {
     getUserNotifications,
-    getPartnerNotifications
-}
+    getPartnerNotifications,
+    markUserRead,
+    markPartnerRead
+};
