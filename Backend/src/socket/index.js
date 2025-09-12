@@ -51,6 +51,10 @@ function initRealtime(server) {
             if (!notificationId) return;
             await Notification.findByIdAndUpdate(notificationId, { deliveredAt: new Date() }).catch(() => { });
         });
+        // NEW: allow any viewer to join a public room for a partner profile
+        socket.on("subscribe:partner", (partnerId) => {
+            if (partnerId) socket.join(`partnerPublic:${partnerId}`);
+        });
     });
 
     return io;
@@ -73,4 +77,12 @@ async function emitTo({ toRole, toId, type, payload }) {
     return notif;
 }
 
-module.exports = { initRealtime, getIO, emitTo };
+// NEW: convenience helper to emit the latest follower count
+function emitFollowerCount(partnerId, count) {
+    const io = getIO();
+    io.to(`partner:${partnerId}`)
+        .to(`partnerPublic:${partnerId}`)
+        .emit("follow:count", { partnerId, count });
+}
+
+module.exports = { initRealtime, getIO, emitTo, emitFollowerCount };

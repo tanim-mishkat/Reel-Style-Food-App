@@ -10,6 +10,7 @@ import {
 import useCart from "../../shared/hooks/useCart";
 import CartIcon from "../../shared/components/ui/CartIcon/CartIcon";
 import styles from "./Profile.module.css";
+import { connectSocket } from "../../shared/realtime/socket.js";
 
 const Profile = () => {
   const { id } = useParams();
@@ -57,6 +58,25 @@ const Profile = () => {
         } catch {
           /* ignore */
         }
+
+        try {
+          const { data } = await followService.getFollowerCount(id);
+          setFollowerCount(data?.count ?? 0);
+        } catch {
+          /* ignore */
+        }
+
+        const socket = connectSocket();
+        socket.emit("subscribe:partner", id);
+        const onCount = ({ partnerId: pid, count }) => {
+          if (id === pid) {
+            setFollowerCount(count ?? 0);
+          }
+        };
+        socket.on("follow:count", onCount);
+        return () => {
+          socket.off("follow:count", onCount);
+        };
       } catch (error) {
         // could set an error state here
       } finally {
@@ -68,12 +88,9 @@ const Profile = () => {
 
   const handleFollow = async () => {
     try {
-      const response = await followService.followPartner(id);
+      const response = await followService.toggleFollow(id);
       const following = !!response?.data?.following;
       setIsFollowing(following);
-      setFollowerCount((prev) =>
-        following ? prev + 1 : Math.max(0, prev - 1)
-      );
     } catch {
       // not logged in -> go to login
       navigate("/auth/user/login");

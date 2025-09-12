@@ -1,6 +1,6 @@
 const followModel = require('../models/follow.model.js');
 const foodModel = require('../models/food.model.js');
-const { emitTo } = require('../socket/index.js');
+const { emitTo, emitFollowerCount } = require('../socket/index.js'); // 🔔 NEW
 
 async function followPartner(req, res, next) {
     try {
@@ -10,12 +10,27 @@ async function followPartner(req, res, next) {
         const existingFollow = await followModel.findOne({ user: userId, partner: partnerId });
         if (existingFollow) {
             await followModel.deleteOne({ user: userId, partner: partnerId });
+
+            // NEW: emit authoritative latest count after UNFOLLOW
+            const count = await followModel.countDocuments({ partner: partnerId });
+            emitFollowerCount(partnerId, count);
+
             return res.status(200).json({ message: 'Partner unfollowed', following: false });
         }
 
-        const follow = await followModel.create({ user: userId, partner: partnerId });
+        // race-safe create
+        try {
+            await followModel.create({ user: userId, partner: partnerId });
+        } catch (e) {
+            // In case of race producing E11000, we treat as already-following then fall through.
+            if (e?.code !== 11000) throw e;
+        }
 
-        // 🔔 Realtime: notify partner
+        // NEW: emit authoritative latest count after FOLLOW
+        const count = await followModel.countDocuments({ partner: partnerId });
+        emitFollowerCount(partnerId, count);
+
+        // (optional) keep your realtime notification to the partner
         await emitTo({
             toRole: 'partner',
             toId: partnerId,
@@ -23,7 +38,17 @@ async function followPartner(req, res, next) {
             payload: { userId }
         });
 
-        res.status(201).json({ message: 'Partner followed', following: true, followId: follow._id });
+        res.status(201).json({ message: 'Partner followed', following: true });
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function getFollowerCount(req, res, next) { 
+    try {
+        const { partnerId } = req.params;
+        const count = await followModel.countDocuments({ partner: partnerId });
+        res.status(200).json({ count });
     } catch (error) {
         next(error);
     }
@@ -67,6 +92,7 @@ async function getPartnerFollowers(req, res, next) {
 
 module.exports = {
     followPartner,
+    getFollowerCount,     
     getFollowedPartners,
     getFollowedFeed,
     getPartnerFollowers

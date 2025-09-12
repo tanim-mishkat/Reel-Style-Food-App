@@ -93,6 +93,8 @@ export const followService = {
   getFollowedPartners: () => api.get('/follow/partners'),
   getFollowedFeed: () => api.get('/follow/feed'),
   getPartnerFollowers: () => api.get('/follow/followers'),
+  getFollowerCount: (partnerId) => api.get(`/follow/count/${partnerId}`),
+  toggleFollow: (partnerId) => api.post('/follow/partner', { partnerId }, { withCredentials: true }),
 };
 
 // Notification Service

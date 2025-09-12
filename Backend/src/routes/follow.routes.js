@@ -9,6 +9,10 @@ router.post('/partner',
     followController.followPartner
 )
 
+router.get('/count/:partnerId',
+    followController.getFollowerCount
+)
+
 router.get('/partners',
     authMiddleware.authUserMiddleware,
     followController.getFollowedPartners

@@ -1,27 +1,21 @@
-// src/shared/realtime/socket.js
 import { io } from "socket.io-client";
 
 let socket;
-
-/**
- * Connect using cookies (httpOnly) sent by your backend.
- * Call connect() once after you know the viewer is authenticated (user or partner).
- */
 export function connectSocket() {
     if (socket?.connected) return socket;
 
-    socket = io(import.meta.env.VITE_API_URL?.replace(/\/api$/, ""), {
-        transports: ["websocket"],
-        withCredentials: true, // send cookies during WS handshake
-        autoConnect: true
-    });
+    const api = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    const wsBase = api.replace(/\/api$/, ""); // => http://localhost:3000
 
-    // helpful logs (remove in prod)
-    socket.on("connect", () => console.log("[ws] connected", socket.id));
-    socket.on("disconnect", (reason) => console.log("[ws] disconnected:", reason));
+    socket = io(wsBase, {
+        transports: ["websocket"],
+        withCredentials: true,
+        autoConnect: true,
+    });
 
     return socket;
 }
+
 
 export function getSocket() {
     return socket;

@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { followService } from "../../../../shared/services/api";
 import FollowersList from "./FollowersList";
 import styles from "./FollowersTab.module.css";
-
+import { connectSocket } from "../../../../shared/realtime/socket";
 const FollowersTab = () => {
   const [followers, setFollowers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,6 +10,15 @@ const FollowersTab = () => {
 
   useEffect(() => {
     fetchFollowers();
+  }, []);
+
+  useEffect(() => {
+    const socket = connectSocket();
+    const onCount = () => fetchFollowers();
+    socket.on("follow:count", onCount);
+    return () => {
+      socket.off("follow:count", onCount);
+    };
   }, []);
 
   const fetchFollowers = async () => {
