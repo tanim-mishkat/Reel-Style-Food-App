@@ -63,7 +63,7 @@ const VideoComments = ({ videoId, isOpen, onClose, onCommentPosted }) => {
       if (typeof onCommentPosted === "function") onCommentPosted();
     } catch (err) {
       console.error("Add comment failed", err);
-      if (err && err.status === 422) {
+      if (err && err.response?.status === 422) {
         alert(err.message || "Validation failed");
       }
     } finally {
@@ -164,7 +164,7 @@ const VideoComments = ({ videoId, isOpen, onClose, onCommentPosted }) => {
       }));
     } catch (err) {
       console.error("Like failed", err);
-      if (err && err.status === 422) alert(err.message || "Could not like");
+      if (err && err.response?.status === 422) alert(err.message || "Could not like");
     }
   };
 
@@ -322,7 +322,8 @@ const VideoComments = ({ videoId, isOpen, onClose, onCommentPosted }) => {
 
             {replies.length > 0 && (
               <div className={styles.repliesWrap}>
-                {hasOwnProperty /* placeholder to avoid accidental removal */}
+                {/*hasOwnProperty*/
+                /* placeholder to avoid accidental removal */}
                 {visibleReplies.length > 0 && (
                   <ul className={styles.repliesList}>
                     {visibleReplies.map((r) => (

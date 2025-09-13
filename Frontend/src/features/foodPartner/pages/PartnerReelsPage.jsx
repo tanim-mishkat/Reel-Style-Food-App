@@ -20,6 +20,7 @@ const PartnerReelsPage = () => {
 
   useEffect(() => {
     fetchPartnerReels();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -61,12 +62,15 @@ const PartnerReelsPage = () => {
       }
     };
 
+    // Capture the current element ONCE for add/remove symmetry
+    const containerEl = containerRef.current;
+
     // Add a small delay to prevent immediate closing
     const timeoutId = setTimeout(() => {
       document.addEventListener("click", handleClickOutside);
       document.addEventListener("keydown", handleKeyDown);
-      if (containerRef.current) {
-        containerRef.current.addEventListener("scroll", handleScrollClose);
+      if (containerEl) {
+        containerEl.addEventListener("scroll", handleScrollClose);
       }
     }, 100);
 
@@ -74,8 +78,8 @@ const PartnerReelsPage = () => {
       clearTimeout(timeoutId);
       document.removeEventListener("click", handleClickOutside);
       document.removeEventListener("keydown", handleKeyDown);
-      if (containerRef.current) {
-        containerRef.current.removeEventListener("scroll", handleScrollClose);
+      if (containerEl) {
+        containerEl.removeEventListener("scroll", handleScrollClose);
       }
     };
   }, [showMenu]);
@@ -223,6 +227,7 @@ const PartnerReelsPage = () => {
               loop
               muted
               playsInline
+              preload="metadata"
               autoPlay={index === currentIndex}
             />
 

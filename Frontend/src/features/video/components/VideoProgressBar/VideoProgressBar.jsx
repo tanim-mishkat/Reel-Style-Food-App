@@ -7,7 +7,7 @@ const VideoProgressBar = ({ currentTime, duration }) => {
   return (
     <div
       className={styles.progressContainer}
-      style={{ ["--progress"]: `${progress}%` }}
+      style={{ "--progress": `${progress}%` }}
     >
       <div className={styles.progressBar} />
     </div>

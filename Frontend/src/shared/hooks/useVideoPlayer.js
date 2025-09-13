@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 
 export const useVideoPlayer = (videos, options = {}) => {
   const containerRef = useRef(null);
-  const videoRefs = useRef([]);
+  const videoRefs = useRef([]); // assumes you map ids -> nodes elsewhere
   const [mutedVideos, setMutedVideos] = useState({});
   const [currentTimes, setCurrentTimes] = useState({});
   const [durations, setDurations] = useState({});
@@ -11,9 +11,9 @@ export const useVideoPlayer = (videos, options = {}) => {
   const [savedTimes, setSavedTimes] = useState({});
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Auto-play a start video (either provided by options.startVideoId) or the first video when videos load
+  // Autoplay initial video safely
   useEffect(() => {
-    if (videos.length > 0 && !isInitialized) {
+    if ((videos || []).length > 0 && !isInitialized) {
       const startVideoId = options.startVideoId || null;
       let targetIndex = 0;
       if (startVideoId) {
@@ -21,16 +21,23 @@ export const useVideoPlayer = (videos, options = {}) => {
         if (idx >= 0) targetIndex = idx;
       }
 
-      const targetVideo = videoRefs.current[videos[targetIndex]._id];
+      const targetId = videos[targetIndex]._id;
+      const targetVideo = videoRefs.current[targetId];
+
       if (targetVideo) {
-        // scroll container to the target video position
         const container = containerRef.current;
         const videoHeight = window.innerHeight;
         if (container) {
           container.scrollTo({ top: targetIndex * videoHeight, behavior: "auto" });
         }
-        // play the target video
-        targetVideo.play();
+        try {
+          targetVideo.muted = true; // required for autoplay
+          targetVideo.setAttribute('playsinline', '');
+          const p = targetVideo.play();
+          if (p && typeof p.catch === 'function') p.catch(() => { });
+        } catch {
+          // ignore NotAllowedError; user can tap to play
+        }
         setCurrentVideoIndex(targetIndex);
         setIsInitialized(true);
       }
@@ -39,6 +46,8 @@ export const useVideoPlayer = (videos, options = {}) => {
 
   useEffect(() => {
     const container = containerRef.current;
+    if (!container) return;
+
     let isScrolling = false;
 
     const handleScroll = () => {
@@ -46,35 +55,43 @@ export const useVideoPlayer = (videos, options = {}) => {
       isScrolling = true;
 
       setTimeout(() => {
-        const scrollTop = container.scrollTop;
         const videoHeight = window.innerHeight;
+        const scrollTop = container.scrollTop ?? 0;
         const newIndex = Math.round(scrollTop / videoHeight);
 
         if (currentVideoIndex !== newIndex && videos[currentVideoIndex]) {
-          const prevVideo = videoRefs.current[videos[currentVideoIndex]._id];
+          const prevId = videos[currentVideoIndex]._id;
+          const prevVideo = videoRefs.current[prevId];
           if (prevVideo && !prevVideo.paused) {
             setSavedTimes((prev) => ({
               ...prev,
-              [videos[currentVideoIndex]._id]: prevVideo.currentTime,
+              [prevId]: prevVideo.currentTime,
             }));
             prevVideo.pause();
           }
         }
 
         if (videos[newIndex]) {
-          const newVideo = videoRefs.current[videos[newIndex]._id];
+          const newId = videos[newIndex]._id;
+          const newVideo = videoRefs.current[newId];
           if (newVideo) {
-            const savedTime = savedTimes[videos[newIndex]._id];
-            if (savedTime) {
-              newVideo.currentTime = savedTime;
-            }
-            if (!pausedVideos[videos[newIndex]._id]) {
-              newVideo.play();
+            const savedTime = savedTimes[newId];
+            if (savedTime != null) newVideo.currentTime = savedTime;
+            if (!pausedVideos[newId]) {
+              try {
+                newVideo.muted = true;
+                newVideo.setAttribute('playsinline', '');
+                const p = newVideo.play();
+                if (p && typeof p.catch === 'function') p.catch(() => { });
+              } catch {
+                // ignore
+              }
             }
           }
         }
 
         setCurrentVideoIndex(newIndex);
+
         container.scrollTo({
           top: newIndex * videoHeight,
           behavior: "smooth",
@@ -84,18 +101,21 @@ export const useVideoPlayer = (videos, options = {}) => {
       }, 100);
     };
 
-    container?.addEventListener("scroll", handleScroll);
-    return () => container?.removeEventListener("scroll", handleScroll);
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
   }, [currentVideoIndex, videos, savedTimes, pausedVideos]);
 
   const togglePlayPause = (videoId) => {
     const videoEl = videoRefs.current[videoId];
+    if (!videoEl) return;
     if (videoEl.paused) {
-      videoEl.play();
-      setPausedVideos((prev) => ({
-        ...prev,
-        [videoId]: false,
-      }));
+      try {
+        videoEl.muted = true;
+        videoEl.setAttribute('playsinline', '');
+        const p = videoEl.play();
+        if (p && typeof p.catch === 'function') p.catch(() => { });
+      } catch {/* ignore */ }
+      setPausedVideos((prev) => ({ ...prev, [videoId]: false }));
     } else {
       videoEl.pause();
       setPausedVideos((prev) => ({ ...prev, [videoId]: true }));
@@ -111,6 +131,7 @@ export const useVideoPlayer = (videos, options = {}) => {
 
   const handleTimeUpdate = (videoId) => {
     const videoEl = videoRefs.current[videoId];
+    if (!videoEl) return;
     setCurrentTimes((prev) => ({
       ...prev,
       [videoId]: videoEl.currentTime,
@@ -119,6 +140,7 @@ export const useVideoPlayer = (videos, options = {}) => {
 
   const handleLoadedMetadata = (videoId) => {
     const videoEl = videoRefs.current[videoId];
+    if (!videoEl) return;
     setDurations((prev) => ({
       ...prev,
       [videoId]: videoEl.duration,
@@ -127,7 +149,7 @@ export const useVideoPlayer = (videos, options = {}) => {
 
   const handleSeek = (videoId, value) => {
     const videoEl = videoRefs.current[videoId];
-    videoEl.currentTime = value;
+    if (videoEl) videoEl.currentTime = value;
   };
 
   return {
@@ -141,6 +163,6 @@ export const useVideoPlayer = (videos, options = {}) => {
     toggleMute,
     handleTimeUpdate,
     handleLoadedMetadata,
-    handleSeek
+    handleSeek,
   };
 };

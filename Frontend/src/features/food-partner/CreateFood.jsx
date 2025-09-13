@@ -12,12 +12,15 @@ const CreateFood = () => {
   const [success, setSuccess] = useState("");
   const [posted, setPosted] = useState(false);
   const videoInputRef = useRef(null);
-
+  const resetTimerRef = useRef(null);
   // Cleanup video preview URL on unmount to prevent memory leaks
   useEffect(() => {
     return () => {
       if (videoPreview) {
         URL.revokeObjectURL(videoPreview);
+      }
+      if (resetTimerRef.current) {
+        clearTimeout(resetTimerRef.current);
       }
     };
   }, [videoPreview]);
@@ -69,9 +72,11 @@ const CreateFood = () => {
       setPosted(true);
 
       // Auto-reset after 3 seconds
-      setTimeout(() => {
+
+      resetTimerRef.current = setTimeout(() => {
         resetForm();
       }, 3000);
+      
     } catch (err) {
       setError(err.response?.data?.message || "Failed to create food reel");
     } finally {

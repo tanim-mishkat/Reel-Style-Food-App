@@ -1,13 +1,13 @@
-import React from 'react';
-import styles from './VideoPlayer.module.css';
+import React from "react";
+import styles from "./VideoPlayer.module.css";
 
-const VideoPlayer = ({ 
-  video, 
-  videoRef, 
-  muted, 
-  onTimeUpdate, 
+const VideoPlayer = ({
+  video,
+  videoRef,
+  muted,
+  onTimeUpdate,
   onLoadedMetadata,
-  onVideoClick
+  onVideoClick,
 }) => {
   return (
     <video

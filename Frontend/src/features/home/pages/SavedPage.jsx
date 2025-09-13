@@ -14,7 +14,6 @@ const SavedPage = () => {
     const fetchSavedVideos = async () => {
       try {
         const response = await foodService.getSavedFoodItems();
-        // Filter out null/undefined items and ensure they have required properties
         const validVideos = (response.data.savedFoodItems || [])
           .filter((video) => video && video._id && video.video)
           .map((video) => ({
@@ -72,10 +71,7 @@ const SavedPage = () => {
         ) : (
           <div className={styles.savedGrid}>
             {savedVideos.map((video) => {
-              // Additional safety check
-              if (!video || !video._id || !video.video) {
-                return null;
-              }
+              if (!video || !video._id || !video.video) return null;
 
               return (
                 <div
@@ -91,10 +87,11 @@ const SavedPage = () => {
                     src={video.video}
                     className={styles.savedVideo}
                     muted
+                    playsInline
                     preload="metadata"
                     onError={(e) => {
                       console.error("Error loading video:", video.video);
-                      e.target.style.display = "none";
+                      e.currentTarget.style.display = "none";
                     }}
                   />
                   <div className={styles.savedVideoInfo}>
