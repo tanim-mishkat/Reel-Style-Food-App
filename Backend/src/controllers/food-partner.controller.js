@@ -1,5 +1,5 @@
-const foodPartnerModel = require('../models/foodpartner.model.js')
 const foodModel = require('../models/food.model.js')
+const foodPartnerModel = require('../models/foodpartner.model.js')
 const likeModel = require('../models/likes.model.js')
 const saveModel = require('../models/save.model.js')
 

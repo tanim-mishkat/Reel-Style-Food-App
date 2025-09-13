@@ -23,7 +23,7 @@ const FoodPartnerLoginForm = () => {
 
     try {
       await axios.post(
-        `${API_URL}/auth/foodpartner/login`,
+        `${API_URL}/auth/food-partner/login`,
         { email, password },
         { withCredentials: true }
       );
@@ -34,16 +34,28 @@ const FoodPartnerLoginForm = () => {
       setLoading(false);
     }
   };
-
   const footer = (
-    <div className={styles.formFooter}>
-      <p className={styles.smallNote}>
-        Don't have an account?{" "}
-        <Link to={ROUTES.FOOD_PARTNER_REGISTER} className={styles.linkPrimary}>
-          Sign Up
-        </Link>
-      </p>
-    </div>
+    <>
+      <div className={styles.formFooter}>
+        <p className={styles.smallNote}>
+          Don’t have a partner account?{" "}
+          <Link
+            to={ROUTES.FOOD_PARTNER_REGISTER}
+            className={styles.linkPrimary}
+          >
+            Sign Up
+          </Link>
+        </p>
+      </div>
+      <div className={styles.formFooter}>
+        <p className={styles.smallNote}>
+          Signing in as a user?{" "}
+          <Link to={ROUTES.USER_LOGIN} className={styles.linkPrimary}>
+            User Sign In
+          </Link>
+        </p>
+      </div>
+    </>
   );
 
   return (

@@ -1,5 +1,5 @@
 import React from "react";
-import Profile from "../../food-partner/Profile";
+import Profile from "../../foodPartner/Profile.jsx";
 
 const ProfilePage = () => <Profile />;
 

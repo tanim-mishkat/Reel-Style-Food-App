@@ -50,6 +50,10 @@
     0 0 0 1px rgba(255, 107, 53, 0.1);
 }
 
+.topNav {
+  margin-bottom: 8px;
+}
+
 .authHeader {
   text-align: center;
   margin-bottom: 32px;

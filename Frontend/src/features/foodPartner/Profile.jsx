@@ -10,7 +10,7 @@ import {
 import useCart from "../../shared/hooks/useCart";
 import CartIcon from "../../shared/components/ui/CartIcon/CartIcon";
 import styles from "./Profile.module.css";
-import { connectSocket } from "../../shared/realtime/socket.js";
+import { connectSocket } from "../../shared/realtime/socket";
 
 const Profile = () => {
   const { id } = useParams();
@@ -29,82 +29,77 @@ const Profile = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followerCount, setFollowerCount] = useState(0);
 
+  // Data fetch
   useEffect(() => {
-    const fetchProfile = async () => {
+    let alive = true;
+    (async () => {
       try {
-        // Partner + videos
         const response = await foodPartnerService.getFoodPartnerById(id);
         const p = response?.data?.foodPartner || null;
+        if (!alive) return;
         setProfile(p);
         setVideos(Array.isArray(p?.foodItems) ? p.foodItems : []);
 
-        // Menu
         const menuResponse = await menuService.getMenuItems(id);
+        if (!alive) return;
         setMenuItems(menuResponse?.data?.menuItems || []);
 
-        // Reviews
         const reviewResponse = await reviewService.getPartnerReviews(id);
+        if (!alive) return;
         setReviewStats(
           reviewResponse?.data || { averageStars: 0, totalReviews: 0 }
         );
 
-        // Following (user-only; ignore errors if not logged in)
         try {
           const followedResponse = await followService.getFollowedPartners();
           const isUserFollowing = (followedResponse?.data?.partners || []).some(
             (f) => f?.partner?._id === id
           );
-          setIsFollowing(isUserFollowing);
+          if (alive) setIsFollowing(isUserFollowing);
         } catch {
-          /* ignore */
+          /* ignore unauth */
         }
 
         try {
           const { data } = await followService.getFollowerCount(id);
-          setFollowerCount(data?.count ?? 0);
+          if (alive) setFollowerCount(data?.count ?? 0);
         } catch {
           /* ignore */
         }
-
-        const socket = connectSocket();
-        socket.emit("subscribe:partner", id);
-        const onCount = ({ partnerId: pid, count }) => {
-          if (id === pid) {
-            setFollowerCount(count ?? 0);
-          }
-        };
-        socket.on("follow:count", onCount);
-        return () => {
-          socket.off("follow:count", onCount);
-        };
-      } catch (error) {
-        // could set an error state here
       } finally {
-        setLoading(false);
+        if (alive) setLoading(false);
       }
+    })();
+    return () => {
+      alive = false;
     };
-    fetchProfile();
+  }, [id]);
+
+  // Socket subscribe with proper cleanup
+  useEffect(() => {
+    const socket = connectSocket();
+    socket.emit("subscribe:partner", id);
+    const onCount = ({ partnerId: pid, count }) => {
+      if (pid === id) setFollowerCount(count ?? 0);
+    };
+    socket.on("follow:count", onCount);
+    return () => {
+      socket.off("follow:count", onCount);
+    };
   }, [id]);
 
   const handleFollow = async () => {
     try {
       const response = await followService.toggleFollow(id);
-      const following = !!response?.data?.following;
-      setIsFollowing(following);
+      setIsFollowing(!!response?.data?.following);
     } catch {
-      // not logged in -> go to login
       navigate("/auth/user/login");
     }
   };
 
-  if (loading) {
-    return <div className={styles.profileLoading}>Loading...</div>;
-  }
-
-  // Guard for failed load
-  if (!profile) {
+  if (loading) return <div className={styles.profileLoading}>Loading...</div>;
+  if (!profile)
     return <div className={styles.profileLoading}>Partner not found.</div>;
-  }
 
   return (
     <>

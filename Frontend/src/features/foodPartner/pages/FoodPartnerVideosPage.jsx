@@ -1,5 +1,5 @@
 import React from "react";
-import FoodPartnerVideos from "../../food-partner/FoodPartnerVideos";
+import FoodPartnerVideos from "../FoodPartnerVideos";
 
 const FoodPartnerVideosPage = () => <FoodPartnerVideos />;
 

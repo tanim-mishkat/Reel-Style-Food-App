@@ -36,14 +36,24 @@ const UserLoginForm = () => {
   };
 
   const footer = (
-    <div className={styles.formFooter}>
-      <p className={styles.smallNote}>
-        Don't have an account?{" "}
-        <Link to={ROUTES.USER_REGISTER} className={styles.linkPrimary}>
-          Sign Up
-        </Link>
-      </p>
-    </div>
+    <>
+      <div className={styles.formFooter}>
+        <p className={styles.smallNote}>
+          Don’t have an account?{" "}
+          <Link to={ROUTES.USER_REGISTER} className={styles.linkPrimary}>
+            Sign Up
+          </Link>
+        </p>
+      </div>
+      <div className={styles.formFooter}>
+        <p className={styles.smallNote}>
+          Are you a food partner?{" "}
+          <Link to={ROUTES.FOOD_PARTNER_LOGIN} className={styles.linkPrimary}>
+            Partner Sign In
+          </Link>
+        </p>
+      </div>
+    </>
   );
 
   return (

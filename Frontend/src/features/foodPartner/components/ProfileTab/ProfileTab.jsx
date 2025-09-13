@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Input from "../../../../shared/components/ui/Input/Input";
 import Button from "../../../../shared/components/ui/Button/Button";
 import { foodPartnerService } from "../../../../shared/services/api";
@@ -10,27 +11,38 @@ const ProfileTab = () => {
   const [contactName, setContactName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // submit state
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loaded, setLoaded] = useState(false); // initial fetch state
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchProfile();
-  }, []);
+    const fetchProfile = async () => {
+      try {
+        const response = await foodPartnerService.getMyProfile();
+        console.log(response);
+        const profileData = response.data.foodPartner || {};
+        setProfile(profileData);
+        setFullName(profileData.fullName || "");
+        setContactName(profileData.contactName || "");
+        setPhone(profileData.phone || "");
+        setAddress(profileData.address || "");
+      } catch (err) {
+        const status = err?.response?.status;
+        if (status === 401) {
+          navigate("/auth/food-partner/login");
+          return;
+        }
+        setError("Failed to load profile" + err.response);
+        setProfile({}); // avoid infinite "Loading..." state
+      } finally {
+        setLoaded(true);
+      }
+    };
 
-  const fetchProfile = async () => {
-    try {
-      const response = await foodPartnerService.getMyProfile();
-      const profileData = response.data.foodPartner;
-      setProfile(profileData);
-      setFullName(profileData.fullName || "");
-      setContactName(profileData.contactName || "");
-      setPhone(profileData.phone || "");
-      setAddress(profileData.address || "");
-    } catch (err) {
-      setError("Failed to load profile");
-    }
-  };
+    fetchProfile();
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,13 +60,13 @@ const ProfileTab = () => {
       setSuccess("Profile updated successfully!");
       setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
-      setError(err.message || "Failed to update profile");
+      setError(err?.message || "Failed to update profile");
     } finally {
       setLoading(false);
     }
   };
 
-  if (!profile) {
+  if (!loaded) {
     return <div className={styles.loading}>Loading profile...</div>;
   }
 

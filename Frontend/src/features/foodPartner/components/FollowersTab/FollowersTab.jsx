@@ -1,12 +1,25 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { followService } from "../../../../shared/services/api";
 import FollowersList from "./FollowersList";
 import styles from "./FollowersTab.module.css";
 import { connectSocket } from "../../../../shared/realtime/socket";
+
 const FollowersTab = () => {
   const [followers, setFollowers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const fetchFollowers = async () => {
+    try {
+      setLoading(true);
+      const response = await followService.getPartnerFollowers();
+      setFollowers(response.data.followers || []);
+    } catch {
+      setError("Failed to load followers");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchFollowers();
@@ -20,18 +33,6 @@ const FollowersTab = () => {
       socket.off("follow:count", onCount);
     };
   }, []);
-
-  const fetchFollowers = async () => {
-    try {
-      setLoading(true);
-      const response = await followService.getPartnerFollowers();
-      setFollowers(response.data.followers || []);
-    } catch (err) {
-      setError("Failed to load followers");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (loading) {
     return <div className={styles.loading}>Loading followers...</div>;
@@ -50,7 +51,6 @@ const FollowersTab = () => {
       </div>
 
       {error && <div className={styles.error}>{error}</div>}
-
       <FollowersList followers={followers} />
     </div>
   );

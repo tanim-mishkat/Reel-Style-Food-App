@@ -46,10 +46,10 @@ export const authService = {
   registerUser: (userData) => api.post('/auth/user/register', userData),
   getUserProfile: () => api.get('/auth/user/profile'),
   updateUserProfile: (data) => api.patch('/auth/user/profile', data),
-  loginFoodPartner: (credentials) => api.post('/auth/foodpartner/login', credentials),
-  registerFoodPartner: (userData) => api.post('/auth/foodpartner/register', userData),
+  loginFoodPartner: (credentials) => api.post('/auth/food-partner/login', credentials),
+  registerFoodPartner: (userData) => api.post('/auth/food-partner/register', userData),
   logoutUser: () => api.get('/auth/user/logout'),
-  logoutFoodPartner: () => api.get('/auth/foodpartner/logout'),
+  logoutFoodPartner: () => api.get('/auth/food-partner/logout'),
 };
 
 // Food Partner Service

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { foodPartnerService, foodService } from "../../../shared/services/api";
 import DeleteConfirmModal from "../components/ReelsTab/DeleteConfirmModal";
@@ -6,7 +6,7 @@ import EditReelModal from "../components/ReelsTab/EditReelModal";
 import styles from "./PartnerReelsPage.module.css";
 
 const PartnerReelsPage = () => {
-  const { id } = useParams(); // reel ID from URL
+  const { id } = useParams();
   const navigate = useNavigate();
   const [reels, setReels] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -18,21 +18,32 @@ const PartnerReelsPage = () => {
   const containerRef = useRef(null);
   const menuRef = useRef(null);
 
-  useEffect(() => {
-    fetchPartnerReels();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const fetchPartnerReels = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await foodPartnerService.getMyReels();
+      setReels(response.data.reels || []);
+    } catch (err) {
+      console.error("Failed to load partner reels:", err);
+      setError("Failed to load reels");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
-    // Find the index of the reel with the given ID
+    fetchPartnerReels();
+  }, [fetchPartnerReels]);
+
+  useEffect(() => {
     if (reels.length > 0 && id) {
       const index = reels.findIndex((reel) => reel._id === id);
       if (index !== -1) {
         setCurrentIndex(index);
-        // Scroll to the specific reel
         setTimeout(() => {
-          if (containerRef.current) {
-            containerRef.current.scrollTo({
+          const el = containerRef.current;
+          if (el) {
+            el.scrollTo({
               top: index * window.innerHeight,
               behavior: "smooth",
             });
@@ -42,95 +53,56 @@ const PartnerReelsPage = () => {
     }
   }, [reels, id]);
 
-  // Close menu when clicking outside, scrolling, or pressing Escape
+  // Close menu on outside/scroll/Escape
   useEffect(() => {
     if (!showMenu) return;
 
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
         setShowMenu(false);
       }
     };
+    const handleScrollClose = () => setShowMenu(false);
+    const handleKeyDown = (e) => e.key === "Escape" && setShowMenu(false);
 
-    const handleScrollClose = () => {
-      setShowMenu(false);
-    };
-
-    const handleKeyDown = (event) => {
-      if (event.key === "Escape") {
-        setShowMenu(false);
-      }
-    };
-
-    // Capture the current element ONCE for add/remove symmetry
     const containerEl = containerRef.current;
-
-    // Add a small delay to prevent immediate closing
-    const timeoutId = setTimeout(() => {
+    const t = setTimeout(() => {
       document.addEventListener("click", handleClickOutside);
       document.addEventListener("keydown", handleKeyDown);
-      if (containerEl) {
-        containerEl.addEventListener("scroll", handleScrollClose);
-      }
+      containerEl && containerEl.addEventListener("scroll", handleScrollClose);
     }, 100);
 
     return () => {
-      clearTimeout(timeoutId);
+      clearTimeout(t);
       document.removeEventListener("click", handleClickOutside);
       document.removeEventListener("keydown", handleKeyDown);
-      if (containerEl) {
+      containerEl &&
         containerEl.removeEventListener("scroll", handleScrollClose);
-      }
     };
   }, [showMenu]);
 
-  const fetchPartnerReels = async () => {
-    try {
-      setLoading(true);
-      const response = await foodPartnerService.getMyReels();
-      const videoReels = response.data.reels || [];
-      setReels(videoReels);
-    } catch (err) {
-      console.error("Failed to load partner reels:", err);
-      setError("Failed to load reels");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleScroll = () => {
-    if (containerRef.current) {
-      const scrollTop = containerRef.current.scrollTop;
-      const newIndex = Math.round(scrollTop / window.innerHeight);
-      if (
-        newIndex !== currentIndex &&
-        newIndex >= 0 &&
-        newIndex < reels.length
-      ) {
-        setCurrentIndex(newIndex);
-        // Update URL without causing a re-render
-        const newReelId = reels[newIndex]._id;
-        window.history.replaceState(null, "", `/partner/reels/${newReelId}`);
-      }
+    const el = containerRef.current;
+    if (!el) return;
+    const newIndex = Math.round(el.scrollTop / window.innerHeight);
+    if (newIndex !== currentIndex && newIndex >= 0 && newIndex < reels.length) {
+      setCurrentIndex(newIndex);
+      const newReelId = reels[newIndex]._id;
+      window.history.replaceState(null, "", `/partner/reels/${newReelId}`);
     }
   };
 
-  const handleClose = () => {
-    navigate("/partner/dashboard?tab=reels");
+  const handleClose = () => navigate("/partner/dashboard?tab=reels");
+  const handleMenuToggle = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setShowMenu((s) => !s);
   };
-
-  const handleMenuToggle = (event) => {
-    event.stopPropagation();
-    event.preventDefault();
-    setShowMenu(!showMenu);
-  };
-
   const handleEdit = () => {
     const currentReel = reels[currentIndex];
     setEditModal({ show: true, reel: currentReel });
     setShowMenu(false);
   };
-
   const handleDelete = () => {
     const currentReel = reels[currentIndex];
     setDeleteModal({ show: true, reelId: currentReel._id });
@@ -140,18 +112,12 @@ const PartnerReelsPage = () => {
   const confirmDelete = async () => {
     try {
       await foodService.deleteFood(deleteModal.reelId);
-      const updatedReels = reels.filter(
-        (reel) => reel._id !== deleteModal.reelId
-      );
-      setReels(updatedReels);
+      const updated = reels.filter((r) => r._id !== deleteModal.reelId);
+      setReels(updated);
       setDeleteModal({ show: false, reelId: null });
-
-      // Navigate to previous reel or back to dashboard if no reels left
-      if (updatedReels.length === 0) {
-        navigate("/partner/dashboard?tab=reels");
-      } else if (currentIndex >= updatedReels.length) {
-        setCurrentIndex(updatedReels.length - 1);
-      }
+      if (updated.length === 0) navigate("/partner/dashboard?tab=reels");
+      else if (currentIndex >= updated.length)
+        setCurrentIndex(updated.length - 1);
     } catch (err) {
       console.error("Failed to delete reel:", err);
     }
@@ -159,15 +125,13 @@ const PartnerReelsPage = () => {
 
   const handleUpdateReel = async (updatedData) => {
     try {
-      const response = await foodService.updateFood(
+      const { data } = await foodService.updateFood(
         editModal.reel._id,
         updatedData
       );
       setReels((prev) =>
-        prev.map((reel) =>
-          reel._id === editModal.reel._id
-            ? { ...reel, ...response.data.food }
-            : reel
+        prev.map((r) =>
+          r._id === editModal.reel._id ? { ...r, ...data.food } : r
         )
       );
       setEditModal({ show: false, reel: null });
@@ -199,7 +163,6 @@ const PartnerReelsPage = () => {
 
   return (
     <div className={styles.reelsContainer}>
-      {/* Header */}
       <div className={styles.header}>
         <button onClick={handleClose} className={styles.closeButton}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -213,7 +176,6 @@ const PartnerReelsPage = () => {
         </div>
       </div>
 
-      {/* Reels Container */}
       <div
         ref={containerRef}
         className={styles.videosContainer}
@@ -231,7 +193,6 @@ const PartnerReelsPage = () => {
               autoPlay={index === currentIndex}
             />
 
-            {/* Video Info Overlay */}
             <div className={styles.videoInfo}>
               <div className={styles.videoDetails}>
                 <h3 className={styles.videoTitle}>{reel.name}</h3>
@@ -268,7 +229,6 @@ const PartnerReelsPage = () => {
                   <span>{reel.savesCount || 0}</span>
                 </div>
 
-                {/* 3-dot menu for current video */}
                 {index === currentIndex && (
                   <div className={styles.statsMenuContainer} ref={menuRef}>
                     <button
@@ -335,19 +295,6 @@ const PartnerReelsPage = () => {
         ))}
       </div>
 
-      {/* Navigation Indicators */}
-      <div className={styles.indicators}>
-        {reels.map((_, index) => (
-          <div
-            key={index}
-            className={`${styles.indicator} ${
-              index === currentIndex ? styles.active : ""
-            }`}
-          />
-        ))}
-      </div>
-
-      {/* Delete Confirmation Modal */}
       {deleteModal.show && (
         <DeleteConfirmModal
           onConfirm={confirmDelete}
@@ -355,7 +302,6 @@ const PartnerReelsPage = () => {
         />
       )}
 
-      {/* Edit Reel Modal */}
       {editModal.show && (
         <EditReelModal
           reel={editModal.reel}

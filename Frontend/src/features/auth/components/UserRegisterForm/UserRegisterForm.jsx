@@ -50,14 +50,27 @@ const UserRegisterForm = () => {
   };
 
   const footer = (
-    <div className={styles.formFooter}>
-      <p className={styles.smallNote}>
-        Already have an account?{" "}
-        <Link to={ROUTES.USER_LOGIN} className={styles.linkPrimary}>
-          Sign In
-        </Link>
-      </p>
-    </div>
+    <>
+      <div className={styles.formFooter}>
+        <p className={styles.smallNote}>
+          Already have an account?{" "}
+          <Link to={ROUTES.USER_LOGIN} className={styles.linkPrimary}>
+            Sign In
+          </Link>
+        </p>
+      </div>
+      <div className={styles.formFooter}>
+        <p className={styles.smallNote}>
+          Want to join as a partner?{" "}
+          <Link
+            to={ROUTES.FOOD_PARTNER_REGISTER}
+            className={styles.linkPrimary}
+          >
+            Become a Partner
+          </Link>
+        </p>
+      </div>
+    </>
   );
 
   return (

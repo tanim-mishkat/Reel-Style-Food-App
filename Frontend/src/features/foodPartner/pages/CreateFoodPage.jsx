@@ -1,5 +1,5 @@
 import React from "react";
-import CreateFood from "../../food-partner/CreateFood";
+import CreateFood from "../CreateFood";
 
 const CreateFoodPage = () => <CreateFood />;
 

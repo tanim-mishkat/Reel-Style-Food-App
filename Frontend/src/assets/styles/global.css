@@ -1,5 +1,15 @@
 @import "./variables.css";
 
+:root {
+  --text-primary: #0f172a;
+  --text-secondary: #6b7280;
+  --surface-card: #f8fafc;
+  --surface-hover: #f1f5f9;
+  --border: #e5e7eb;
+  --primary: #ff6b35;
+  --primary-pressed: #e55a2b;
+}
+
 /* Reset & Base Styles */
 * {
   margin: 0;

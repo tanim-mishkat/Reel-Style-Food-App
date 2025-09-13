@@ -34,8 +34,8 @@ router.patch('/user/profile', authMiddleware.authUserMiddleware, authController.
 
 // food partner auth API
 
-router.post('/foodpartner/register', optionalUpload, authController.registerFoodPartner)
-router.post('/foodpartner/login', authController.loginFoodPartner)
-router.get('/foodpartner/logout', authController.logoutFoodPartner)
+router.post('/food-partner/register', optionalUpload, authController.registerFoodPartner)
+router.post('/food-partner/login', authController.loginFoodPartner)
+router.get('/food-partner/logout', authController.logoutFoodPartner)
 
 module.exports = router

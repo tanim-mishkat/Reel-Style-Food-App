@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import styles from './VideoInfo.module.css';
+import React from "react";
+import { Link } from "react-router-dom";
+import styles from "./VideoInfo.module.css";
 
 const VideoInfo = ({ video, onDescriptionClick }) => {
   return (
