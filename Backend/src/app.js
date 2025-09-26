@@ -1,5 +1,5 @@
 const express = require('express')
-// const dotenv = require('dotenv').config()
+const dotenv = require('dotenv').config()
 const cookieParser = require('cookie-parser')
 const authRoutes = require('./routes/auth.routes.js')
 const foodRoutes = require('./routes/food.routes.js')
