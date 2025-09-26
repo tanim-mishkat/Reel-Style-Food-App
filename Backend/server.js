@@ -11,5 +11,5 @@ const server = http.createServer(app);
 initRealtime(server);
 
 server.listen(PORT, () => {
-    console.log(`Server listening on http://localhost:${PORT}`);
+    console.log(`Server listening on port:${PORT}`);
 });

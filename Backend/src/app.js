@@ -14,21 +14,34 @@ const cors = require('cors')
 
 const app = express()
 
-app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
+const allowed = new Set(
+    (process.env.CLIENT_ORIGINS || '')
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean)
+);
 
-        // Allow any localhost origin for development
-        if (origin.startsWith('http://localhost:')) {
-            return callback(null, true);
-        }
-
-        // For production, you would check against specific domains
-        callback(new Error('Not allowed by CORS'));
+const corsOptions = {
+    origin(origin, callback) {
+        if (!origin) return callback(null, true); // curl/mobile
+        if (origin.startsWith('http://localhost:')) return callback(null, true);
+        if (allowed.has(origin)) return callback(null, true);
+        return callback(new Error('Not allowed by CORS'));
     },
-    credentials: true
-}))
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+};
+
+// Preflight first, then CORS middleware
+// app.options('/', cors(corsOptions));
+// app.options('/:path(*)', cors(corsOptions));
+app.use(cors(corsOptions));
+
+/* ---- Proxy/cookies (Render) ---- */
+if (process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1);
+}
 
 app.use(cookieParser())
 app.use(express.json())

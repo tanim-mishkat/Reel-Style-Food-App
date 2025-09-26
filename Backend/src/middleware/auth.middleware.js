@@ -21,8 +21,8 @@ async function authFoodPartnerMiddleware(req, res, next) {
         req.foodPartner = foodPartner
         next()
     } catch (error) {
-        console.log(error)
-        return res.status(401).json({ message: "Invalid Token" })
+        // console.log(error)
+        return res.status(401).json({ message: "Invalid Token: "+error })
     }
 }
 
@@ -45,8 +45,8 @@ async function authUserMiddleware(req, res, next) {
         req.user = user
         next()
     } catch (error) {
-        console.log(error)
-        return res.status(401).json({ message: "Invalid Token" })
+        // console.log(error)
+        return res.status(401).json({ message: "Invalid Token: "+error })
     }
 }
 

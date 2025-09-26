@@ -18,7 +18,7 @@ async function createOrder(req, res) {
         }]
     });
 
-    console.log('Order placed:', order._id);
+    // console.log('Order placed:', order._id);
 
     // 🔔 Realtime: notify partner
     await emitTo({
@@ -98,7 +98,7 @@ async function updateOrderStatus(req, res) {
         return res.status(404).json({ message: 'Order not found' });
     }
 
-    console.log('Order status updated:', order._id, status);
+    // console.log('Order status updated:', order._id, status);
 
     //  Realtime: notify user
     await emitTo({

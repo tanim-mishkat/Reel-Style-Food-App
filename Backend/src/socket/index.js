@@ -22,11 +22,18 @@ function authenticateSocket(socket, next) {
 }
 
 function initRealtime(server) {
+    const allowed = new Set(
+        (process.env.CLIENT_ORIGINS || '')
+            .split(',')
+            .map(s => s.trim())
+            .filter(Boolean)
+    );
     io = new Server(server, {
         cors: {
             origin(origin, cb) {
                 if (!origin) return cb(null, true);
                 if (origin.startsWith('http://localhost:')) return cb(null, true);
+                if (allowed.has(origin)) return cb(null, true);
                 return cb(new Error('Not allowed by CORS'));
             },
             credentials: true

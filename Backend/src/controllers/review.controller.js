@@ -23,7 +23,7 @@ async function createReview(req, res) {
         stars
     });
 
-    console.log(`New review created: User ${userId} rated Order ${orderId} with ${stars} stars`);
+    // console.log(`New review created: User ${userId} rated Order ${orderId} with ${stars} stars`);
 
     // Realtime: notify partner
     await emitTo({

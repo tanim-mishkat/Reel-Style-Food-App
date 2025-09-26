@@ -15,7 +15,7 @@ export async function initPushNotifications() {
   try {
     if ('serviceWorker' in navigator && 'PushManager' in window) {
       await navigator.serviceWorker.register('/sw.js')
-      console.log('Service worker registered successfully')
+      // console.log('Service worker registered successfully')
     }
   } catch (error) {
     console.log('Push notifications not available:', error.message)
