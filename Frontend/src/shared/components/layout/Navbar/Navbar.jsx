@@ -16,7 +16,7 @@ const Navbar = () => {
 
   useEffect(() => {
     checkAuthStatus();
-  }, [location.pathname]);
+  }, []);
 
   const checkAuthStatus = async () => {
     try {

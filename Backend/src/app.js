@@ -32,7 +32,8 @@ const corsOptions = {
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-    exposedHeaders: ['Set-Cookie']
+    exposedHeaders: ['Set-Cookie'],
+    optionsSuccessStatus: 200
 };
 
 app.use(cors(corsOptions));
@@ -49,6 +50,11 @@ app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+// CSRF protection
+const { setCsrfToken, csrfProtection } = require('./middleware/csrf.middleware.js')
+app.use(setCsrfToken)
+app.use(csrfProtection)
+
 
 
 app.use('/api/auth', authRoutes)
@@ -62,6 +68,7 @@ app.use('/api/notifications', notificationRoutes)
 app.use('/api/follow', followRoutes)
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
+app.get('/healthz', (req, res) => res.status(200).send('OK'));
 
 // Global error handler
 const errorHandler = require('./middleware/error.middleware.js')

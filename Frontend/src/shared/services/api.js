@@ -8,6 +8,18 @@ const api = axios.create({
   withCredentials: true, // always send cookies (user_token / partner_token)
 });
 
+// Add CSRF token to all requests
+api.interceptors.request.use((config) => {
+  const csrfToken = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('csrf_token='))
+    ?.split('=')[1];
+  if (csrfToken) {
+    config.headers['x-csrf-token'] = csrfToken;
+  }
+  return config;
+});
+
 // --- Error normalization ---
 api.interceptors.response.use(
   (res) => res,
