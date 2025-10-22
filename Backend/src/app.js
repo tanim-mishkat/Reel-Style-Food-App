@@ -36,6 +36,8 @@ const corsOptions = {
 // Preflight first, then CORS middleware
 // app.options('/', cors(corsOptions));
 // app.options('/:path(*)', cors(corsOptions));
+app.options('*', cors(corsOptions));
+
 app.use(cors(corsOptions));
 
 /* ---- Proxy/cookies (Render) ---- */
@@ -47,6 +49,8 @@ app.use(cookieParser())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+
+
 app.use('/api/auth', authRoutes)
 app.use('/api/food', foodRoutes)
 app.use('/api/food-partner', foodPartnerRoutes)
@@ -56,6 +60,8 @@ app.use('/api/reviews', reviewRoutes)
 app.use('/api/push', pushRoutes)
 app.use('/api/notifications', notificationRoutes)
 app.use('/api/follow', followRoutes)
+
+app.get('/api/health', (req, res) => res.json({ ok: true }));
 
 // Global error handler
 const errorHandler = require('./middleware/error.middleware.js')
