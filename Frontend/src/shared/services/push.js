@@ -14,10 +14,11 @@ function urlBase64ToUint8Array(base64String) {
 export async function initPushNotifications() {
   try {
     if ('serviceWorker' in navigator && 'PushManager' in window) {
-      await navigator.serviceWorker.register('/sw.js')
-      // console.log('Service worker registered successfully')
+      const registration = await navigator.serviceWorker.register('/sw.js')
+      console.log('Service worker registered successfully')
+      return registration
     }
   } catch (error) {
-    console.log('Push notifications not available:', error.message)
+    console.error('Service worker registration failed:', error)
   }
 }
