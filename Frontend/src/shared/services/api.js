@@ -12,6 +12,14 @@ const api = axios.create({
 api.interceptors.response.use(
   (res) => res,
   (err) => {
+    // Suppress console errors for expected 401s
+    if (err.response?.status === 401) {
+      return Promise.reject({
+        message: err.response.data?.message || 'Unauthorized',
+        status: 401,
+        data: err.response.data,
+      });
+    }
     if (err.response) {
       return Promise.reject({
         message: err.response.data?.message || err.message || 'Request failed',

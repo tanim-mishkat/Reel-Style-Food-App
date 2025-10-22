@@ -34,13 +34,13 @@ const Navbar = () => {
           setPartner(partnerResponse.data.foodPartner);
           setUser(null);
         } catch (partnerError) {
-          // Neither auth worked
+          // Neither auth worked - this is normal for logged out users
           setUser(null);
           setPartner(null);
         }
       }
     } catch (error) {
-      console.error("Auth check failed:", error);
+      // Silent fail - normal for unauthenticated users
       setUser(null);
       setPartner(null);
     } finally {
