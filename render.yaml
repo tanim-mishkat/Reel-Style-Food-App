@@ -21,9 +21,6 @@ services:
         name: Cache-Control
         value: public, max-age=31536000, immutable
     routes:
-      - type: redirect
-        source: /index.html
-        destination: /
       - type: rewrite
         source: /*
         destination: /index.html
