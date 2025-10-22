@@ -7,6 +7,11 @@ function csrfProtection(req, res, next) {
         return next();
     }
 
+    // Skip CSRF for auth routes (login/register don't have auth cookies yet)
+    if (req.path.startsWith('/api/auth/')) {
+        return next();
+    }
+
     const token = req.headers['x-csrf-token'];
     const cookieToken = req.cookies.csrf_token;
 
