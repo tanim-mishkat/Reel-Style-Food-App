@@ -49,10 +49,7 @@ export const foodService = {
   likeFood: (foodId) => api.post('/food/like', { foodId }),
   saveFood: (foodId) => api.post('/food/save', { foodId }),
   getSavedFoodItems: () => api.get('/food/saved'),
-  createFood: (formData) =>
-    api.post('/food', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }),
+  createFood: (formData) => api.post('/food', formData),
   updateFood: (id, data) => api.patch(`/food/${id}`, data),
   deleteFood: (id) => api.delete(`/food/${id}`),
   addComment: (foodId, text, parent) => api.post('/food/comment', { foodId, text, parent }),

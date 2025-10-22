@@ -26,9 +26,10 @@ function setCsrfToken(req, res, next) {
     if (!req.cookies.csrf_token) {
         const token = crypto.randomBytes(32).toString('hex');
         res.cookie('csrf_token', token, {
-            httpOnly: false, // Must be readable by JS
-            sameSite: 'none',
+            httpOnly: false,
             secure: true,
+            sameSite: 'none',
+            domain: '.onrender.com',
             path: '/'
         });
     }
