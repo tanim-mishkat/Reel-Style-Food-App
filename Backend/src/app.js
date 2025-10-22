@@ -36,7 +36,6 @@ const corsOptions = {
 // Preflight first, then CORS middleware
 // app.options('/', cors(corsOptions));
 // app.options('/:path(*)', cors(corsOptions));
-app.options('*', cors(corsOptions));
 
 app.use(cors(corsOptions));
 
