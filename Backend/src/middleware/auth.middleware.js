@@ -3,6 +3,8 @@ const userModel = require('../models/user.model.js')
 const jwt = require('jsonwebtoken')
 
 async function authFoodPartnerMiddleware(req, res, next) {
+    if (req.method === 'OPTIONS') return next();
+    
     const token = req.cookies.partner_token
 
     if (!token) {
@@ -21,12 +23,13 @@ async function authFoodPartnerMiddleware(req, res, next) {
         req.foodPartner = foodPartner
         next()
     } catch (error) {
-        // console.log(error)
-        return res.status(401).json({ message: "Invalid Token: "+error })
+        return res.status(401).json({ message: "Invalid Token" })
     }
 }
 
 async function authUserMiddleware(req, res, next) {
+    if (req.method === 'OPTIONS') return next();
+    
     const token = req.cookies.user_token
 
     if (!token) {
@@ -45,8 +48,7 @@ async function authUserMiddleware(req, res, next) {
         req.user = user
         next()
     } catch (error) {
-        // console.log(error)
-        return res.status(401).json({ message: "Invalid Token: "+error })
+        return res.status(401).json({ message: "Invalid Token" })
     }
 }
 

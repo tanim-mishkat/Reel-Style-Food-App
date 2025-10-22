@@ -20,8 +20,12 @@ if (process.env.NODE_ENV === 'production') {
     app.set('trust proxy', 1);
 }
 
+app.use(cookieParser())
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+
 const allowed = new Set(
-    (process.env.CLIENT_ORIGINS || '')
+    (process.env.FRONTEND_ORIGINS || 'https://reel-style-food-app.onrender.com,http://localhost:5173')
         .split(',')
         .map(s => s.trim())
         .filter(Boolean)
@@ -39,16 +43,11 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options('/:path(*)', cors(corsOptions));
-app.use((req, res, next) => { res.header('Vary', 'Origin'); next(); });
+app.use((req, res, next) => { res.setHeader('Vary', 'Origin'); next(); });
 
 app.use(helmet({
     crossOriginResourcePolicy: { policy: 'cross-origin' }
-}));
-
-app.use(cookieParser())
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+}))
 
 // CSRF protection
 const { setCsrfToken, csrfProtection } = require('./middleware/csrf.middleware.js')
