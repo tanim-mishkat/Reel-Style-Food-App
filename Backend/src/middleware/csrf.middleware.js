@@ -29,7 +29,6 @@ function setCsrfToken(req, res, next) {
             httpOnly: false,
             secure: true,
             sameSite: 'none',
-            domain: '.onrender.com',
             path: '/'
         });
     }

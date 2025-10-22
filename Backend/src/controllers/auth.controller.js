@@ -3,7 +3,13 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const foodPartnerModel = require('../models/foodpartner.model.js')
 
-
+const cookieOptions = {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    path: '/',
+    maxAge: 24 * 60 * 60 * 1000
+};
 
 // user auth controller
 
@@ -25,14 +31,7 @@ async function registerUser(req, res, next) {
 
         const token = jwt.sign({ id: user._id, role: 'user' }, process.env.JWT_SECRET, { expiresIn: '1d' })
 
-        res.cookie('user_token', token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'none',
-            domain: '.onrender.com',
-            path: '/',
-            maxAge: 24 * 60 * 60 * 1000
-        })
+        res.cookie('user_token', token, cookieOptions)
 
         res.status(201).json({
             message: 'User registered successfully',
@@ -67,14 +66,7 @@ async function loginUser(req, res, next) {
 
         const token = jwt.sign({ id: user._id, role: 'user' }, process.env.JWT_SECRET, { expiresIn: '1d' })
 
-        res.cookie('user_token', token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'none',
-            domain: '.onrender.com',
-            path: '/',
-            maxAge: 24 * 60 * 60 * 1000
-        })
+        res.cookie('user_token', token, cookieOptions)
 
         res.status(200).json({
             message: 'User logged in successfully',
@@ -90,7 +82,7 @@ async function loginUser(req, res, next) {
 }
 
 async function logoutUser(req, res) {
-    res.clearCookie('user_token')
+    res.clearCookie('user_token', { path: '/', sameSite: 'none', secure: true })
     res.status(200).json({ message: 'User logged out successfully' })
 }
 
@@ -131,8 +123,6 @@ async function updateUserProfile(req, res) {
 
 async function registerFoodPartner(req, res, next) {
     try {
-
-
         const { fullName, email, password, contactName, phone, address } = req.body
 
         if (!fullName || !email || !password || !contactName || !phone || !address) {
@@ -147,7 +137,6 @@ async function registerFoodPartner(req, res, next) {
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
 
-        // Handle profile image upload if provided
         let profileImgUrl = null
         if (req.file) {
             try {
@@ -155,10 +144,8 @@ async function registerFoodPartner(req, res, next) {
                 const filename = `partner-${Date.now()}-${req.file.originalname}`
                 const uploadResult = await storageService.uploadFile(req.file.buffer, filename)
                 profileImgUrl = uploadResult.url
-
             } catch (uploadError) {
                 console.error('Image upload failed:', uploadError)
-                // Continue with registration even if image upload fails
                 profileImgUrl = null
             }
         }
@@ -175,14 +162,7 @@ async function registerFoodPartner(req, res, next) {
 
         const token = jwt.sign({ id: foodPartner._id, role: 'partner' }, process.env.JWT_SECRET, { expiresIn: '1d' })
 
-        res.cookie('partner_token', token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'none',
-            domain: '.onrender.com',
-            path: '/',
-            maxAge: 24 * 60 * 60 * 1000
-        })
+        res.cookie('partner_token', token, cookieOptions)
 
         res.status(201).json({
             message: 'Food partner registered successfully',
@@ -222,14 +202,8 @@ async function loginFoodPartner(req, res, next) {
 
         const token = jwt.sign({ id: foodPartner._id, role: 'partner' }, process.env.JWT_SECRET, { expiresIn: '1d' })
 
-        res.cookie('partner_token', token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'none',
-            domain: '.onrender.com',
-            path: '/',
-            maxAge: 24 * 60 * 60 * 1000
-        })
+        res.cookie('partner_token', token, cookieOptions)
+
         res.status(200).json({
             message: 'Food partner logged in successfully',
             foodPartner: {
@@ -243,9 +217,8 @@ async function loginFoodPartner(req, res, next) {
     }
 }
 
-
 async function logoutFoodPartner(req, res) {
-    res.clearCookie('partner_token')
+    res.clearCookie('partner_token', { path: '/', sameSite: 'none', secure: true })
     res.status(200).json({ message: 'Food partner logged out successfully' })
 }
 

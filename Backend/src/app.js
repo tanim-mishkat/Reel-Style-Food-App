@@ -15,6 +15,11 @@ const cors = require('cors')
 
 const app = express()
 
+/* ---- Proxy/cookies (Render) ---- */
+if (process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1);
+}
+
 const allowed = new Set(
     (process.env.CLIENT_ORIGINS || '')
         .split(',')
@@ -24,27 +29,22 @@ const allowed = new Set(
 
 const corsOptions = {
     origin(origin, callback) {
-        if (!origin) return callback(null, true); // curl/mobile
-        if (origin.startsWith('http://localhost:')) return callback(null, true);
+        if (!origin) return callback(null, true);
         if (allowed.has(origin)) return callback(null, true);
-        return callback(new Error('Not allowed by CORS'));
+        return callback(null, false);
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-    exposedHeaders: ['Set-Cookie'],
-    optionsSuccessStatus: 200
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 };
 
 app.use(cors(corsOptions));
+app.options('/:path(*)', cors(corsOptions));
+app.use((req, res, next) => { res.header('Vary', 'Origin'); next(); });
+
 app.use(helmet({
     crossOriginResourcePolicy: { policy: 'cross-origin' }
 }));
-
-/* ---- Proxy/cookies (Render) ---- */
-if (process.env.NODE_ENV === 'production') {
-    app.set('trust proxy', 1);
-}
 
 app.use(cookieParser())
 app.use(express.json())
