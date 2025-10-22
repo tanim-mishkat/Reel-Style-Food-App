@@ -139,14 +139,6 @@ const AppRouter = () => {
               </PrivateRoute>
             }
           />
-          <Route
-            path={ROUTES.USER_ORDERS}
-            element={
-              <PrivateRoute>
-                <UserOrdersPage />
-              </PrivateRoute>
-            }
-          />
 
           {/* Following Route */}
           <Route

@@ -9,6 +9,7 @@ const Input = ({
   onChange,
   placeholder,
   required,
+  autoComplete,
 }) => {
   const hasValue =
     value !== undefined && value !== null && String(value).length > 0;
@@ -23,6 +24,7 @@ const Input = ({
           onChange={onChange}
           placeholder=" "
           required={required}
+          autoComplete={autoComplete}
           className={styles.formInput}
         />
         {label && (

@@ -29,7 +29,8 @@ async function registerUser(req, res, next) {
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000,
             sameSite: 'none',
-            secure: true
+            secure: true,
+            path: '/'
         })
 
         res.status(201).json({
@@ -69,7 +70,8 @@ async function loginUser(req, res, next) {
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000,
             sameSite: 'none',
-            secure: true
+            secure: true,
+            path: '/'
         })
 
         res.status(200).json({
@@ -171,7 +173,13 @@ async function registerFoodPartner(req, res, next) {
 
         const token = jwt.sign({ id: foodPartner._id, role: 'partner' }, process.env.JWT_SECRET, { expiresIn: '1d' })
 
-        res.cookie('partner_token', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 })
+        res.cookie('partner_token', token, {
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000,
+            sameSite: 'none',
+            secure: true,
+            path: '/'
+        })
 
         res.status(201).json({
             message: 'Food partner registered successfully',
@@ -211,7 +219,13 @@ async function loginFoodPartner(req, res, next) {
 
         const token = jwt.sign({ id: foodPartner._id, role: 'partner' }, process.env.JWT_SECRET, { expiresIn: '1d' })
 
-        res.cookie('partner_token', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 })
+        res.cookie('partner_token', token, {
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000,
+            sameSite: 'none',
+            secure: true,
+            path: '/'
+        })
         res.status(200).json({
             message: 'Food partner logged in successfully',
             foodPartner: {

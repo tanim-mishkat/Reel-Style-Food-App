@@ -1,6 +1,7 @@
 const express = require('express')
 const dotenv = require('dotenv').config()
 const cookieParser = require('cookie-parser')
+const helmet = require('helmet')
 const authRoutes = require('./routes/auth.routes.js')
 const foodRoutes = require('./routes/food.routes.js')
 const foodPartnerRoutes = require('./routes/food-partner.routes.js')
@@ -30,14 +31,14 @@ const corsOptions = {
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['Set-Cookie']
 };
 
-// Preflight first, then CORS middleware
-// app.options('/', cors(corsOptions));
-// app.options('/:path(*)', cors(corsOptions));
-
 app.use(cors(corsOptions));
+app.use(helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' }
+}));
 
 /* ---- Proxy/cookies (Render) ---- */
 if (process.env.NODE_ENV === 'production') {
