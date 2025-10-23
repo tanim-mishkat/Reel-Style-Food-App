@@ -5,8 +5,8 @@ const foodPartnerModel = require('../models/foodpartner.model.js')
 
 const cookieOptions = {
     httpOnly: true,
-    secure: true,
-    sameSite: 'none',
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     path: '/',
     maxAge: 30 * 24 * 60 * 60 * 1000
 };
@@ -82,7 +82,12 @@ async function loginUser(req, res, next) {
 }
 
 async function logoutUser(req, res) {
-    res.clearCookie('user_token', { path: '/', sameSite: 'none', secure: true })
+    const clearCookieOptions = {
+        path: '/',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: process.env.NODE_ENV === 'production'
+    };
+    res.clearCookie('user_token', clearCookieOptions)
     res.status(200).json({ message: 'User logged out successfully' })
 }
 
@@ -218,7 +223,12 @@ async function loginFoodPartner(req, res, next) {
 }
 
 async function logoutFoodPartner(req, res) {
-    res.clearCookie('partner_token', { path: '/', sameSite: 'none', secure: true })
+    const clearCookieOptions = {
+        path: '/',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: process.env.NODE_ENV === 'production'
+    };
+    res.clearCookie('partner_token', clearCookieOptions)
     res.status(200).json({ message: 'Food partner logged out successfully' })
 }
 

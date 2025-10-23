@@ -78,7 +78,7 @@ async function getFoodItems(req, res) {
     const limit = Math.min(parseInt(req.query.limit) || 12, 20)
     const skip = (page - 1) * limit
 
-    const foodItems = await foodModel.find({}).sort({ createdAt: -1 }).skip(skip).limit(limit)
+    const foodItems = await foodModel.find({}).populate('foodPartner').sort({ createdAt: -1 }).skip(skip).limit(limit)
     const user = req.user
 
     let foodItemsWithStatus
@@ -166,7 +166,12 @@ async function saveFood(req, res) {
 
 async function getSavedFoodItems(req, res) {
     const user = req.user
-    const savedItems = await saveModel.find({ user: user._id }).populate('food')
+    const savedItems = await saveModel.find({ user: user._id }).populate({
+        path: 'food',
+        populate: {
+            path: 'foodPartner'
+        }
+    })
     const savedFoodItems = savedItems.map(item => item.food)
     res.status(200).json({ message: 'Saved food items fetched successfully', savedFoodItems })
 }

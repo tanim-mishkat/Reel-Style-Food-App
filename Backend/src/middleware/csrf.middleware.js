@@ -12,6 +12,11 @@ function csrfProtection(req, res, next) {
         return next();
     }
 
+    // Skip CSRF in development for easier testing
+    if (process.env.NODE_ENV === 'development') {
+        return next();
+    }
+
     const token = req.headers['x-csrf-token'];
     const cookieToken = req.cookies.csrf_token;
 

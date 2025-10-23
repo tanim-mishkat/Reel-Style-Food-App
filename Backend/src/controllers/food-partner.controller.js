@@ -326,4 +326,4 @@ async function searchPartners(req, res) {
     }
 }
 
-module.exports = { getFoodPartnerById, getFoodPartnerBySlug, getMyProfile, updateMyProfile, getFoodPartnerVideos, getMyReels }
+module.exports = { getFoodPartnerById, getFoodPartnerBySlug, getMyProfile, updateMyProfile, getFoodPartnerVideos, getMyReels, searchPartners }

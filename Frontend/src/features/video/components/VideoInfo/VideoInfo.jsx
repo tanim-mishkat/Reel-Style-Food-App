@@ -7,7 +7,7 @@ const VideoInfo = ({ video, onDescriptionClick }) => {
     <div className={styles.videoInfoBottom} onClick={onDescriptionClick}>
       <p className={styles.videoDescription}>{video.description}</p>
       <Link
-        to={`/food-partner/${video.foodPartner}`}
+        to={`/food-partner/${video.foodPartner?._id || video.foodPartner}`}
         className={styles.visitStoreBtn}
         onClick={(e) => e.stopPropagation()}
       >

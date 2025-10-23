@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { authService } from "../../services/api";
 import { ROUTES } from "../../../routes/routeConfig";
 import Loading from "../ui/Loading/Loading";
 
 const PrivateRoute = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const location = useLocation();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -13,6 +14,7 @@ const PrivateRoute = ({ children }) => {
         await authService.getUserProfile();
         setIsAuthenticated(true);
       } catch (error) {
+        console.log("Authentication check failed:", error.message);
         setIsAuthenticated(false);
       }
     };
@@ -20,13 +22,13 @@ const PrivateRoute = ({ children }) => {
   }, []);
 
   if (isAuthenticated === null) {
-    return <Loading>Loading...</Loading>;
+    return <Loading>Checking authentication...</Loading>;
   }
 
   return isAuthenticated ? (
     children
   ) : (
-    <Navigate to={ROUTES.USER_LOGIN} replace />
+    <Navigate to={ROUTES.USER_LOGIN} state={{ from: location }} replace />
   );
 };
 

@@ -25,6 +25,9 @@ import PartnerReelsPage from "../features/foodPartner/pages/PartnerReelsPage";
 import ProfilePage from "../features/foodPartner/pages/ProfilePage";
 import FoodPartnerVideosPage from "../features/foodPartner/pages/FoodPartnerVideosPage";
 
+// Store Pages
+import StorePage from "../features/store/pages/StorePage";
+
 // Checkout Pages
 import CheckoutPage from "../features/checkout/pages/CheckoutPage";
 import PaymentPage from "../features/checkout/pages/PaymentPage";
@@ -110,18 +113,14 @@ const AppRouter = () => {
               </PartnerPrivateRoute>
             }
           />
-          <Route
-            path={ROUTES.FOOD_PARTNER_PROFILE}
-            element={
-              <PartnerPrivateRoute>
-                <ProfilePage />
-              </PartnerPrivateRoute>
-            }
-          />
+          <Route path={ROUTES.FOOD_PARTNER_PROFILE} element={<ProfilePage />} />
           <Route
             path={ROUTES.FOOD_PARTNER_VIDEOS}
             element={<FoodPartnerVideosPage />}
           />
+
+          {/* Store Routes */}
+          <Route path={ROUTES.STORE} element={<StorePage />} />
 
           {/* Checkout Routes */}
           <Route

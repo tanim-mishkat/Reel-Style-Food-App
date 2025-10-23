@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { authService } from "../../../../shared/services/api";
 import AuthLayout from "../AuthLayout/AuthLayout";
 import styles from "../AuthForm.module.css";
 import Input from "../../../../shared/components/ui/Input/Input";
@@ -13,8 +13,7 @@ const UserLoginForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,14 +21,13 @@ const UserLoginForm = () => {
     setError("");
 
     try {
-      const res = await axios.post(
-        `${API_URL}/auth/user/login`,
-        { email, password },
-        { withCredentials: true }
-      );
-      navigate(ROUTES.HOME);
+      await authService.loginUser({ email, password });
+
+      // Redirect to the page they were trying to access, or home
+      const from = location.state?.from?.pathname || ROUTES.HOME;
+      navigate(from, { replace: true });
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid email or password");
+      setError(err.message || "Invalid email or password");
     } finally {
       setLoading(false);
     }

@@ -19,7 +19,8 @@ export const ROUTES = {
   FOOD_PARTNER_PROFILE: '/food-partner/:id',
   FOOD_PARTNER_VIDEOS: '/food-partner/:id/videos',
 
-  // Checkout routes
+  // Store and Checkout routes
+  STORE: '/store',
   CHECKOUT: '/checkout',
   PAYMENT: '/payment',
 
@@ -42,6 +43,5 @@ export const PROTECTED_ROUTES = [
   ROUTES.SAVED,
   ROUTES.USER_SAVED_VIDEOS,
   ROUTES.CREATE_FOOD,
-  ROUTES.FOOD_PARTNER_PROFILE,
   ROUTES.FOOD_PARTNER_VIDEOS,
 ];
