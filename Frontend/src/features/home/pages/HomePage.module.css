@@ -156,12 +156,14 @@
 
 @media (min-width: 1024px) {
   .homeContainer {
-    display: flex;
-    justify-content: center;
+    display: block;
+    max-width: 720px;
+    margin: 0 auto;
   }
 
   .videoSection {
-    min-width: 480px;
+    width: 100%;
     max-width: 720px;
+    margin: 0 auto;
   }
 }

@@ -33,7 +33,8 @@ export const useVideoPlayer = (videos, options = {}) => {
 
       if (targetVideo) {
         const container = containerRef.current;
-        const videoHeight = window.innerHeight;
+        const navbarHeight = window.innerWidth <= 480 ? 56 : 64;
+        const videoHeight = window.innerHeight - navbarHeight;
         if (container) {
           container.scrollTo({ top: targetIndex * videoHeight, behavior: "auto" });
         }
@@ -62,7 +63,9 @@ export const useVideoPlayer = (videos, options = {}) => {
       isScrolling = true;
 
       setTimeout(() => {
-        const videoHeight = window.innerHeight;
+        // Calculate proper video height accounting for navbar
+        const navbarHeight = window.innerWidth <= 480 ? 56 : 64; // 3.5rem or 4rem
+        const videoHeight = window.innerHeight - navbarHeight;
         const scrollTop = container.scrollTop ?? 0;
         const newIndex = Math.round(scrollTop / videoHeight);
 
@@ -104,7 +107,7 @@ export const useVideoPlayer = (videos, options = {}) => {
         setCurrentVideoIndex(newIndex);
 
         container.scrollTo({
-          top: newIndex * videoHeight,
+          top: newIndex * (window.innerHeight - navbarHeight),
           behavior: "smooth",
         });
 
