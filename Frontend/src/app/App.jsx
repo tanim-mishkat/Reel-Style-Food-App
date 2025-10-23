@@ -8,9 +8,10 @@ import "../assets/styles/global.css";
 const App = () => {
   useEffect(() => {
     initPushNotifications().catch(console.error);
-    // Initialize CSRF token
-    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000/api'}/health`, {
-      credentials: 'include'
+    // Initialize CSRF token by making a request to the API
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+    fetch(`${apiUrl}/health`, {
+      credentials: "include",
     }).catch(() => {});
   }, []);
 

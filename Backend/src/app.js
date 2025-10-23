@@ -25,7 +25,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 const allowed = new Set(
-    (process.env.FRONTEND_ORIGINS || 'https://reel-style-food-app.onrender.com,http://localhost:5173')
+    (process.env.CLIENT_ORIGINS || process.env.FRONTEND_ORIGINS || 'https://reel-style-food-app.onrender.com,http://localhost:5173')
         .split(',')
         .map(s => s.trim())
         .filter(Boolean)
@@ -39,7 +39,7 @@ const corsOptions = {
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'x-csrf-token']
 };
 
 app.use(cors(corsOptions));

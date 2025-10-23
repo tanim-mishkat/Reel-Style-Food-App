@@ -3,6 +3,7 @@
 ## Backend Service (reelify-pr6n.onrender.com)
 
 ### Environment Variables
+
 ```
 NODE_ENV=production
 CLIENT_ORIGINS=https://reel-style-food-app.onrender.com
@@ -13,23 +14,30 @@ IMAGE_KIT_PRIVATE_KEY=<your_key>
 IMAGE_KIT_URL_ENDPOINT=<your_endpoint>
 ```
 
+**Important:** The backend now supports both `CLIENT_ORIGINS` and `FRONTEND_ORIGINS` for backward compatibility.
+
 ## Frontend Static Site (reel-style-food-app.onrender.com)
 
 ### Redirects/Rewrites
+
 Add in Dashboard → Redirects/Rewrites:
 
 **Rule 1 (Required):**
+
 - Source: `/*`
 - Destination: `/index.html`
 - Action: `Rewrite`
 
 ### Headers (Optional)
+
 **Rule 1:**
+
 - Path: `/index.html`
 - Name: `Cache-Control`
 - Value: `no-cache`
 
 **Rule 2:**
+
 - Path: `/assets/*`
 - Name: `Cache-Control`
 - Value: `public, max-age=31536000, immutable`

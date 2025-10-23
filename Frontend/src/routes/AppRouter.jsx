@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ROUTES } from "./routeConfig";
 import PrivateRoute from "../shared/components/auth/PrivateRoute";
+import PartnerPrivateRoute from "../shared/components/auth/PartnerPrivateRoute";
 import Navbar from "../shared/components/layout/Navbar";
 
 // Auth Pages
@@ -85,10 +86,38 @@ const AppRouter = () => {
           />
 
           {/* Food Partner Routes */}
-          <Route path={ROUTES.CREATE_FOOD} element={<CreateFoodPage />} />
-          <Route path={ROUTES.PARTNER_DASHBOARD} element={<DashboardPage />} />
-          <Route path={ROUTES.PARTNER_REELS} element={<PartnerReelsPage />} />
-          <Route path={ROUTES.FOOD_PARTNER_PROFILE} element={<ProfilePage />} />
+          <Route
+            path={ROUTES.CREATE_FOOD}
+            element={
+              <PartnerPrivateRoute>
+                <CreateFoodPage />
+              </PartnerPrivateRoute>
+            }
+          />
+          <Route
+            path={ROUTES.PARTNER_DASHBOARD}
+            element={
+              <PartnerPrivateRoute>
+                <DashboardPage />
+              </PartnerPrivateRoute>
+            }
+          />
+          <Route
+            path={ROUTES.PARTNER_REELS}
+            element={
+              <PartnerPrivateRoute>
+                <PartnerReelsPage />
+              </PartnerPrivateRoute>
+            }
+          />
+          <Route
+            path={ROUTES.FOOD_PARTNER_PROFILE}
+            element={
+              <PartnerPrivateRoute>
+                <ProfilePage />
+              </PartnerPrivateRoute>
+            }
+          />
           <Route
             path={ROUTES.FOOD_PARTNER_VIDEOS}
             element={<FoodPartnerVideosPage />}

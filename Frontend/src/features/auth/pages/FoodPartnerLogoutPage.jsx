@@ -14,7 +14,7 @@ const FoodPartnerLogoutPage = () => {
       } catch (err) {
         // Handle error silently
       } finally {
-        navigate(ROUTES.HOME);
+        navigate(ROUTES.FOOD_PARTNER_LOGIN);
       }
     };
     logout();
