@@ -12,7 +12,8 @@
     <div id="results"></div>
 
     <button onclick="checkCsrfToken()">Check CSRF Token</button>
-    <button onclick="testFoodPost()">Test Food POST</button>
+    <button onclick="initCsrfToken()">Initialize CSRF Token</button>
+    <button onclick="testFoodPost()">Test CSRF POST</button>
 
     <script>
         const API_BASE = 'https://reelify-pr6n.onrender.com/api';
@@ -49,6 +50,29 @@
             }
         }
 
+        async function initCsrfToken() {
+            try {
+                const response = await fetch(`${API_BASE}/init-csrf`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                log('Init CSRF Response: ' + JSON.stringify(data, null, 2));
+
+                // Check for token in response headers
+                const csrfHeader = response.headers.get('X-CSRF-Token');
+                if (csrfHeader) {
+                    log('CSRF token in response header: ' + csrfHeader.substring(0, 8) + '...');
+                }
+
+                // Check what we have in cookies after init
+                log('All cookies after init: ' + document.cookie);
+                log('CSRF token from cookie after init: ' + getCsrfToken());
+
+            } catch (error) {
+                log('Error initializing CSRF: ' + error.message);
+            }
+        }
+
         async function testFoodPost() {
             const csrfToken = getCsrfToken();
             log('Using CSRF token: ' + csrfToken);
@@ -59,7 +83,7 @@
             }
 
             try {
-                const response = await fetch(`${API_BASE}/food`, {
+                const response = await fetch(`${API_BASE}/test-csrf`, {
                     method: 'POST',
                     credentials: 'include',
                     headers: {
@@ -67,8 +91,7 @@
                         'x-csrf-token': csrfToken
                     },
                     body: JSON.stringify({
-                        title: 'Test Food',
-                        description: 'Test description'
+                        test: 'data'
                     })
                 });
 

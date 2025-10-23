@@ -39,7 +39,8 @@ const corsOptions = {
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'x-csrf-token']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'x-csrf-token'],
+    exposedHeaders: ['X-CSRF-Token'] // Expose the CSRF token header to frontend
 };
 
 app.use(cors(corsOptions));
@@ -67,7 +68,6 @@ app.use('/api/notifications', notificationRoutes)
 app.use('/api/follow', followRoutes)
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
-app.get('/healthz', (req, res) => res.status(200).send('OK'));
 
 // Debug CSRF page (remove in production after testing)
 app.get('/debug-csrf', (req, res) => {
@@ -174,7 +174,16 @@ app.get('/api/debug/csrf', (req, res) => {
 app.get('/api/init-csrf', (req, res) => {
     res.json({
         message: 'CSRF token initialized',
-        hasCsrfCookie: !!req.cookies.csrf_token
+        hasCsrfCookie: !!req.cookies.csrf_token,
+        tokenInHeader: !!res.get('X-CSRF-Token')
+    });
+});
+
+// Test endpoint for CSRF token validation
+app.post('/api/test-csrf', (req, res) => {
+    res.json({
+        message: 'CSRF token is valid!',
+        timestamp: new Date().toISOString()
     });
 });
 

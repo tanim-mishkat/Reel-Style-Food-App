@@ -8,26 +8,42 @@ const api = axios.create({
   withCredentials: true, // always send cookies (user_token / partner_token)
 });
 
-// Helper function to ensure CSRF token is available
-const ensureCsrfToken = async () => {
-  let csrfToken = document.cookie
+// Store CSRF token in memory as fallback
+let memoryCSRFToken = null;
+
+// Helper function to get CSRF token from cookie or memory
+const getCSRFToken = () => {
+  // Try to get from cookie first
+  const cookieToken = document.cookie
     .split(';')
     .map(cookie => cookie.trim())
-    .find(cookie => cookie.startsWith('csrf_token='));
+    .find(cookie => cookie.startsWith('csrf_token='))
+    ?.substring('csrf_token='.length);
+
+  return cookieToken || memoryCSRFToken;
+};
+
+// Helper function to ensure CSRF token is available
+const ensureCsrfToken = async () => {
+  let csrfToken = getCSRFToken();
 
   if (!csrfToken) {
     // Make a GET request to trigger CSRF token creation
     try {
       console.log('Initializing CSRF token...');
-      await api.get('/init-csrf');
+      const response = await api.get('/init-csrf');
+
+      // Try to get token from response header as fallback
+      const headerToken = response.headers['x-csrf-token'];
+      if (headerToken) {
+        memoryCSRFToken = headerToken;
+        console.log('CSRF token received from header');
+      }
 
       // Wait a bit and check again for the cookie
       await new Promise(resolve => setTimeout(resolve, 200));
 
-      csrfToken = document.cookie
-        .split(';')
-        .map(cookie => cookie.trim())
-        .find(cookie => cookie.startsWith('csrf_token='));
+      csrfToken = getCSRFToken();
 
       if (csrfToken) {
         console.log('CSRF token initialized successfully');
@@ -50,12 +66,7 @@ export const initializeCSRF = ensureCsrfToken;
 
 // Add CSRF token to all requests
 api.interceptors.request.use((config) => {
-  // More robust cookie parsing
-  const csrfToken = document.cookie
-    .split(';')
-    .map(cookie => cookie.trim())
-    .find(cookie => cookie.startsWith('csrf_token='))
-    ?.substring('csrf_token='.length);
+  const csrfToken = getCSRFToken();
 
   if (csrfToken) {
     config.headers['x-csrf-token'] = csrfToken;
@@ -68,7 +79,15 @@ api.interceptors.request.use((config) => {
 
 // --- Error normalization ---
 api.interceptors.response.use(
-  (res) => res,
+  (res) => {
+    // Capture CSRF token from response headers if available
+    const headerToken = res.headers['x-csrf-token'];
+    if (headerToken && headerToken !== memoryCSRFToken) {
+      memoryCSRFToken = headerToken;
+      console.log('Updated CSRF token from response header');
+    }
+    return res;
+  },
   async (err) => {
     // Handle CSRF token issues
     if (err.response?.status === 403 && err.response?.data?.message === 'Invalid CSRF token') {
@@ -80,11 +99,7 @@ api.interceptors.response.use(
 
         // Retry the original request
         const originalRequest = err.config;
-        const newCsrfToken = document.cookie
-          .split(';')
-          .map(cookie => cookie.trim())
-          .find(cookie => cookie.startsWith('csrf_token='))
-          ?.substring('csrf_token='.length);
+        const newCsrfToken = getCSRFToken();
 
         if (newCsrfToken) {
           originalRequest.headers['x-csrf-token'] = newCsrfToken;
