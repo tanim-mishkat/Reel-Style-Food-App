@@ -2,12 +2,11 @@
 
 ## Introduction
 
-Reelify is a modern social media platform focused on food content, similar to TikTok but specifically designed for restaurants and food enthusiasts. The platform allows food partners (restaurants) to upload short video reels showcasing their dishes, while users can discover, like, save, and order food directly through the app. The project features real-time interactions, secure authentication, video streaming, order management, and social features like following restaurants and commenting on videos.
+Reelify is a social media platform built for food content, similar to TikTok but made specifically for restaurants and food lovers. Restaurants can upload short video reels showing off their dishes, while users can browse, like, save, and order food right from the app. The platform includes real-time interactions, secure authentication, video streaming, order management, and social features like following restaurants and commenting on videos.
 
 ## Live Demo Link
 
-🚀 **Live Application**: [https://food-reel-app.vercel.app](https://food-reel-app.vercel.app)  
-🔗 **Backend API**: [https://reelify-pr6n.onrender.com](https://reelify-pr6n.onrender.com)
+🔗 **Live Application**: [https://reel-style-food-app.onrender.com/](https://reel-style-food-app.onrender.com/)  
 
 ## Resume Review Shortcuts
 
@@ -22,63 +21,65 @@ Reelify is a modern social media platform focused on food content, similar to Ti
 
 ### Core Features
 
-- **Video Reel Feed**: Infinite scroll feed with single video playback
-- **User Authentication**: Separate auth for customers and restaurant partners
+- **Video Reel Feed**: Infinite scroll feed with single video playback at a time
+- **User Authentication**: Separate authentication systems for customers and restaurant partners
 - **Food Discovery**: Browse and search food videos by restaurants
-- **Social Interactions**: Like, save, comment, and follow restaurants
-- **Order Management**: Place orders directly from videos with real-time status updates
-- **Restaurant Dashboard**: Upload videos, manage menu, track orders and analytics
-- **Real-time Notifications**: Socket.io powered live updates
-- **Push Notifications**: Web push notifications for order updates
-- **Responsive Design**: Mobile-first design with tablet and desktop support
+- **Social Interactions**: Like, save, comment with threaded replies, and follow restaurants
+- **Order Management**: Place orders directly from videos with real-time status tracking
+- **Restaurant Dashboard**: Upload videos, manage menu items, track orders and view followers
+- **Real-time Notifications**: Socket.io powered live updates for orders and interactions
+- **Push Notifications**: Web push notifications for order status updates
+- **Responsive Design**: Mobile-first design that works on tablets and desktops
 
 ### Advanced Features
 
-- **CSRF Protection**: Secure cross-origin request handling
-- **Image/Video Upload**: ImageKit integration for media management
-- **Search & Filters**: Advanced search with text and location-based filtering
-- **Review System**: Rate and review completed orders
-- **Following System**: Follow favorite restaurants for personalized feed
-- **Menu Management**: Restaurant partners can manage their digital menu
-- **Order Tracking**: Real-time order status updates with notifications
+- **CSRF Protection**: Secure cross-site request forgery protection with token management
+- **Image/Video Upload**: ImageKit integration for media storage and optimization
+- **Search & Filters**: Filter orders by status, reels by availability
+- **Review System**: Rate completed orders with star ratings
+- **Following System**: Follow favorite restaurants for a personalized feed
+- **Menu Management**: Restaurant partners can create and manage their digital menu
+- **Order Tracking**: Real-time order status updates with timeline tracking
+- **Comment System**: Threaded comments with like functionality on videos
 
 ## Tech Stack
 
 ### Frontend
 
-- **React 19** - Modern UI library with latest features
-- **React Router DOM** - Client-side routing
-- **Axios** - HTTP client with interceptors
-- **Socket.io Client** - Real-time communication
-- **Vite** - Fast build tool and dev server
-- **CSS Modules** - Scoped styling
+- **React 19** - Latest version of React with modern features
+- **React Router DOM v7** - Client-side routing with nested routes
+- **Axios** - HTTP client with request/response interceptors
+- **Socket.io Client** - Real-time bidirectional communication
+- **Vite** - Lightning-fast build tool and development server
+- **CSS Modules** - Component-scoped styling
 
 ### Backend
 
-- **Node.js** - Runtime environment
-- **Express.js** - Web application framework
-- **MongoDB** - NoSQL database
-- **Mongoose** - MongoDB object modeling
-- **Socket.io** - Real-time bidirectional communication
-- **JWT** - JSON Web Token authentication
-- **bcryptjs** - Password hashing
-- **Multer** - File upload handling
-- **ImageKit** - Media storage and optimization
-- **Web Push** - Push notification service
+- **Node.js** - JavaScript runtime environment
+- **Express.js v5** - Web application framework
+- **MongoDB** - NoSQL database for flexible data storage
+- **Mongoose** - MongoDB object modeling with schema validation
+- **Socket.io** - Real-time event-based communication
+- **JWT** - Stateless authentication with JSON Web Tokens
+- **bcryptjs** - Secure password hashing
+- **Multer** - Multipart form data handling for file uploads
+- **ImageKit** - Cloud-based media storage and CDN
+- **Web Push** - Push notification service for browsers
 
 ### Security & Middleware
 
-- **Helmet** - Security headers
-- **CORS** - Cross-origin resource sharing
-- **CSRF Protection** - Cross-site request forgery protection
-- **Express Validator** - Input validation and sanitization
+- **Helmet** - HTTP security headers
+- **CORS** - Cross-origin resource sharing configuration
+- **CSRF Protection** - Custom CSRF middleware with token validation
+- **Cookie Parser** - Parse and manage HTTP cookies
+- **Express Validator** - Request validation and sanitization
 
 ### Deployment & DevOps
 
-- **Render** - Cloud hosting platform
-- **Vercel** - Frontend deployment (alternative)
-- **MongoDB Atlas** - Cloud database
-- **Nodemon** - Development auto-restart
+- **Render** - Cloud platform for backend hosting
+- **Vercel** - Frontend deployment platform
+- **MongoDB Atlas** - Cloud-hosted MongoDB database
+- **Nodemon** - Auto-restart development server
 
 ## Database Architecture
 
@@ -86,24 +87,22 @@ Reelify is a modern social media platform focused on food content, similar to Ti
 erDiagram
     User {
         ObjectId _id PK
-        string name
+        string fullName
         string email UK
         string password
-        string phone
-        string address
         Date createdAt
         Date updatedAt
     }
 
     FoodPartner {
         ObjectId _id PK
-        string name
+        string fullName
         string email UK
         string password
+        string contactName
         string phone
         string address
-        string description
-        string profileImage
+        string profileImg
         string slug UK
         Date createdAt
         Date updatedAt
@@ -115,10 +114,14 @@ erDiagram
         string description
         string video
         number price
-        ObjectId partnerId FK
+        ObjectId foodPartner FK
         number likesCount
-        number savesCount
+        number savedCount
         number commentsCount
+        object prepTime
+        boolean isAvailable
+        string photoUrl
+        object tags
         Date createdAt
         Date updatedAt
     }
@@ -126,56 +129,60 @@ erDiagram
     Order {
         ObjectId _id PK
         ObjectId userId FK
-        ObjectId partnerId FK
+        ObjectId restaurantId FK
         array items
-        number totalAmount
+        object fulfillment
+        object payment
         string status
-        string deliveryAddress
+        array timeline
         Date createdAt
         Date updatedAt
     }
 
     Menu {
         ObjectId _id PK
-        ObjectId partnerId FK
+        ObjectId foodPartner FK
         string name
         string description
         number price
-        string category
-        string image
-        boolean available
+        object prepTime
+        boolean isAvailable
+        string photoUrl
+        object tags
         Date createdAt
         Date updatedAt
     }
 
     Like {
         ObjectId _id PK
-        ObjectId userId FK
-        ObjectId foodId FK
+        ObjectId user FK
+        ObjectId food FK
         Date createdAt
     }
 
     Save {
         ObjectId _id PK
-        ObjectId userId FK
-        ObjectId foodId FK
+        ObjectId user FK
+        ObjectId food FK
         Date createdAt
     }
 
     Comment {
         ObjectId _id PK
-        ObjectId userId FK
-        ObjectId foodId FK
+        ObjectId user FK
+        ObjectId food FK
         string text
         ObjectId parent FK
+        number likesCount
+        number repliesCount
         Date createdAt
         Date updatedAt
     }
 
     CommentLike {
         ObjectId _id PK
-        ObjectId userId FK
-        ObjectId commentId FK
+        ObjectId user FK
+        ObjectId comment FK
         Date createdAt
     }
 
@@ -190,9 +197,8 @@ erDiagram
         ObjectId _id PK
         ObjectId userId FK
         ObjectId orderId FK
-        ObjectId partnerId FK
+        ObjectId restaurantId FK
         number stars
-        string comment
         Date createdAt
     }
 
@@ -201,8 +207,8 @@ erDiagram
         ObjectId to FK
         string toRole
         string type
-        string message
-        object data
+        object payload
+        Date deliveredAt
         Date readAt
         Date createdAt
     }
@@ -210,7 +216,8 @@ erDiagram
     Subscription {
         ObjectId _id PK
         ObjectId userId FK
-        object subscription
+        string endpoint
+        object keys
         Date createdAt
     }
 
@@ -247,77 +254,113 @@ erDiagram
 ├── Backend/                          # Node.js Backend Application
 │   ├── src/
 │   │   ├── controllers/              # Request handlers and business logic
-│   │   │   ├── auth.controller.js    # Authentication logic
-│   │   │   ├── food.controller.js    # Food video operations
-│   │   │   ├── order.controller.js   # Order management
-│   │   │   ├── food-partner.controller.js # Restaurant operations
-│   │   │   └── ...                   # Other controllers
+│   │   │   ├── auth.controller.js    # User and partner authentication
+│   │   │   ├── food.controller.js    # Food video CRUD and interactions
+│   │   │   ├── order.controller.js   # Order creation and management
+│   │   │   ├── food-partner.controller.js # Restaurant profile operations
+│   │   │   ├── menu.controller.js    # Menu item management
+│   │   │   ├── follow.controller.js  # Follow/unfollow functionality
+│   │   │   ├── review.controller.js  # Review creation and retrieval
+│   │   │   ├── notification.controller.js # Notification management
+│   │   │   └── push.controller.js    # Push notification subscriptions
 │   │   ├── models/                   # MongoDB schemas and models
 │   │   │   ├── user.model.js         # User schema
+│   │   │   ├── foodpartner.model.js  # Food partner schema
 │   │   │   ├── food.model.js         # Food video schema
-│   │   │   ├── order.model.js        # Order schema
-│   │   │   └── ...                   # Other models
+│   │   │   ├── order.model.js        # Order schema with timeline
+│   │   │   ├── menu.model.js         # Menu item schema
+│   │   │   ├── comment.model.js      # Comment schema with threading
+│   │   │   ├── commentLike.model.js  # Comment like schema
+│   │   │   ├── likes.model.js        # Food like schema
+│   │   │   ├── save.model.js         # Saved food schema
+│   │   │   ├── follow.model.js       # Follow relationship schema
+│   │   │   ├── review.model.js       # Review schema
+│   │   │   ├── notification.model.js # Notification schema
+│   │   │   └── subscription.model.js # Push subscription schema
 │   │   ├── routes/                   # API route definitions
-│   │   │   ├── auth.routes.js        # Authentication routes
-│   │   │   ├── food.routes.js        # Food-related routes
-│   │   │   ├── order.routes.js       # Order routes
-│   │   │   └── ...                   # Other routes
+│   │   │   ├── auth.routes.js        # Authentication endpoints
+│   │   │   ├── food.routes.js        # Food video endpoints
+│   │   │   ├── order.routes.js       # Order endpoints
+│   │   │   ├── food-partner.routes.js # Partner profile endpoints
+│   │   │   ├── menu.routes.js        # Menu management endpoints
+│   │   │   ├── follow.routes.js      # Follow system endpoints
+│   │   │   ├── review.routes.js      # Review endpoints
+│   │   │   ├── notification.routes.js # Notification endpoints
+│   │   │   └── push.routes.js        # Push notification endpoints
 │   │   ├── middleware/               # Custom middleware functions
-│   │   │   ├── auth.middleware.js    # JWT authentication
-│   │   │   ├── csrf.middleware.js    # CSRF protection
-│   │   │   └── error.middleware.js   # Error handling
+│   │   │   ├── auth.middleware.js    # JWT authentication for users and partners
+│   │   │   ├── optional-auth.middleware.js # Optional authentication
+│   │   │   ├── csrf.middleware.js    # CSRF token generation and validation
+│   │   │   └── error.middleware.js   # Global error handling
 │   │   ├── services/                 # External service integrations
-│   │   │   └── push.service.js       # Push notification service
+│   │   │   ├── push.service.js       # Web push notification service
+│   │   │   └── storage.service.js    # ImageKit file upload service
 │   │   ├── socket/                   # Real-time communication
-│   │   │   └── index.js              # Socket.io configuration
+│   │   │   └── index.js              # Socket.io server configuration
 │   │   ├── db/                       # Database configuration
-│   │   │   └── db.js                 # MongoDB connection
+│   │   │   └── db.js                 # MongoDB connection setup
 │   │   └── app.js                    # Express app configuration
 │   ├── .env                          # Environment variables
+│   ├── .env.example                  # Environment variables template
 │   ├── package.json                  # Dependencies and scripts
 │   └── server.js                     # Application entry point
 │
 ├── Frontend/                         # React Frontend Application
 │   ├── src/
 │   │   ├── app/                      # App-level components
-│   │   │   └── App.jsx               # Main app component
+│   │   │   └── App.jsx               # Main app component with routing
 │   │   ├── features/                 # Feature-based modules
 │   │   │   ├── auth/                 # Authentication features
-│   │   │   │   ├── components/       # Auth-specific components
-│   │   │   │   └── pages/            # Login, register pages
+│   │   │   │   ├── components/       # Login/register forms
+│   │   │   │   └── pages/            # Auth pages for users and partners
 │   │   │   ├── home/                 # Home feed features
 │   │   │   │   └── pages/            # Home, saved, following pages
 │   │   │   ├── video/                # Video player components
-│   │   │   │   └── components/       # Video player, controls, actions
+│   │   │   │   └── components/       # Player, controls, actions, comments
 │   │   │   ├── foodPartner/          # Restaurant dashboard
-│   │   │   │   ├── components/       # Dashboard components
-│   │   │   │   └── pages/            # Dashboard pages
+│   │   │   │   ├── components/       # Dashboard tabs and components
+│   │   │   │   ├── pages/            # Dashboard, profile, reels pages
+│   │   │   │   ├── hooks/            # Dashboard custom hooks
+│   │   │   │   └── utils/            # Formatting utilities
 │   │   │   ├── orders/               # Order management
-│   │   │   │   └── pages/            # Order history, details
+│   │   │   │   └── pages/            # Order history and details
 │   │   │   ├── checkout/             # Checkout process
-│   │   │   │   └── pages/            # Cart, payment pages
+│   │   │   │   └── pages/            # Cart and payment pages
 │   │   │   └── user/                 # User profile features
-│   │   │       └── pages/            # Profile, settings pages
+│   │   │       └── pages/            # User dashboard page
 │   │   ├── shared/                   # Shared utilities and components
 │   │   │   ├── components/           # Reusable UI components
-│   │   │   │   ├── layout/           # Layout components (Navbar, BottomNav)
-│   │   │   │   ├── ui/               # UI components (Loading, Modal)
-│   │   │   │   └── auth/             # Auth guards (PrivateRoute)
+│   │   │   │   ├── layout/           # Navbar, BottomNav
+│   │   │   │   ├── ui/               # Button, Input, Loading, Toast, etc.
+│   │   │   │   └── auth/             # PrivateRoute, PartnerPrivateRoute
+│   │   │   ├── contexts/             # React contexts
+│   │   │   │   └── CartContext.jsx   # Shopping cart state management
 │   │   │   ├── hooks/                # Custom React hooks
 │   │   │   │   ├── useVideoPlayer.js # Video playback management
-│   │   │   │   └── useVideoActions.js # Video interactions
+│   │   │   │   ├── useVideoActions.js # Video interactions (like, save)
+│   │   │   │   ├── useCart.js        # Cart operations
+│   │   │   │   ├── useRealtime.js    # Socket.io connection
+│   │   │   │   └── useFollowerCount.js # Follower count tracking
+│   │   │   ├── realtime/             # Real-time communication
+│   │   │   │   └── socket.js         # Socket.io client setup
 │   │   │   └── services/             # API service layer
-│   │   │       └── api.js            # Axios configuration and API calls
+│   │   │       ├── api.js            # Axios configuration and all API calls
+│   │   │       ├── follow.service.js # Follow-related API calls
+│   │   │       └── push.js           # Push notification setup
 │   │   ├── routes/                   # Routing configuration
-│   │   │   ├── AppRouter.jsx         # Main router component
-│   │   │   └── routeConfig.js        # Route constants
+│   │   │   ├── AppRouter.jsx         # Main router with all routes
+│   │   │   └── routeConfig.js        # Route path constants
+│   │   ├── assets/                   # Static assets
+│   │   │   └── styles/               # Global CSS and variables
 │   │   └── main.jsx                  # Application entry point
-│   ├── public/                       # Static assets
+│   ├── public/                       # Public static files
 │   │   ├── sw.js                     # Service worker for PWA
-│   │   └── default_image.jpeg        # Default images
+│   │   ├── default_image.jpeg        # Default placeholder image
+│   │   └── _redirects                # Netlify/Vercel redirect rules
 │   ├── .env                          # Environment variables
+│   ├── .env.example                  # Environment variables template
 │   ├── package.json                  # Dependencies and scripts
-│   └── vite.config.js                # Vite configuration
+│   └── vite.config.js                # Vite build configuration
 │
 ├── render.yaml                       # Render deployment configuration
 └── README.md                         # Project documentation
@@ -327,67 +370,67 @@ erDiagram
 
 ### Authentication
 
-- `POST /api/auth/user/register` - Register new user
-- `POST /api/auth/user/login` - User login
-- `GET /api/auth/user/logout` - User logout
-- `GET /api/auth/user/profile` - Get user profile
-- `PATCH /api/auth/user/profile` - Update user profile
-- `POST /api/auth/food-partner/register` - Register restaurant partner
-- `POST /api/auth/food-partner/login` - Partner login
-- `GET /api/auth/food-partner/logout` - Partner logout
+- `POST /api/auth/user/register` - Register new user account
+- `POST /api/auth/user/login` - User login with credentials
+- `GET /api/auth/user/logout` - User logout and clear session
+- `GET /api/auth/user/profile` - Get authenticated user profile
+- `PATCH /api/auth/user/profile` - Update user profile information
+- `POST /api/auth/food-partner/register` - Register restaurant partner account
+- `POST /api/auth/food-partner/login` - Partner login with credentials
+- `GET /api/auth/food-partner/logout` - Partner logout and clear session
 
 ### Food & Videos
 
-- `GET /api/food` - Get food video feed
-- `POST /api/food` - Upload new food video (Partner only)
-- `PATCH /api/food/:id` - Update food video (Partner only)
+- `GET /api/food` - Get paginated food video feed
+- `POST /api/food` - Upload new food video (Partner only, requires video file)
+- `PATCH /api/food/:id` - Update food video details (Partner only)
 - `DELETE /api/food/:id` - Delete food video (Partner only)
-- `POST /api/food/like` - Like/unlike food video
-- `POST /api/food/save` - Save/unsave food video
+- `POST /api/food/like` - Toggle like on food video
+- `POST /api/food/save` - Toggle save on food video
 - `GET /api/food/saved` - Get user's saved videos
-- `POST /api/food/comment` - Add comment to video
-- `GET /api/food/:foodId/comments` - Get video comments
-- `POST /api/food/comment/like` - Like/unlike comment
-- `DELETE /api/food/comment/:commentId` - Delete comment
+- `POST /api/food/comment` - Add comment to video (supports threaded replies)
+- `GET /api/food/:foodId/comments` - Get all comments for a video
+- `POST /api/food/comment/like` - Toggle like on comment
+- `DELETE /api/food/comment/:commentId` - Delete own comment
 
 ### Food Partners
 
-- `GET /api/food-partner/me` - Get partner profile
+- `GET /api/food-partner/me` - Get authenticated partner profile
 - `PATCH /api/food-partner/me` - Update partner profile
-- `GET /api/food-partner/me/reels` - Get partner's videos
-- `GET /api/food-partner/:id` - Get partner by ID
-- `GET /api/food-partner/:id/videos` - Get partner's videos
-- `GET /api/food-partner/restaurant/:slug` - Get partner by slug
+- `GET /api/food-partner/me/reels` - Get partner's own videos
+- `GET /api/food-partner/:id` - Get partner profile by ID
+- `GET /api/food-partner/:id/videos` - Get partner's public videos
+- `GET /api/food-partner/restaurant/:slug` - Get partner by unique slug
 
 ### Orders
 
-- `POST /api/orders` - Create new order
-- `GET /api/orders/user` - Get user's orders
-- `GET /api/orders/partner/orders` - Get partner's orders
-- `GET /api/orders/:id` - Get order details
-- `PATCH /api/orders/:id/status` - Update order status
-- `PATCH /api/orders/batch/status` - Batch update order status
+- `POST /api/orders` - Create new order from cart
+- `GET /api/orders/user` - Get user's order history
+- `GET /api/orders/partner/orders` - Get partner's received orders (with optional status filter)
+- `GET /api/orders/:id` - Get specific order details
+- `PATCH /api/orders/:id/status` - Update single order status (Partner only)
+- `PATCH /api/orders/batch/status` - Batch update multiple order statuses (Partner only)
 
 ### Menu Management
 
-- `POST /api/menu` - Create menu item (Partner only)
-- `GET /api/menu/me` - Get partner's menu items
-- `GET /api/menu/:id` - Get menu items by partner ID
+- `POST /api/menu` - Create new menu item (Partner only)
+- `GET /api/menu/me` - Get partner's own menu items
+- `GET /api/menu/:id` - Get menu items by partner ID (public)
 - `PATCH /api/menu/:id` - Update menu item (Partner only)
 - `DELETE /api/menu/:id` - Delete menu item (Partner only)
 
 ### Social Features
 
-- `POST /api/follow/partner` - Follow/unfollow restaurant
-- `GET /api/follow/partners` - Get followed restaurants
-- `GET /api/follow/feed` - Get followed restaurants' videos
-- `GET /api/follow/count/:partnerId` - Get follower count
-- `GET /api/follow/followers` - Get partner's followers
+- `POST /api/follow/partner` - Toggle follow/unfollow restaurant
+- `GET /api/follow/partners` - Get list of followed restaurants
+- `GET /api/follow/feed` - Get video feed from followed restaurants
+- `GET /api/follow/count/:partnerId` - Get follower count for a partner
+- `GET /api/follow/followers` - Get partner's follower list (Partner only)
 
 ### Reviews
 
 - `POST /api/reviews` - Create review for completed order
-- `GET /api/reviews/partner/:id` - Get partner's reviews
+- `GET /api/reviews/partner/:id` - Get all reviews for a partner
 
 ### Notifications
 
@@ -395,6 +438,10 @@ erDiagram
 - `GET /api/notifications/partner` - Get partner notifications
 - `PATCH /api/notifications/user/:id/read` - Mark user notification as read
 - `PATCH /api/notifications/partner/:id/read` - Mark partner notification as read
+
+### Push Notifications
+
+- `POST /api/push/subscribe` - Subscribe to push notifications
 
 ### Utility
 
@@ -408,6 +455,7 @@ erDiagram
 - Node.js (v18 or higher)
 - MongoDB (local installation or MongoDB Atlas account)
 - Git
+- ImageKit account (for media storage)
 
 ### Backend Setup
 
@@ -415,7 +463,7 @@ erDiagram
 
    ```bash
    git clone <repository-url>
-   cd <project-name>
+   cd Reel-Style-Food-App
    ```
 
 2. **Navigate to Backend directory**
@@ -432,21 +480,17 @@ erDiagram
 
 4. **Environment Configuration**
 
-   ```bash
-   cp .env.example .env
-   ```
-
-   Update `.env` file with your configuration:
+   Create a `.env` file in the Backend directory:
 
    ```env
-   JWT_SECRET=your_jwt_secret_key
+   JWT_SECRET=your_jwt_secret_key_here
    MONGODB_URI=mongodb://localhost:27017/reelify
    # OR for MongoDB Atlas:
    # MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/reelify
 
    IMAGE_KIT_PUBLIC_KEY=your_imagekit_public_key
    IMAGE_KIT_PRIVATE_KEY=your_imagekit_private_key
-   IMAGE_KIT_URL_ENDPOINT=your_imagekit_url_endpoint
+   IMAGE_KIT_URL_ENDPOINT=https://ik.imagekit.io/your_id
 
    PORT=3000
    NODE_ENV=development
@@ -477,11 +521,7 @@ erDiagram
 
 3. **Environment Configuration**
 
-   ```bash
-   cp .env.example .env
-   ```
-
-   Update `.env` file:
+   Create a `.env` file in the Frontend directory:
 
    ```env
    VITE_API_URL=http://localhost:3000/api
@@ -499,16 +539,30 @@ erDiagram
 
 **For Local MongoDB:**
 
-1. Install MongoDB Community Edition
-2. Start MongoDB service
-3. The application will automatically create the database and collections
+1. Install MongoDB Community Edition from [mongodb.com](https://www.mongodb.com/try/download/community)
+2. Start MongoDB service:
+   - Windows: MongoDB runs as a service automatically
+   - Mac: `brew services start mongodb-community`
+   - Linux: `sudo systemctl start mongod`
+3. The application will automatically create the database and collections on first run
 
-**For MongoDB Atlas:**
+**For MongoDB Atlas (Recommended for Production):**
 
-1. Create a MongoDB Atlas account
-2. Create a new cluster
-3. Get the connection string and update `MONGODB_URI` in `.env`
-4. Whitelist your IP address in Atlas security settings
+1. Create a free account at [mongodb.com/cloud/atlas](https://www.mongodb.com/cloud/atlas)
+2. Create a new cluster (free tier available)
+3. Create a database user with read/write permissions
+4. Get the connection string from the "Connect" button
+5. Update `MONGODB_URI` in `.env` with your connection string
+6. Add your IP address to the IP whitelist in Atlas security settings
+
+### ImageKit Setup
+
+1. Create a free account at [imagekit.io](https://imagekit.io)
+2. Get your credentials from the Dashboard:
+   - Public Key
+   - Private Key
+   - URL Endpoint
+3. Update the ImageKit variables in your backend `.env` file
 
 ## Deployment Steps
 
@@ -518,78 +572,102 @@ This project is configured for Render deployment using the included `render.yaml
 
 1. **Prepare for Deployment**
 
-   - Ensure all environment variables are set correctly
-   - Update `CLIENT_ORIGINS` in backend `.env` to include your frontend domain
-   - Update `VITE_API_URL` in frontend `.env` to point to your backend domain
+   - Create accounts on [Render](https://render.com) and [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+   - Set up ImageKit account for media storage
+   - Push your code to a GitHub repository
 
 2. **Deploy to Render**
 
    - Connect your GitHub repository to Render
    - Render will automatically detect the `render.yaml` configuration
    - Both backend and frontend will be deployed simultaneously
-   - Backend will be deployed as a Node.js web service
-   - Frontend will be deployed as a static site
+   - Backend deploys as a Node.js web service
+   - Frontend deploys as a static site
 
 3. **Environment Variables Setup**
 
-   - In Render dashboard, configure environment variables for the backend service:
-     ```
-     JWT_SECRET=your_production_jwt_secret
-     MONGODB_URI=your_mongodb_atlas_connection_string
-     IMAGE_KIT_PUBLIC_KEY=your_imagekit_public_key
-     IMAGE_KIT_PRIVATE_KEY=your_imagekit_private_key
-     IMAGE_KIT_URL_ENDPOINT=your_imagekit_url_endpoint
-     NODE_ENV=production
-     CLIENT_ORIGINS=https://your-frontend-domain.onrender.com
-     ```
+   In Render dashboard, configure these environment variables for the backend service:
 
-4. **Database Configuration**
+   ```
+   JWT_SECRET=your_production_jwt_secret_minimum_32_characters
+   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/reelify
+   IMAGE_KIT_PUBLIC_KEY=your_imagekit_public_key
+   IMAGE_KIT_PRIVATE_KEY=your_imagekit_private_key
+   IMAGE_KIT_URL_ENDPOINT=https://ik.imagekit.io/your_id
+   NODE_ENV=production
+   CLIENT_ORIGINS=https://your-frontend-domain.onrender.com,https://food-reel-app.vercel.app
+   PORT=3000
+   ```
+
+4. **Frontend Environment Variables**
+
+   Update your frontend `.env.production` file:
+
+   ```
+   VITE_API_URL=https://your-backend-domain.onrender.com/api
+   ```
+
+5. **Database Configuration**
+
    - Use MongoDB Atlas for production database
-   - Ensure IP whitelist includes `0.0.0.0/0` for Render servers
-   - Update connection string in environment variables
+   - In Atlas, go to Network Access and add `0.0.0.0/0` to allow Render servers
+   - Copy the connection string and update `MONGODB_URI` in Render environment variables
 
 ### Alternative Deployment Options
 
 **Backend (Node.js):**
 
-- Heroku
-- Railway
-- DigitalOcean App Platform
-- AWS Elastic Beanstalk
+- Heroku - Easy deployment with Git push
+- Railway - Modern platform with automatic deployments
+- DigitalOcean App Platform - Managed container platform
+- AWS Elastic Beanstalk - Scalable AWS deployment
 
 **Frontend (Static Site):**
 
-- Vercel
-- Netlify
-- GitHub Pages
-- AWS S3 + CloudFront
+- Vercel - Automatic deployments from Git (recommended for Vite)
+- Netlify - Continuous deployment with form handling
+- GitHub Pages - Free hosting for static sites
+- AWS S3 + CloudFront - Scalable CDN distribution
 
 ### Post-Deployment Checklist
 
 1. **Verify API Health**
 
-   - Check `https://your-backend-domain.com/api/health`
-   - Should return `{"status": "ok", "timestamp": "..."}`
+   - Visit `https://your-backend-domain.com/api/health`
+   - Should return: `{"status": "ok", "timestamp": "2024-..."}`
 
 2. **Test Core Functionality**
 
    - User registration and login
+   - Partner registration and login
    - Video upload and playback
-   - Order placement and tracking
+   - Like, save, and comment on videos
+   - Add items to cart and place order
+   - Order status updates
    - Real-time notifications
+   - Follow/unfollow restaurants
 
 3. **Monitor Performance**
 
    - Check application logs in Render dashboard
    - Monitor database performance in MongoDB Atlas
-   - Test mobile responsiveness
+   - Test on mobile devices for responsiveness
+   - Check video loading times
 
 4. **Security Verification**
-   - Ensure HTTPS is enabled
-   - Verify CORS configuration
-   - Test CSRF protection
-   - Check authentication flows
+
+   - Verify HTTPS is enabled on both frontend and backend
+   - Test CORS configuration with actual domains
+   - Verify CSRF protection is working
+   - Test authentication flows for both users and partners
+   - Check that JWT tokens are properly set in HTTP-only cookies
+
+5. **Production Optimizations**
+
+   - Enable gzip compression on backend
+   - Set up CDN for static assets
+   - Configure proper cache headers
+   - Set up error monitoring (e.g., Sentry)
+   - Configure backup strategy for MongoDB
 
 ---
-
-**Built with ❤️ for learning and demonstration purposes**
