@@ -69,6 +69,92 @@ app.use('/api/follow', followRoutes)
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 app.get('/healthz', (req, res) => res.status(200).send('OK'));
 
+// Debug CSRF page (remove in production after testing)
+app.get('/debug-csrf', (req, res) => {
+    res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSRF Debug</title>
+</head>
+<body>
+    <h1>CSRF Token Debug</h1>
+    <div id="results"></div>
+    
+    <button onclick="checkCsrfToken()">Check CSRF Token</button>
+    <button onclick="testFoodPost()">Test Food POST</button>
+    
+    <script>
+        const API_BASE = window.location.origin + '/api';
+        
+        function getCsrfToken() {
+            return document.cookie
+                .split(';')
+                .map(cookie => cookie.trim())
+                .find(cookie => cookie.startsWith('csrf_token='))
+                ?.substring('csrf_token='.length);
+        }
+        
+        function log(message) {
+            const results = document.getElementById('results');
+            results.innerHTML += '<p>' + message + '</p>';
+        }
+        
+        async function checkCsrfToken() {
+            document.getElementById('results').innerHTML = '';
+            
+            try {
+                const response = await fetch(API_BASE + '/debug/csrf', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                log('CSRF Debug Response: ' + JSON.stringify(data, null, 2));
+                
+                log('All cookies: ' + document.cookie);
+                log('CSRF token from cookie: ' + getCsrfToken());
+                
+            } catch (error) {
+                log('Error checking CSRF: ' + error.message);
+            }
+        }
+        
+        async function testFoodPost() {
+            const csrfToken = getCsrfToken();
+            log('Using CSRF token: ' + csrfToken);
+            
+            if (!csrfToken) {
+                log('No CSRF token found! Try clicking "Check CSRF Token" first.');
+                return;
+            }
+            
+            try {
+                const response = await fetch(API_BASE + '/food', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-csrf-token': csrfToken
+                    },
+                    body: JSON.stringify({
+                        title: 'Test Food',
+                        description: 'Test description'
+                    })
+                });
+                
+                log('Response status: ' + response.status);
+                const responseText = await response.text();
+                log('Response body: ' + responseText);
+                
+            } catch (error) {
+                log('Error making POST request: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>`);
+});
+
 // Debug endpoint to check CSRF token (remove in production after testing)
 app.get('/api/debug/csrf', (req, res) => {
     res.json({
