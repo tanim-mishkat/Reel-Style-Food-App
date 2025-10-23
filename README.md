@@ -4,12 +4,12 @@ A full-stack MERN application that combines social media-style video reels with 
 
 ## 🚀 Live Demo
 
-- **Frontend:** [https://reel-style-food-app.onrender.com](https://reel-style-food-app.onrender.com)
-- **Backend API:** [https://reelify-pr6n.onrender.com](https://reelify-pr6n.onrender.com)
+- **Live Site:** [https://reel-style-food-app.onrender.com](https://reel-style-food-app.onrender.com)
 
 ## ✨ Features
 
 ### User Features
+
 - 📱 TikTok-style vertical video feed for food discovery
 - ❤️ Like, save, and comment on food reels
 - 🛒 Add items to cart and place orders
@@ -19,6 +19,7 @@ A full-stack MERN application that combines social media-style video reels with 
 - 🔐 Secure authentication with HTTP-only cookies
 
 ### Food Partner Features
+
 - 🎥 Upload video reels to showcase dishes
 - 📋 Manage menu items and pricing
 - 📊 Dashboard for order management
@@ -28,6 +29,7 @@ A full-stack MERN application that combines social media-style video reels with 
 - 📈 Track likes, saves, and comments
 
 ### Technical Features
+
 - 🔒 CSRF protection with double-submit cookie pattern
 - 🌐 Cross-origin authentication with SameSite cookies
 - ⚡ Real-time updates using Socket.IO
@@ -39,6 +41,7 @@ A full-stack MERN application that combines social media-style video reels with 
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **Framework:** React 19.1.1
 - **Routing:** React Router DOM 7.8.2
 - **HTTP Client:** Axios 1.11.0
@@ -47,6 +50,7 @@ A full-stack MERN application that combines social media-style video reels with 
 - **Styling:** CSS Modules
 
 ### Backend
+
 - **Runtime:** Node.js
 - **Framework:** Express 5.1.0
 - **Database:** MongoDB with Mongoose 8.18.0
@@ -100,6 +104,7 @@ Reel-Style-Food-App/
 ## 🔧 Installation & Setup
 
 ### Prerequisites
+
 - Node.js 18+ and npm
 - MongoDB instance
 - ImageKit account (for media storage)
@@ -142,129 +147,144 @@ npm run dev
 ## 🔐 Environment Variables
 
 ### Backend (.env)
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `PORT` | Server port | `3000` |
-| `MONGODB_URI` | MongoDB connection string | `mongodb+srv://...` |
-| `JWT_SECRET` | Secret for JWT signing | `your-secret-key` |
-| `CLIENT_ORIGINS` | Allowed CORS origins (comma-separated) | `https://app.com,http://localhost:5173` |
-| `NODE_ENV` | Environment | `production` or `development` |
-| `IMAGE_KIT_PUBLIC_KEY` | ImageKit public key | `public_xxx` |
-| `IMAGE_KIT_PRIVATE_KEY` | ImageKit private key | `private_xxx` |
-| `IMAGE_KIT_URL_ENDPOINT` | ImageKit CDN endpoint | `https://ik.imagekit.io/xxx` |
+
+| Variable                 | Description                            | Example                                 |
+| ------------------------ | -------------------------------------- | --------------------------------------- |
+| `PORT`                   | Server port                            | `3000`                                  |
+| `MONGODB_URI`            | MongoDB connection string              | `mongodb+srv://...`                     |
+| `JWT_SECRET`             | Secret for JWT signing                 | `your-secret-key`                       |
+| `CLIENT_ORIGINS`         | Allowed CORS origins (comma-separated) | `https://app.com,http://localhost:5173` |
+| `NODE_ENV`               | Environment                            | `production` or `development`           |
+| `IMAGE_KIT_PUBLIC_KEY`   | ImageKit public key                    | `public_xxx`                            |
+| `IMAGE_KIT_PRIVATE_KEY`  | ImageKit private key                   | `private_xxx`                           |
+| `IMAGE_KIT_URL_ENDPOINT` | ImageKit CDN endpoint                  | `https://ik.imagekit.io/xxx`            |
 
 ### Frontend (.env)
-| Variable | Description | Example |
-|----------|-------------|---------|
+
+| Variable       | Description          | Example                       |
+| -------------- | -------------------- | ----------------------------- |
 | `VITE_API_URL` | Backend API base URL | `https://api.example.com/api` |
 
 ## 📡 API Endpoints
 
 ### Authentication
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | `/api/auth/user/register` | Register new user | ❌ |
-| POST | `/api/auth/user/login` | User login | ❌ |
-| GET | `/api/auth/user/logout` | User logout | ✅ |
-| GET | `/api/auth/user/profile` | Get user profile | ✅ |
-| PATCH | `/api/auth/user/profile` | Update user profile | ✅ |
-| POST | `/api/auth/food-partner/register` | Register food partner | ❌ |
-| POST | `/api/auth/food-partner/login` | Partner login | ❌ |
-| GET | `/api/auth/food-partner/logout` | Partner logout | ✅ |
+
+| Method | Endpoint                          | Description           | Auth Required |
+| ------ | --------------------------------- | --------------------- | ------------- |
+| POST   | `/api/auth/user/register`         | Register new user     | ❌            |
+| POST   | `/api/auth/user/login`            | User login            | ❌            |
+| GET    | `/api/auth/user/logout`           | User logout           | ✅            |
+| GET    | `/api/auth/user/profile`          | Get user profile      | ✅            |
+| PATCH  | `/api/auth/user/profile`          | Update user profile   | ✅            |
+| POST   | `/api/auth/food-partner/register` | Register food partner | ❌            |
+| POST   | `/api/auth/food-partner/login`    | Partner login         | ❌            |
+| GET    | `/api/auth/food-partner/logout`   | Partner logout        | ✅            |
 
 ### Food Reels
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/api/food` | Get food reels feed | ❌ |
-| POST | `/api/food` | Create food reel | ✅ Partner |
-| PATCH | `/api/food/:id` | Update food reel | ✅ Partner |
-| DELETE | `/api/food/:id` | Delete food reel | ✅ Partner |
-| POST | `/api/food/like` | Like/unlike food reel | ✅ User |
-| POST | `/api/food/save` | Save/unsave food reel | ✅ User |
-| GET | `/api/food/saved` | Get saved reels | ✅ User |
+
+| Method | Endpoint          | Description           | Auth Required |
+| ------ | ----------------- | --------------------- | ------------- |
+| GET    | `/api/food`       | Get food reels feed   | ❌            |
+| POST   | `/api/food`       | Create food reel      | ✅ Partner    |
+| PATCH  | `/api/food/:id`   | Update food reel      | ✅ Partner    |
+| DELETE | `/api/food/:id`   | Delete food reel      | ✅ Partner    |
+| POST   | `/api/food/like`  | Like/unlike food reel | ✅ User       |
+| POST   | `/api/food/save`  | Save/unsave food reel | ✅ User       |
+| GET    | `/api/food/saved` | Get saved reels       | ✅ User       |
 
 ### Comments
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | `/api/food/comment` | Add comment | ✅ User |
-| GET | `/api/food/:foodId/comments` | Get comments | ✅ User |
-| DELETE | `/api/food/comment/:commentId` | Delete comment | ✅ User |
-| POST | `/api/food/comment/like` | Like/unlike comment | ✅ User |
+
+| Method | Endpoint                       | Description         | Auth Required |
+| ------ | ------------------------------ | ------------------- | ------------- |
+| POST   | `/api/food/comment`            | Add comment         | ✅ User       |
+| GET    | `/api/food/:foodId/comments`   | Get comments        | ✅ User       |
+| DELETE | `/api/food/comment/:commentId` | Delete comment      | ✅ User       |
+| POST   | `/api/food/comment/like`       | Like/unlike comment | ✅ User       |
 
 ### Food Partners
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/api/food-partner/:id` | Get partner by ID | ❌ |
-| GET | `/api/food-partner/restaurant/:slug` | Get partner by slug | ❌ |
-| GET | `/api/food-partner/:id/videos` | Get partner videos | ❌ |
-| GET | `/api/food-partner/me` | Get my profile | ✅ Partner |
-| PATCH | `/api/food-partner/me` | Update my profile | ✅ Partner |
-| GET | `/api/food-partner/me/reels` | Get my reels | ✅ Partner |
+
+| Method | Endpoint                             | Description         | Auth Required |
+| ------ | ------------------------------------ | ------------------- | ------------- |
+| GET    | `/api/food-partner/:id`              | Get partner by ID   | ❌            |
+| GET    | `/api/food-partner/restaurant/:slug` | Get partner by slug | ❌            |
+| GET    | `/api/food-partner/:id/videos`       | Get partner videos  | ❌            |
+| GET    | `/api/food-partner/me`               | Get my profile      | ✅ Partner    |
+| PATCH  | `/api/food-partner/me`               | Update my profile   | ✅ Partner    |
+| GET    | `/api/food-partner/me/reels`         | Get my reels        | ✅ Partner    |
 
 ### Menu
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | `/api/menu` | Create menu item | ✅ Partner |
-| GET | `/api/menu/me` | Get my menu items | ✅ Partner |
-| GET | `/api/menu/:id` | Get partner menu | ❌ |
-| PATCH | `/api/menu/:id` | Update menu item | ✅ Partner |
-| DELETE | `/api/menu/:id` | Delete menu item | ✅ Partner |
+
+| Method | Endpoint        | Description       | Auth Required |
+| ------ | --------------- | ----------------- | ------------- |
+| POST   | `/api/menu`     | Create menu item  | ✅ Partner    |
+| GET    | `/api/menu/me`  | Get my menu items | ✅ Partner    |
+| GET    | `/api/menu/:id` | Get partner menu  | ❌            |
+| PATCH  | `/api/menu/:id` | Update menu item  | ✅ Partner    |
+| DELETE | `/api/menu/:id` | Delete menu item  | ✅ Partner    |
 
 ### Orders
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | `/api/orders` | Create order | ✅ User |
-| GET | `/api/orders/user` | Get user orders | ✅ User |
-| GET | `/api/orders/:id` | Get order by ID | ✅ User |
-| GET | `/api/orders/partner/orders` | Get partner orders | ✅ Partner |
-| PATCH | `/api/orders/:id/status` | Update order status | ✅ Partner |
-| PATCH | `/api/orders/batch/status` | Batch update orders | ✅ Partner |
+
+| Method | Endpoint                     | Description         | Auth Required |
+| ------ | ---------------------------- | ------------------- | ------------- |
+| POST   | `/api/orders`                | Create order        | ✅ User       |
+| GET    | `/api/orders/user`           | Get user orders     | ✅ User       |
+| GET    | `/api/orders/:id`            | Get order by ID     | ✅ User       |
+| GET    | `/api/orders/partner/orders` | Get partner orders  | ✅ Partner    |
+| PATCH  | `/api/orders/:id/status`     | Update order status | ✅ Partner    |
+| PATCH  | `/api/orders/batch/status`   | Batch update orders | ✅ Partner    |
 
 ### Reviews
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | `/api/reviews` | Create review | ✅ User |
-| GET | `/api/reviews/partner/:id` | Get partner reviews | ❌ |
+
+| Method | Endpoint                   | Description         | Auth Required |
+| ------ | -------------------------- | ------------------- | ------------- |
+| POST   | `/api/reviews`             | Create review       | ✅ User       |
+| GET    | `/api/reviews/partner/:id` | Get partner reviews | ❌            |
 
 ### Follow
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | `/api/follow/partner` | Follow/unfollow partner | ✅ User |
-| GET | `/api/follow/count/:partnerId` | Get follower count | ❌ |
-| GET | `/api/follow/partners` | Get followed partners | ✅ User |
-| GET | `/api/follow/feed` | Get followed feed | ✅ User |
-| GET | `/api/follow/followers` | Get my followers | ✅ Partner |
+
+| Method | Endpoint                       | Description             | Auth Required |
+| ------ | ------------------------------ | ----------------------- | ------------- |
+| POST   | `/api/follow/partner`          | Follow/unfollow partner | ✅ User       |
+| GET    | `/api/follow/count/:partnerId` | Get follower count      | ❌            |
+| GET    | `/api/follow/partners`         | Get followed partners   | ✅ User       |
+| GET    | `/api/follow/feed`             | Get followed feed       | ✅ User       |
+| GET    | `/api/follow/followers`        | Get my followers        | ✅ Partner    |
 
 ### Notifications
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/api/notifications/user` | Get user notifications | ✅ User |
-| GET | `/api/notifications/partner` | Get partner notifications | ✅ Partner |
-| PATCH | `/api/notifications/user/:id/read` | Mark user notification read | ✅ User |
-| PATCH | `/api/notifications/partner/:id/read` | Mark partner notification read | ✅ Partner |
+
+| Method | Endpoint                              | Description                    | Auth Required |
+| ------ | ------------------------------------- | ------------------------------ | ------------- |
+| GET    | `/api/notifications/user`             | Get user notifications         | ✅ User       |
+| GET    | `/api/notifications/partner`          | Get partner notifications      | ✅ Partner    |
+| PATCH  | `/api/notifications/user/:id/read`    | Mark user notification read    | ✅ User       |
+| PATCH  | `/api/notifications/partner/:id/read` | Mark partner notification read | ✅ Partner    |
 
 ### Push Notifications
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| POST | `/api/push/subscribe` | Subscribe to push notifications | ✅ User |
+
+| Method | Endpoint              | Description                     | Auth Required |
+| ------ | --------------------- | ------------------------------- | ------------- |
+| POST   | `/api/push/subscribe` | Subscribe to push notifications | ✅ User       |
 
 ### Health Check
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| GET | `/api/health` | API health check | ❌ |
-| GET | `/healthz` | Server health check | ❌ |
+
+| Method | Endpoint      | Description         | Auth Required |
+| ------ | ------------- | ------------------- | ------------- |
+| GET    | `/api/health` | API health check    | ❌            |
+| GET    | `/healthz`    | Server health check | ❌            |
 
 ## 🚀 Deployment
 
 ### Render Configuration
 
 **Backend (Web Service):**
+
 - Build Command: `cd Backend && npm install`
 - Start Command: `cd Backend && npm start`
 - Environment: Node
 - Add all environment variables from Backend .env
 
 **Frontend (Static Site):**
+
 - Build Command: `cd Frontend && npm install && npm run build`
 - Publish Directory: `Frontend/dist`
 - Add Rewrite Rule: `/*` → `/index.html`
@@ -272,6 +292,7 @@ npm run dev
 - Add Header: `/assets/*` → `Cache-Control: public, max-age=31536000, immutable`
 
 ### Important Notes
+
 - Set `CLIENT_ORIGINS` in backend to include frontend URL
 - Enable "Auto-Deploy" for automatic deployments on push
 - Backend must be HTTPS for cross-origin cookies to work
@@ -301,9 +322,10 @@ This project is open source and available under the [MIT License](LICENSE).
 ## 👤 Contact
 
 **Developer:** Your Name
-- GitHub: [@yourusername](https://github.com/tanim-mishkat)
-- LinkedIn: [Your Name](https://linkedin.com/in/md-tanimur-rahman-mishkat)
-- Email: your.email@example.com
+
+- GitHub: [@Md.Tanimur Rahman](https://github.com/tanim-mishkat)
+- LinkedIn: [Md.Tanimur Rahman](https://linkedin.com/in/md-tanimur-rahman-mishkat)
+- Email: mishkat.workmail@gmail.com
 
 ## 🙏 Acknowledgments
 

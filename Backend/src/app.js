@@ -163,8 +163,18 @@ app.get('/api/debug/csrf', (req, res) => {
         cookies: Object.keys(req.cookies),
         headers: {
             origin: req.headers.origin,
-            referer: req.headers.referer
-        }
+            referer: req.headers.referer,
+            'user-agent': req.headers['user-agent']
+        },
+        nodeEnv: process.env.NODE_ENV
+    });
+});
+
+// Simple endpoint to force CSRF token creation
+app.get('/api/init-csrf', (req, res) => {
+    res.json({
+        message: 'CSRF token initialized',
+        hasCsrfCookie: !!req.cookies.csrf_token
     });
 });
 

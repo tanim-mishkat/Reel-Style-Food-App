@@ -10,7 +10,7 @@ const api = axios.create({
 
 // Helper function to ensure CSRF token is available
 const ensureCsrfToken = async () => {
-  const csrfToken = document.cookie
+  let csrfToken = document.cookie
     .split(';')
     .map(cookie => cookie.trim())
     .find(cookie => cookie.startsWith('csrf_token='));
@@ -18,8 +18,27 @@ const ensureCsrfToken = async () => {
   if (!csrfToken) {
     // Make a GET request to trigger CSRF token creation
     try {
-      await api.get('/health');
-      console.log('CSRF token initialized');
+      console.log('Initializing CSRF token...');
+      await api.get('/init-csrf');
+
+      // Wait a bit and check again for the cookie
+      await new Promise(resolve => setTimeout(resolve, 200));
+
+      csrfToken = document.cookie
+        .split(';')
+        .map(cookie => cookie.trim())
+        .find(cookie => cookie.startsWith('csrf_token='));
+
+      if (csrfToken) {
+        console.log('CSRF token initialized successfully');
+      } else {
+        console.warn('CSRF token not found after initialization attempt');
+        console.log('Current cookies:', document.cookie);
+
+        // Try debug endpoint to see what's happening
+        const debugResponse = await api.get('/debug/csrf');
+        console.log('Debug response:', debugResponse.data);
+      }
     } catch (error) {
       console.warn('Failed to get CSRF token:', error);
     }

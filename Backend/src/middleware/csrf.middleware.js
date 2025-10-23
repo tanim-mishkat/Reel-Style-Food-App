@@ -30,19 +30,15 @@ function setCsrfToken(req, res, next) {
         const cookieOptions = {
             httpOnly: false,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'lax', // Changed from 'none' to 'lax'
             path: '/',
             maxAge: 24 * 60 * 60 * 1000 // 24 hours
         };
 
-        // In production, ensure domain is set correctly
-        if (process.env.NODE_ENV === 'production') {
-            // Don't set domain for Render deployment - let it default
-            // cookieOptions.domain = '.onrender.com';
-        }
-
         res.cookie('csrf_token', token, cookieOptions);
-        console.log('Setting CSRF token for:', req.path);
+        console.log('Setting CSRF token for:', req.path, 'with options:', cookieOptions);
+    } else {
+        console.log('CSRF token already exists for:', req.path);
     }
     next();
 }
