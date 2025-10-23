@@ -12,12 +12,7 @@ function csrfProtection(req, res, next) {
         return next();
     }
 
-    // Temporary: Skip CSRF for food routes during debugging
-    // TODO: Remove this after fixing CSRF token issues
-    if (req.path.startsWith('/api/food')) {
-        console.log('Skipping CSRF for food route (DEBUG MODE)');
-        return next();
-    }
+
 
     const token = req.headers['x-csrf-token'];
     const cookieToken = req.cookies.csrf_token;
@@ -32,12 +27,22 @@ function csrfProtection(req, res, next) {
 function setCsrfToken(req, res, next) {
     if (!req.cookies.csrf_token) {
         const token = crypto.randomBytes(32).toString('hex');
-        res.cookie('csrf_token', token, {
+        const cookieOptions = {
             httpOnly: false,
             secure: process.env.NODE_ENV === 'production',
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-            path: '/'
-        });
+            path: '/',
+            maxAge: 24 * 60 * 60 * 1000 // 24 hours
+        };
+
+        // In production, ensure domain is set correctly
+        if (process.env.NODE_ENV === 'production') {
+            // Don't set domain for Render deployment - let it default
+            // cookieOptions.domain = '.onrender.com';
+        }
+
+        res.cookie('csrf_token', token, cookieOptions);
+        console.log('Setting CSRF token for:', req.path);
     }
     next();
 }
