@@ -69,6 +69,19 @@ app.use('/api/follow', followRoutes)
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 app.get('/healthz', (req, res) => res.status(200).send('OK'));
 
+// Debug endpoint to check CSRF token (remove in production after testing)
+app.get('/api/debug/csrf', (req, res) => {
+    res.json({
+        hasCsrfCookie: !!req.cookies.csrf_token,
+        csrfToken: req.cookies.csrf_token ? 'SET' : 'NOT SET',
+        cookies: Object.keys(req.cookies),
+        headers: {
+            origin: req.headers.origin,
+            referer: req.headers.referer
+        }
+    });
+});
+
 // Global error handler
 const errorHandler = require('./middleware/error.middleware.js')
 app.use(errorHandler)

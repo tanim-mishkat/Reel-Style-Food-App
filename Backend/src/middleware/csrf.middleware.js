@@ -27,8 +27,8 @@ function setCsrfToken(req, res, next) {
         const token = crypto.randomBytes(32).toString('hex');
         res.cookie('csrf_token', token, {
             httpOnly: false,
-            secure: true,
-            sameSite: 'none',
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
             path: '/'
         });
     }
