@@ -30,33 +30,20 @@ const ensureCsrfToken = async () => {
   if (!csrfToken) {
     // Make a GET request to trigger CSRF token creation
     try {
-      console.log('Initializing CSRF token...');
       const response = await api.get('/init-csrf');
 
       // Try to get token from response header as fallback
       const headerToken = response.headers['x-csrf-token'];
       if (headerToken) {
         memoryCSRFToken = headerToken;
-        console.log('CSRF token received from header');
       }
 
       // Wait a bit and check again for the cookie
       await new Promise(resolve => setTimeout(resolve, 200));
 
       csrfToken = getCSRFToken();
-
-      if (csrfToken) {
-        console.log('CSRF token initialized successfully');
-      } else {
-        console.warn('CSRF token not found after initialization attempt');
-        console.log('Current cookies:', document.cookie);
-
-        // Try debug endpoint to see what's happening
-        const debugResponse = await api.get('/debug/csrf');
-        console.log('Debug response:', debugResponse.data);
-      }
     } catch (error) {
-      console.warn('Failed to get CSRF token:', error);
+      // Silent fail - CSRF will be handled by interceptors
     }
   }
 };
@@ -70,9 +57,6 @@ api.interceptors.request.use((config) => {
 
   if (csrfToken) {
     config.headers['x-csrf-token'] = csrfToken;
-    console.log('Adding CSRF token to request:', csrfToken.substring(0, 8) + '...');
-  } else {
-    console.warn('No CSRF token found in cookies:', document.cookie);
   }
   return config;
 });
@@ -84,14 +68,12 @@ api.interceptors.response.use(
     const headerToken = res.headers['x-csrf-token'];
     if (headerToken && headerToken !== memoryCSRFToken) {
       memoryCSRFToken = headerToken;
-      console.log('Updated CSRF token from response header');
     }
     return res;
   },
   async (err) => {
     // Handle CSRF token issues
     if (err.response?.status === 403 && err.response?.data?.message === 'Invalid CSRF token') {
-      console.log('CSRF token invalid, attempting to refresh...');
       try {
         // Clear existing token and get a new one
         document.cookie = 'csrf_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
@@ -106,7 +88,7 @@ api.interceptors.response.use(
           return api.request(originalRequest);
         }
       } catch (refreshError) {
-        console.error('Failed to refresh CSRF token:', refreshError);
+        // Silent fail
       }
     }
 

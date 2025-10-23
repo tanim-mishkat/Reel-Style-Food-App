@@ -12,33 +12,11 @@ function csrfProtection(req, res, next) {
         return next();
     }
 
-    // Skip CSRF for test endpoint
-    if (req.path === '/api/test-csrf') {
-        console.log('Testing CSRF protection for:', req.path);
-    }
-
     const token = req.headers['x-csrf-token'];
     const cookieToken = req.cookies.csrf_token;
 
-    console.log('CSRF Protection Check:', {
-        path: req.path,
-        method: req.method,
-        hasHeaderToken: !!token,
-        hasCookieToken: !!cookieToken,
-        headerToken: token ? token.substring(0, 8) + '...' : 'none',
-        cookieToken: cookieToken ? cookieToken.substring(0, 8) + '...' : 'none',
-        tokensMatch: token === cookieToken
-    });
-
     if (!token || !cookieToken || token !== cookieToken) {
-        return res.status(403).json({
-            message: 'Invalid CSRF token',
-            debug: {
-                hasHeaderToken: !!token,
-                hasCookieToken: !!cookieToken,
-                tokensMatch: token === cookieToken
-            }
-        });
+        return res.status(403).json({ message: 'Invalid CSRF token' });
     }
 
     next();
@@ -58,10 +36,7 @@ function setCsrfToken(req, res, next) {
         res.cookie('csrf_token', token, cookieOptions);
         // Also set the token in a response header as fallback for cross-origin scenarios
         res.set('X-CSRF-Token', token);
-        console.log('Setting CSRF token for:', req.path, 'with options:', cookieOptions);
-        console.log('Generated token:', token.substring(0, 8) + '...');
     } else {
-        console.log('CSRF token already exists for:', req.path);
         // Still set header even if cookie exists
         res.set('X-CSRF-Token', req.cookies.csrf_token);
     }
