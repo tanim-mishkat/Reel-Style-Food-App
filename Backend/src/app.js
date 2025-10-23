@@ -79,6 +79,8 @@ app.get('/api/init-csrf', (req, res) => {
     });
 });
 
+
+
 // Global error handler
 const errorHandler = require('./middleware/error.middleware.js')
 app.use(errorHandler)

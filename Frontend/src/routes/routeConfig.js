@@ -19,8 +19,7 @@ export const ROUTES = {
   FOOD_PARTNER_PROFILE: '/food-partner/:id',
   FOOD_PARTNER_VIDEOS: '/food-partner/:id/videos',
 
-  // Store and Checkout routes
-  STORE: '/store',
+  // Checkout routes
   CHECKOUT: '/checkout',
   PAYMENT: '/payment',
 

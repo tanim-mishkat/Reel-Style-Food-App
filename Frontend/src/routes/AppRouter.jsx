@@ -25,9 +25,6 @@ import PartnerReelsPage from "../features/foodPartner/pages/PartnerReelsPage";
 import ProfilePage from "../features/foodPartner/pages/ProfilePage";
 import FoodPartnerVideosPage from "../features/foodPartner/pages/FoodPartnerVideosPage";
 
-// Store Pages
-import StorePage from "../features/store/pages/StorePage";
-
 // Checkout Pages
 import CheckoutPage from "../features/checkout/pages/CheckoutPage";
 import PaymentPage from "../features/checkout/pages/PaymentPage";
@@ -118,9 +115,6 @@ const AppRouter = () => {
             path={ROUTES.FOOD_PARTNER_VIDEOS}
             element={<FoodPartnerVideosPage />}
           />
-
-          {/* Store Routes */}
-          <Route path={ROUTES.STORE} element={<StorePage />} />
 
           {/* Checkout Routes */}
           <Route
