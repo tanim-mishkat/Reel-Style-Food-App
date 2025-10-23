@@ -11,9 +11,16 @@ export const useVideoPlayer = (videos, options = {}) => {
   const [savedTimes, setSavedTimes] = useState({});
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Autoplay initial video safely
+  // Initialize all videos as muted and set up initial state
   useEffect(() => {
     if ((videos || []).length > 0 && !isInitialized) {
+      // Initialize all videos as muted
+      const initialMutedState = {};
+      videos.forEach((video) => {
+        initialMutedState[video._id] = true;
+      });
+      setMutedVideos(initialMutedState);
+
       const startVideoId = options.startVideoId || null;
       let targetIndex = 0;
       if (startVideoId) {
@@ -81,7 +88,8 @@ export const useVideoPlayer = (videos, options = {}) => {
             if (savedTime != null) newVideo.currentTime = savedTime;
             if (!pausedVideos[newId]) {
               try {
-                newVideo.muted = true;
+                // Set mute state based on current muted state
+                newVideo.muted = mutedVideos[newId] !== false;
                 newVideo.setAttribute('playsinline', '');
                 const p = newVideo.play();
                 if (p && typeof p.catch === 'function') p.catch(() => { });
@@ -125,7 +133,8 @@ export const useVideoPlayer = (videos, options = {}) => {
       });
 
       try {
-        videoEl.muted = true;
+        // Set mute state based on current muted state
+        videoEl.muted = mutedVideos[videoId] !== false;
         videoEl.setAttribute('playsinline', '');
         const p = videoEl.play();
         if (p && typeof p.catch === 'function') p.catch(() => { });
@@ -138,9 +147,15 @@ export const useVideoPlayer = (videos, options = {}) => {
   };
 
   const toggleMute = (videoId) => {
+    const videoEl = videoRefs.current[videoId];
+    if (!videoEl) return;
+
+    const newMutedState = !mutedVideos[videoId];
+    videoEl.muted = newMutedState;
+
     setMutedVideos((prev) => ({
       ...prev,
-      [videoId]: !prev[videoId],
+      [videoId]: newMutedState,
     }));
   };
 
