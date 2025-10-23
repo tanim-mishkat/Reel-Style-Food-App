@@ -8,14 +8,37 @@ const api = axios.create({
   withCredentials: true, // always send cookies (user_token / partner_token)
 });
 
+// Helper function to ensure CSRF token is available
+const ensureCsrfToken = async () => {
+  const csrfToken = document.cookie
+    .split(';')
+    .map(cookie => cookie.trim())
+    .find(cookie => cookie.startsWith('csrf_token='));
+
+  if (!csrfToken) {
+    // Make a GET request to trigger CSRF token creation
+    try {
+      await api.get('/health');
+    } catch (error) {
+      console.warn('Failed to get CSRF token:', error);
+    }
+  }
+};
+
 // Add CSRF token to all requests
 api.interceptors.request.use((config) => {
+  // More robust cookie parsing
   const csrfToken = document.cookie
-    .split('; ')
-    .find(row => row.startsWith('csrf_token='))
-    ?.split('=')[1];
+    .split(';')
+    .map(cookie => cookie.trim())
+    .find(cookie => cookie.startsWith('csrf_token='))
+    ?.substring('csrf_token='.length);
+
   if (csrfToken) {
     config.headers['x-csrf-token'] = csrfToken;
+    console.log('Adding CSRF token to request:', csrfToken.substring(0, 8) + '...');
+  } else {
+    console.warn('No CSRF token found in cookies:', document.cookie);
   }
   return config;
 });
@@ -49,7 +72,10 @@ export const foodService = {
   likeFood: (foodId) => api.post('/food/like', { foodId }),
   saveFood: (foodId) => api.post('/food/save', { foodId }),
   getSavedFoodItems: () => api.get('/food/saved'),
-  createFood: (formData) => api.post('/food', formData),
+  createFood: async (formData) => {
+    await ensureCsrfToken();
+    return api.post('/food', formData);
+  },
   updateFood: (id, data) => api.patch(`/food/${id}`, data),
   deleteFood: (id) => api.delete(`/food/${id}`),
   addComment: (foodId, text, parent) => api.post('/food/comment', { foodId, text, parent }),

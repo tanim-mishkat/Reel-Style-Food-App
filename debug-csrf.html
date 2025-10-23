@@ -4,200 +4,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSRF Debug Tool</title>
-    <style>
-        body {
-            font-family: monospace;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #1e1e1e;
-            color: #d4d4d4;
-        }
-
-        .section {
-            margin: 20px 0;
-            padding: 15px;
-            background: #252526;
-            border-radius: 5px;
-        }
-
-        button {
-            background: #0e639c;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 3px;
-            margin: 5px;
-        }
-
-        button:hover {
-            background: #1177bb;
-        }
-
-        .success {
-            color: #4ec9b0;
-        }
-
-        .error {
-            color: #f48771;
-        }
-
-        .warning {
-            color: #dcdcaa;
-        }
-
-        pre {
-            background: #1e1e1e;
-            padding: 10px;
-            border-radius: 3px;
-            overflow-x: auto;
-        }
-    </style>
+    <title>CSRF Debug</title>
 </head>
 
 <body>
-    <h1>🔍 CSRF Token Debug Tool</h1>
+    <h1>CSRF Token Debug</h1>
+    <div id="results"></div>
 
-    <div class="section">
-        <h2>Configuration</h2>
-        <label>Backend URL:</label>
-        <input type="text" id="backendUrl" value="https://reelify-pr6n.onrender.com"
-            style="width: 100%; padding: 5px; margin: 5px 0;">
-    </div>
-
-    <div class="section">
-        <h2>Tests</h2>
-        <button onclick="testHealth()">1. Test /api/health</button>
-        <button onclick="testDebugCsrf()">2. Test /api/debug/csrf</button>
-        <button onclick="checkCookies()">3. Check Browser Cookies</button>
-        <button onclick="testFoodPost()">4. Test POST /api/food</button>
-    </div>
-
-    <div class="section">
-        <h2>Results</h2>
-        <div id="results"></div>
-    </div>
+    <button onclick="checkCsrfToken()">Check CSRF Token</button>
+    <button onclick="testFoodPost()">Test Food POST</button>
 
     <script>
-        const log = (message, type = 'info') => {
-            const results = document.getElementById('results');
-            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : '';
-            results.innerHTML += `<div class="${className}">${message}</div>`;
-        };
+        const API_BASE = 'https://reelify-pr6n.onrender.com/api';
 
-        const clearResults = () => {
-            document.getElementById('results').innerHTML = '';
-        };
-
-        const getBackendUrl = () => document.getElementById('backendUrl').value;
-
-        async function testHealth() {
-            clearResults();
-            log('Testing /api/health endpoint...');
-
-            try {
-                const response = await fetch(`${getBackendUrl()}/api/health`, {
-                    credentials: 'include'
-                });
-
-                if (response.ok) {
-                    log('✅ Health endpoint responded successfully', 'success');
-                    const data = await response.json();
-                    log(`Response: ${JSON.stringify(data)}`);
-
-                    // Check Set-Cookie header
-                    const setCookie = response.headers.get('set-cookie');
-                    if (setCookie) {
-                        log(`Set-Cookie header: ${setCookie}`, 'success');
-                    } else {
-                        log('⚠️ No Set-Cookie header in response', 'warning');
-                    }
-                } else {
-                    log(`❌ Health endpoint failed: ${response.status}`, 'error');
-                }
-            } catch (err) {
-                log(`❌ Error: ${err.message}`, 'error');
-            }
-        }
-
-        async function testDebugCsrf() {
-            clearResults();
-            log('Testing /api/debug/csrf endpoint...');
-
-            try {
-                const response = await fetch(`${getBackendUrl()}/api/debug/csrf`, {
-                    credentials: 'include'
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    log('✅ Debug endpoint responded:', 'success');
-                    log(`<pre>${JSON.stringify(data, null, 2)}</pre>`);
-
-                    if (data.hasCsrfCookie) {
-                        log('✅ CSRF cookie is set on backend', 'success');
-                    } else {
-                        log('❌ CSRF cookie NOT set on backend', 'error');
-                    }
-                } else {
-                    log(`❌ Debug endpoint failed: ${response.status}`, 'error');
-                }
-            } catch (err) {
-                log(`❌ Error: ${err.message}`, 'error');
-            }
-        }
-
-        function checkCookies() {
-            clearResults();
-            log('Checking browser cookies...');
-
-            const cookies = document.cookie;
-            if (!cookies) {
-                log('❌ No cookies found in browser', 'error');
-                log('This means the CSRF cookie is not being set or not accessible from JavaScript');
-                return;
-            }
-
-            log(`All cookies: ${cookies}`);
-
-            const csrfToken = document.cookie
+        function getCsrfToken() {
+            return document.cookie
                 .split('; ')
                 .find(row => row.startsWith('csrf_token='))
                 ?.split('=')[1];
+        }
 
-            if (csrfToken) {
-                log(`✅ CSRF token found: ${csrfToken.substring(0, 20)}...`, 'success');
-            } else {
-                log('❌ CSRF token NOT found in cookies', 'error');
-                log('Possible reasons:', 'warning');
-                log('1. Cookie has httpOnly=true (check backend code)');
-                log('2. Cookie domain mismatch');
-                log('3. Cookie not being set by backend');
-                log('4. CORS credentials not working');
+        function log(message) {
+            const results = document.getElementById('results');
+            results.innerHTML += '<p>' + message + '</p>';
+        }
+
+        async function checkCsrfToken() {
+            document.getElementById('results').innerHTML = '';
+
+            // First, get CSRF token by visiting the debug endpoint
+            try {
+                const response = await fetch(`${API_BASE}/debug/csrf`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                log('CSRF Debug Response: ' + JSON.stringify(data, null, 2));
+
+                // Check what we have in cookies
+                log('All cookies: ' + document.cookie);
+                log('CSRF token from cookie: ' + getCsrfToken());
+
+            } catch (error) {
+                log('Error checking CSRF: ' + error.message);
             }
         }
 
         async function testFoodPost() {
-            clearResults();
-            log('Testing POST /api/food...');
-
-            const csrfToken = document.cookie
-                .split('; ')
-                .find(row => row.startsWith('csrf_token='))
-                ?.split('=')[1];
+            const csrfToken = getCsrfToken();
+            log('Using CSRF token: ' + csrfToken);
 
             if (!csrfToken) {
-                log('❌ Cannot test POST - no CSRF token found', 'error');
-                log('Run test 1 and 3 first to get the CSRF token');
+                log('No CSRF token found! Try clicking "Check CSRF Token" first.');
                 return;
             }
 
-            log(`Using CSRF token: ${csrfToken.substring(0, 20)}...`);
-
             try {
-                const response = await fetch(`${getBackendUrl()}/api/food`, {
+                const response = await fetch(`${API_BASE}/food`, {
                     method: 'POST',
                     credentials: 'include',
                     headers: {
@@ -206,35 +68,18 @@
                     },
                     body: JSON.stringify({
                         title: 'Test Food',
-                        description: 'Testing CSRF'
+                        description: 'Test description'
                     })
                 });
 
-                log(`Response status: ${response.status}`);
+                log('Response status: ' + response.status);
+                const responseText = await response.text();
+                log('Response body: ' + responseText);
 
-                if (response.status === 403) {
-                    log('❌ Got 403 Forbidden - CSRF validation failed', 'error');
-                    const data = await response.json();
-                    log(`Error: ${JSON.stringify(data)}`);
-                } else if (response.status === 401) {
-                    log('⚠️ Got 401 Unauthorized - you need to login first', 'warning');
-                    log('But CSRF token was accepted! ✅', 'success');
-                } else if (response.ok) {
-                    log('✅ Request succeeded!', 'success');
-                    const data = await response.json();
-                    log(`Response: ${JSON.stringify(data)}`);
-                } else {
-                    log(`⚠️ Got ${response.status} - check backend logs`, 'warning');
-                }
-            } catch (err) {
-                log(`❌ Error: ${err.message}`, 'error');
+            } catch (error) {
+                log('Error making POST request: ' + error.message);
             }
         }
-
-        // Auto-run health check on load
-        window.addEventListener('load', () => {
-            setTimeout(testHealth, 500);
-        });
     </script>
 </body>
 
