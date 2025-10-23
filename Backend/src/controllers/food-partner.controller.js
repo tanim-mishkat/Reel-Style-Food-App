@@ -217,7 +217,7 @@ async function searchPartners(req, res) {
 
                 searchResults = textResults
             } catch (textSearchError) {
-                // console.log('Text search not available, falling back to regex')
+
             }
         }
 

@@ -7,7 +7,7 @@ import "../assets/styles/global.css";
 
 const App = () => {
   useEffect(() => {
-    initPushNotifications().catch(console.error);
+    initPushNotifications().catch(() => {});
     // Initialize CSRF token by making a request to the API
     const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
     fetch(`${apiUrl}/health`, {

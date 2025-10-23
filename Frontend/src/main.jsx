@@ -6,9 +6,8 @@ import { initializeCSRF } from "./shared/services/api.js";
 async function startApp() {
   try {
     await initializeCSRF();
-    console.log("App starting with CSRF token ready");
   } catch (error) {
-    console.warn("Failed to initialize CSRF token:", error);
+    // CSRF initialization failed - will be handled by interceptors
   }
 
   createRoot(document.getElementById("root")).render(<App />);

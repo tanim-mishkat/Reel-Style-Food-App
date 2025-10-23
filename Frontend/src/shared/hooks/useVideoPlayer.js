@@ -59,18 +59,20 @@ export const useVideoPlayer = (videos, options = {}) => {
         const scrollTop = container.scrollTop ?? 0;
         const newIndex = Math.round(scrollTop / videoHeight);
 
-        if (currentVideoIndex !== newIndex && videos[currentVideoIndex]) {
-          const prevId = videos[currentVideoIndex]._id;
-          const prevVideo = videoRefs.current[prevId];
-          if (prevVideo && !prevVideo.paused) {
+        // Pause all videos first
+        Object.keys(videoRefs.current).forEach((id) => {
+          const video = videoRefs.current[id];
+          if (video && !video.paused) {
             setSavedTimes((prev) => ({
               ...prev,
-              [prevId]: prevVideo.currentTime,
+              [id]: video.currentTime,
             }));
-            prevVideo.pause();
+            video.pause();
+            setPausedVideos((prev) => ({ ...prev, [id]: true }));
           }
-        }
+        });
 
+        // Play only the current video
         if (videos[newIndex]) {
           const newId = videos[newIndex]._id;
           const newVideo = videoRefs.current[newId];
@@ -83,6 +85,7 @@ export const useVideoPlayer = (videos, options = {}) => {
                 newVideo.setAttribute('playsinline', '');
                 const p = newVideo.play();
                 if (p && typeof p.catch === 'function') p.catch(() => { });
+                setPausedVideos((prev) => ({ ...prev, [newId]: false }));
               } catch {
                 // ignore
               }
@@ -108,7 +111,19 @@ export const useVideoPlayer = (videos, options = {}) => {
   const togglePlayPause = (videoId) => {
     const videoEl = videoRefs.current[videoId];
     if (!videoEl) return;
+
     if (videoEl.paused) {
+      // Pause all other videos before playing this one
+      Object.keys(videoRefs.current).forEach((id) => {
+        if (id !== videoId) {
+          const otherVideo = videoRefs.current[id];
+          if (otherVideo && !otherVideo.paused) {
+            otherVideo.pause();
+            setPausedVideos((prev) => ({ ...prev, [id]: true }));
+          }
+        }
+      });
+
       try {
         videoEl.muted = true;
         videoEl.setAttribute('playsinline', '');
@@ -152,6 +167,38 @@ export const useVideoPlayer = (videos, options = {}) => {
     if (videoEl) videoEl.currentTime = value;
   };
 
+  const pauseAllVideos = () => {
+    Object.keys(videoRefs.current).forEach((id) => {
+      const video = videoRefs.current[id];
+      if (video && !video.paused) {
+        video.pause();
+        setPausedVideos((prev) => ({ ...prev, [id]: true }));
+      }
+    });
+  };
+
+  // Pause all videos when component unmounts or page visibility changes
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        pauseAllVideos();
+      }
+    };
+
+    const handleBeforeUnload = () => {
+      pauseAllVideos();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      pauseAllVideos(); // Pause all videos on cleanup
+    };
+  }, []);
+
   return {
     containerRef,
     videoRefs,
@@ -164,5 +211,6 @@ export const useVideoPlayer = (videos, options = {}) => {
     handleTimeUpdate,
     handleLoadedMetadata,
     handleSeek,
+    pauseAllVideos,
   };
 };

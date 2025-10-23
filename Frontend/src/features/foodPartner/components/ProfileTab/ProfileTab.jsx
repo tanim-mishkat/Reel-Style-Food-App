@@ -21,7 +21,7 @@ const ProfileTab = () => {
     const fetchProfile = async () => {
       try {
         const response = await foodPartnerService.getMyProfile();
-        // console.log(response);
+
         const profileData = response.data.foodPartner || {};
         setProfile(profileData);
         setFullName(profileData.fullName || "");
