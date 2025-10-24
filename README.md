@@ -7,6 +7,7 @@ Reelify is a social media platform built for food content, similar to TikTok but
 ## Live Demo Link
 
 🔗 **Live Application**: [https://reel-style-food-app.onrender.com/](https://reel-style-food-app.onrender.com/)  
+🎬 **Video Demo:** https://youtu.be/CvBApJZyIuU?si=okcDn13bb4ABcDuW
 
 ## Resume Review Shortcuts
 
